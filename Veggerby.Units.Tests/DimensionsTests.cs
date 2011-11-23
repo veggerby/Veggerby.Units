@@ -146,5 +146,17 @@ namespace Veggerby.Units.Tests
         {
             Assert.AreEqual("L^2T^2/M^2", ((Dimension.Length * Dimension.Time / Dimension.Mass) ^ 2).Symbol);
         }
+
+        [Test]
+        public void Dimension_MultipleIdenticalOperandsForProduct_ReductToPower()
+        {
+            Assert.AreEqual("L^3", (Dimension.Length * (Dimension.Length ^ 2)).Symbol);
+        }
+
+        [Test]
+        public void Dimension_MultipleIdenticalOperandsForMultipleProduct_ReductToPower()
+        {
+            Assert.AreEqual("L^6T", ((Dimension.Length ^ 3) * (Dimension.Length ^ 2) * Dimension.Time * Dimension.Length).Symbol);
+        }
     }
 }

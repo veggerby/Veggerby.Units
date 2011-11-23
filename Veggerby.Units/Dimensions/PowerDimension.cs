@@ -1,6 +1,7 @@
+using Veggerby.Units.Reduction;
 namespace Veggerby.Units.Dimensions
 {
-    public class PowerDimension : Dimension
+    public class PowerDimension : Dimension, IPowerOperation
     {
         private readonly Dimension _Base;
         private readonly int _Exponent;
@@ -19,6 +20,16 @@ namespace Veggerby.Units.Dimensions
         public override string Name
         {
             get { return string.Format("{0} ^ {1}", this._Base.Name, this._Exponent); }
+        }
+
+        IOperand IPowerOperation.Base
+        {
+            get { return this._Base; }
+        }
+
+        int IPowerOperation.Exponent
+        {
+            get { return this._Exponent; }
         }
     }
 }

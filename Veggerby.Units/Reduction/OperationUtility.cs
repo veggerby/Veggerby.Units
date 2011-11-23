@@ -124,18 +124,20 @@ namespace Veggerby.Units.Reduction
         /// Reduce a division operation, i.e. (A*C)/(A*B) => C/B
         /// </summary>
         /// <typeparam name="T">The type of operand</typeparam>
+        /// <param name="mult">Multiplication function <u>with</u> reduction/rearrange</param>
         /// <param name="pow">Power function <u>with</u> reduction/rearrange</param>
         /// <param name="operands">The operands to reduce</param>
         /// <returns>A reduced operand <b>if</b> any reduction has occurred, otherwise default(T)</returns>
-        internal static IEnumerable<T> ReduceMultiplication<T>(Func<T, int, T> pow, params IOperand[] operands)
+        internal static T ReduceMultiplication<T>(Func<IEnumerable<T>, T> mult, Func<T, int, T> pow, params T[] operands)
             where T : IOperand
         {
             var powers = operands
+                .SelectMany(x => x.ExpandMultiplication())
                 .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
-                .Select(g => pow((T)g.Key, g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1)))
+                .Select(g => new { IsReduced = g.Count() > 1, Operand = pow((T)g.Key, g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1)) })
                 .ToList();
 
-            return powers.Count() != operands.Count() ? powers : null;
+            return powers.Any(x => x.IsReduced) ? mult(powers.Select(x => x.Operand)) : default(T);
         }
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace Veggerby.Units.Reduction
 
             if (@base is IDivisionOperation)
             {
-                return div(pow((T) (@base as IDivisionOperation).Dividend, exponent), pow((T) (@base as IDivisionOperation).Divisor, exponent));
+                return div(pow((T)(@base as IDivisionOperation).Dividend, exponent), pow((T)(@base as IDivisionOperation).Divisor, exponent));
             }
 
             if (@base is IProductOperation)

@@ -1,4 +1,5 @@
-﻿using Veggerby.Units.Reduction;
+﻿using System.Linq;
+using Veggerby.Units.Reduction;
 
 namespace Veggerby.Units.Dimensions
 {
@@ -46,7 +47,10 @@ namespace Veggerby.Units.Dimensions
 
         public static Dimension operator *(Dimension d1, Dimension d2)
         {
-            return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b), (x, y) => x / y, d1, d2) ?? new ProductDimension(d1, d2);
+            // where to put OperationUtility.ReduceMultiplication
+            return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b), (x, y) => x / y, d1, d2) ??
+                OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b), (x, y) => x ^ y, d1, d2) ??
+                new ProductDimension(d1, d2);
         }
 
         public static Dimension operator /(int dividend, Dimension divisor)
