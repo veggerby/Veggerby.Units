@@ -21,7 +21,8 @@ namespace Veggerby.Units.Reduction
 
             return
                 Equals(o1 as IProductOperation, o2 as IProductOperation) ||
-                Equals(o1 as IDivisionOperation, o2 as IDivisionOperation);
+                Equals(o1 as IDivisionOperation, o2 as IDivisionOperation) ||
+                Equals(o1 as IPowerOperation, o2 as IPowerOperation);
         }
 
         private static bool Equals(IProductOperation o1, IProductOperation o2)
@@ -45,6 +46,16 @@ namespace Veggerby.Units.Reduction
             }
 
             return Equals(o1.Dividend, o2.Dividend) && Equals(o1.Divisor, o2.Divisor);
+        }
+
+        private static bool Equals(IPowerOperation o1, IPowerOperation o2)
+        {
+            if (o1 == null || o2 == null)
+            {
+                return false;
+            }
+
+            return Equals(o1.Base, o2.Base) && Equals(o1.Exponent, o2.Exponent);
         }
 
         /// <summary>
