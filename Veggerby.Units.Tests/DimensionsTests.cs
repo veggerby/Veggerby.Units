@@ -148,15 +148,47 @@ namespace Veggerby.Units.Tests
         }
 
         [Test]
-        public void Dimension_MultipleIdenticalOperandsForProduct_ReductToPower()
+        public void Dimension_MultipleIdenticalOperandsForProduct_ReduceToPower()
         {
             Assert.AreEqual("L^3", (Dimension.Length * (Dimension.Length ^ 2)).Symbol);
         }
 
         [Test]
-        public void Dimension_MultipleIdenticalOperandsForMultipleProduct_ReductToPower()
+        public void Dimension_MultipleIdenticalOperandsForMultipleProduct_ReduceToPower()
         {
             Assert.AreEqual("L^6T", ((Dimension.Length ^ 3) * (Dimension.Length ^ 2) * Dimension.Time * Dimension.Length).Symbol);
+        }
+
+        [Test]
+        public void Dimension_DivisionOperationWithSameOperands_ShouldReduceOperands()
+        {
+            Assert.AreEqual("L", ((Dimension.Length ^ 2) / Dimension.Length).Symbol);
+        }
+
+        [Test]
+        public void Dimension_DivisionOperationWithSameOperandsAndPower_ShouldReduceOperandsCompletely()
+        {
+            Assert.AreEqual("", (Dimension.Length / Dimension.Length).Symbol);
+        }
+
+        [Test]
+        public void Dimension_DivisionOperationWithSameOperandsButDifferentPowerDividend_ShouldReduceOperandsPartially()
+        {
+            Assert.AreEqual("L^2", ((Dimension.Length ^ 3) / Dimension.Length).Symbol);
+        }
+
+        [Test]
+        public void Dimension_DivisionOperationWithSameOperandsButDifferentPowerDivisor_ShouldReduceOperandsPartially()
+        {
+            Assert.AreEqual("1/L^2", (Dimension.Length / (Dimension.Length ^ 3)).Symbol);
+        }
+
+
+        [Test]
+        public void Dimension_ComplexReduction_YieldsExpected()
+        {
+            // T*L^2*M/(T^2*L^3) => M/TL
+            Assert.AreEqual("M/TL", (Dimension.Time * (((Dimension.Length ^ 2) * Dimension.Mass) / ((Dimension.Time ^ 2) * (Dimension.Length ^ 3)))).Symbol);
         }
     }
 }
