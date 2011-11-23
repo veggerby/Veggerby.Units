@@ -92,5 +92,59 @@ namespace Veggerby.Units.Tests
             var d1 = (Dimension.Length / Dimension.ElectricCurrent) / Dimension.Time;
             Assert.AreEqual("L/IT", d1.Symbol);
         }
+
+        [Test]
+        public void Dimension_PowerDimension_ReturnsCorrectType()
+        {
+            Assert.IsInstanceOf<PowerDimension>(Dimension.Length ^ 2);
+        }
+
+        [Test]
+        public void Dimension_PowerDimension_ReturnsCorrectSymbol()
+        {
+            Assert.AreEqual("L^2", (Dimension.Length ^ 2).Symbol);
+        }
+
+        [Test]
+        public void Dimension_PowerDimension_ReturnsCorrectName()
+        {
+            Assert.AreEqual("length ^ 2", (Dimension.Length ^ 2).Name);
+        }
+
+        [Test]
+        public void Dimension_PowerDimension0_ReturnsNone()
+        {
+            Assert.AreEqual("", (Dimension.Time ^ 0).Symbol);
+        }
+
+        [Test]
+        public void Dimension_PowerDimension1_ReturnsBase()
+        {
+            Assert.AreEqual("T", (Dimension.Time ^ 1).Symbol);
+        }
+
+        [Test]
+        public void Dimension_PowerDimensionMinus1_ReturnsDivision()
+        {
+            Assert.AreEqual("1/T", (Dimension.Time ^ -1).Symbol);
+        }
+
+        [Test]
+        public void Dimension_PowerDimensionNegative_ReturnsDivision()
+        {
+            Assert.AreEqual("1/T^2", (Dimension.Time ^ -2).Symbol);
+        }
+
+        [Test]
+        public void Dimension_MultiplePowerDimension_ExpandsEachPower()
+        {
+            Assert.AreEqual("L^2T^2", ((Dimension.Length * Dimension.Time) ^ 2).Symbol);
+        }
+
+        [Test]
+        public void Dimension_MultiplePowerDimensionWithDivision_ExpandsEachPower()
+        {
+            Assert.AreEqual("L^2T^2/M^2", ((Dimension.Length * Dimension.Time / Dimension.Mass) ^ 2).Symbol);
+        }
     }
 }

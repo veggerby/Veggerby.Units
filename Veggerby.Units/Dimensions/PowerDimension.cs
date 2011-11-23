@@ -18,7 +18,7 @@ namespace Veggerby.Units.Dimensions
 
         public override string Name
         {
-            get { return string.Format("{0} / {1}", this._Base.Name, this._Exponent); }
+            get { return string.Format("{0} ^ {1}", this._Base.Name, this._Exponent); }
         }
     }
 }

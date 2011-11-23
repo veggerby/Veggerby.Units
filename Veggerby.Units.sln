@@ -5,6 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veggerby.Units", "Veggerby.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veggerby.Units.Tests", "Veggerby.Units.Tests\Veggerby.Units.Tests.csproj", "{91570B32-295B-4A98-AD6C-4B651FE0B320}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{FE89D044-D995-4852-BCDA-E33577380F20}"
+	ProjectSection(SolutionItems) = preProject
+		README = README
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

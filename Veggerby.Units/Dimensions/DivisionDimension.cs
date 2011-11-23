@@ -15,12 +15,12 @@ namespace Veggerby.Units.Dimensions
 
         public override string Symbol
         {
-            get { return string.Format("{0}/{1}", this._Dividend.Symbol, this._Divisor.Symbol); }
+            get { return string.Format("{0}/{1}", this._Dividend.Symbol == string.Empty ? "1" : this._Dividend.Symbol, this._Divisor.Symbol); }
         }
 
         public override string Name
         {
-            get { return string.Format("{0} / {1}", this._Dividend.Name, this._Divisor.Name); }
+            get { return string.Format("{0} / {1}", this._Dividend.Symbol == string.Empty ? "1" : this._Dividend.Name, this._Divisor.Name); }
         }
 
         public override bool Equals(object obj)

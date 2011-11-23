@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Veggerby.Units.Dimensions;
 
 namespace Veggerby.Units.Reduction
 {
@@ -65,7 +66,7 @@ namespace Veggerby.Units.Reduction
             if (divisions.Any())
             {
                 var dividends = divisions.Select(x => (T)x.Dividend).Concat(rest);
-                var divisors = divisions.Select(x => (T) x.Divisor);
+                var divisors = divisions.Select(x => (T)x.Divisor);
                 return div(mult(dividends), mult(divisors));
             }
 
@@ -120,6 +121,24 @@ namespace Veggerby.Units.Reduction
         }
 
         /// <summary>
+        /// Reduce a division operation, i.e. (A*C)/(A*B) => C/B
+        /// </summary>
+        /// <typeparam name="T">The type of operand</typeparam>
+        /// <param name="pow">Power function <u>with</u> reduction/rearrange</param>
+        /// <param name="operands">The operands to reduce</param>
+        /// <returns>A reduced operand <b>if</b> any reduction has occurred, otherwise default(T)</returns>
+        internal static IEnumerable<T> ReduceMultiplication<T>(Func<T, int, T> pow, params IOperand[] operands)
+            where T : IOperand
+        {
+            var powers = operands
+                .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
+                .Select(g => pow((T)g.Key, g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1)))
+                .ToList();
+
+            return powers.Count() != operands.Count() ? powers : null;
+        }
+
+        /// <summary>
         /// Ensure that multiplication operations are linear (e.g. (A*B)*(C*D*E)*F => A*B*C*D*E*F
         /// </summary>
         /// <typeparam name="T">The type of operand</typeparam>
@@ -128,6 +147,36 @@ namespace Veggerby.Units.Reduction
         internal static IEnumerable<T> LinearizeMultiplication<T>(params T[] operands) where T : IOperand
         {
             return operands.SelectMany(x => x.ExpandMultiplication().OfType<T>());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T">The type of operand</typeparam>
+        /// <param name="mult">Multiplication function <u>with</u> reduction/rearrange</param>
+        /// <param name="div">Division function <u>with</u> reduction/rearrange</param>
+        /// <param name="pow">Power function <u>with</u> reduction/rearrange</param>
+        /// <param name="base">The power base operand</param>
+        /// <param name="exponent">The power exponent</param>
+        /// <returns>An operand representing expanded power operation</returns>
+        internal static T ExpandPower<T>(Func<IEnumerable<T>, T> mult, Func<T, T, T> div, Func<T, int, T> pow, T @base, int exponent) where T : IOperand
+        {
+            if (@base is IPowerOperation)
+            {
+                return pow((T)(@base as IPowerOperation).Base, (@base as IPowerOperation).Exponent * exponent);
+            }
+
+            if (@base is IDivisionOperation)
+            {
+                return div(pow((T) (@base as IDivisionOperation).Dividend, exponent), pow((T) (@base as IDivisionOperation).Divisor, exponent));
+            }
+
+            if (@base is IProductOperation)
+            {
+                return mult((@base as IProductOperation).Operands.Select(x => pow((T)x, exponent)));
+            }
+
+            return default(T);
         }
     }
 }

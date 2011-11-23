@@ -4,7 +4,10 @@ namespace Veggerby.Units.Dimensions
 {
     public abstract class Dimension : IOperand
     {
-        public static Dimension Empty = default(Dimension);
+        /// <summary>
+        /// Dimensionless property, eg. a constant (pi, e, etc.)
+        /// </summary>
+        public static Dimension None = new NullDimension();
 
         public static Dimension Length = new BasicDimension("L", "length");
         public static Dimension Mass = new BasicDimension("M", "mass");
@@ -46,10 +49,35 @@ namespace Veggerby.Units.Dimensions
             return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b), (x, y) => x / y, d1, d2) ?? new ProductDimension(d1, d2);
         }
 
-        public static Dimension operator /(Dimension d1, Dimension d2)
+        public static Dimension operator /(int dividend, Dimension divisor)
         {
-            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, d1, d2) ?? new DivisionDimension(d1, d2);
+            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, Dimension.None, divisor) ?? new DivisionDimension(Dimension.None, divisor);
+        }
 
+        public static Dimension operator /(Dimension dividend, Dimension divisor)
+        {
+            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ?? new DivisionDimension(dividend, divisor);
+        }
+
+        public static Dimension operator ^(Dimension @base, int exponent)
+        {
+            if (exponent < 0)
+            {
+                return 1 / (@base ^ (-exponent));
+            }
+
+            if (exponent == 0)
+            {
+                return Dimension.None;
+            }
+
+            if (exponent == 1)
+            {
+                return @base;
+            }
+
+            return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
+                   new PowerDimension(@base, exponent);
         }
 
         public static bool operator ==(Dimension d1, Dimension d2)

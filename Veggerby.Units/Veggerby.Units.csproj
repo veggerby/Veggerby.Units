@@ -42,11 +42,13 @@
   <ItemGroup>
     <Compile Include="Dimensions\BasicDimension.cs" />
     <Compile Include="Dimensions\DivisionDimension.cs" />
+    <Compile Include="Dimensions\NullDimension.cs" />
     <Compile Include="Dimensions\ProductDimension.cs" />
     <Compile Include="Dimensions\Dimension.cs" />
     <Compile Include="Dimensions\DimensionException.cs" />
     <Compile Include="Dimensions\PowerDimension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reduction\IPowerOperation.cs" />
     <Compile Include="Reduction\OperandExtensions.cs" />
     <Compile Include="Reduction\IDivisionOperation.cs" />
     <Compile Include="Reduction\IOperand.cs" />
