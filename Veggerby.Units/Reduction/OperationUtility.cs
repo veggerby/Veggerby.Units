@@ -122,12 +122,38 @@ namespace Veggerby.Units.Reduction
         /// <typeparam name="T">The type of operand</typeparam>
         /// <param name="mult">Multiplication function <u>with</u> reduction/rearrange</param>
         /// <param name="div">Division function <u>with</u> reduction/rearrange</param>
+        /// <param name="pow">Power function <u>with</u> reduction/rearrange</param>
         /// <param name="dividend">The dividend</param>
         /// <param name="divisor">The divisor</param>
         /// <returns>A reduced operand <b>if</b> any reduction has occurred, otherwise default(T)</returns>
-        internal static T ReduceDivision<T>(Func<T, T, T> mult, Func<T, T, T> div, T dividend, T divisor)
+        internal static T ReduceDivision<T>(Func<IEnumerable<T>, T> mult, Func<T, T, T> div, Func<T, int, T> pow, T dividend, T divisor)
             where T : IOperand
         {
+            var dividends = dividend
+                .ExpandMultiplication()
+                .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
+                .Select(g => new { Operand = g.Key, Exponent = g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1) })
+                .ToList();
+
+            var divisors = divisor
+                .ExpandMultiplication()
+                .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
+                .Select(g => new { Operand = g.Key, Exponent = -g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1) })
+                .ToList();
+
+            if (dividends.Select(x => x.Operand).Intersect(divisors.Select(x => x.Operand)).Any())
+            {
+                var result = dividends
+                    .Concat(divisors)
+                    .GroupBy(x => x.Operand)
+                    .Select(g => new { Operand = g.Key, Exponent = g.Sum(x => x.Exponent) })
+                    .ToList();
+
+                return div(
+                    mult(result.Where(x => x.Exponent > 0).Select(x => pow((T)x.Operand, x.Exponent))),
+                    mult(result.Where(x => x.Exponent < 0).Select(x => pow((T)x.Operand, -x.Exponent))));
+            }
+
             return default(T);
         }
 

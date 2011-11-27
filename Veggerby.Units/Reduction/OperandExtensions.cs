@@ -16,18 +16,20 @@ namespace Veggerby.Units.Reduction
             return new[] { o };
         }
 
-        public static T Multiply<T>(this IEnumerable<T> operands, Func<T, T, T> mult) where T : IOperand
+        public static T Multiply<T>(this IEnumerable<T> operands, Func<T, T, T> mult, T @default) where T : IOperand
         {
-            T result = operands.First();
             if (operands.Any())
             {
-                foreach(var o in operands.Skip(1))
+                T result = operands.First();
+                foreach (var o in operands.Skip(1))
                 {
                     result = mult(result, o);
                 }
+
+                return result;
             }
 
-            return result;
+            return @default;
         }
     }
 }

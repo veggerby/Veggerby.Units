@@ -25,6 +25,21 @@ namespace Veggerby.Units.Dimensions
         public abstract string Symbol { get; }
         public abstract string Name { get; }
 
+        public static Dimension Mult(params Dimension[] operands)
+        {
+            return new ProductDimension(operands);
+        }
+
+        public static Dimension Div(Dimension dividend, Dimension divisor)
+        {
+            return new DivisionDimension(dividend, divisor);
+        }
+
+        public static Dimension Pow(Dimension @base, int exponent)
+        {
+            return new PowerDimension(@base, exponent);
+        }
+
         public static Dimension operator +(Dimension d1, Dimension d2)
         {
             if (d1 != d2)
@@ -47,20 +62,38 @@ namespace Veggerby.Units.Dimensions
 
         public static Dimension operator *(Dimension d1, Dimension d2)
         {
+            if (d1 == Dimension.None) // and if d2 == None, return d2 (=None)
+            {
+                return d2;
+            }
+
+            if (d2 == Dimension.None)
+            {
+                return d1;
+            }
+
             // where to put OperationUtility.ReduceMultiplication
-            return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b), (x, y) => x / y, d1, d2) ??
-                OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b), (x, y) => x ^ y, d1, d2) ??
-                new ProductDimension(d1, d2);
+            return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x / y, d1, d2) ??
+                OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x ^ y, d1, d2) ??
+                Mult(d1, d2);
         }
 
         public static Dimension operator /(int dividend, Dimension divisor)
         {
-            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, Dimension.None, divisor) ?? new DivisionDimension(Dimension.None, divisor);
+            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, Dimension.None, divisor) ??
+                Div(Dimension.None, divisor);
         }
 
         public static Dimension operator /(Dimension dividend, Dimension divisor)
         {
-            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ?? new DivisionDimension(dividend, divisor);
+            if (divisor == Dimension.None)
+            {
+                return dividend;
+            }
+
+            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ??
+                OperationUtility.ReduceDivision(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x / y, (x, y) => x ^ y, dividend, divisor) ??
+                Div(dividend, divisor);
         }
 
         public static Dimension operator ^(Dimension @base, int exponent)
@@ -80,8 +113,8 @@ namespace Veggerby.Units.Dimensions
                 return @base;
             }
 
-            return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
-                   new PowerDimension(@base, exponent);
+            return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
+                   Pow(@base, exponent);
         }
 
         public static bool operator ==(Dimension d1, Dimension d2)

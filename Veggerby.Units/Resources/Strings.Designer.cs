@@ -68,5 +68,14 @@ namespace Veggerby.Units.Resources {
                 return ResourceManager.GetString("IncompatibleDimensions", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Units are incompatible ({0} and {1}).
+        /// </summary>
+        internal static string IncompatibleUnits {
+            get {
+                return ResourceManager.GetString("IncompatibleUnits", resourceCulture);
+            }
+        }
     }
 }

@@ -41,8 +41,7 @@ namespace Veggerby.Units.Tests
         {
             var d1 = Dimension.Length * Dimension.Mass;
             var d2 = Dimension.Mass * Dimension.Length;
-            var equal = d1 == d2;
-            Assert.IsTrue(equal);
+            Assert.IsTrue(d1 == d2);
         }
 
         [Test]
@@ -50,8 +49,7 @@ namespace Veggerby.Units.Tests
         {
             var d1 = Dimension.ElectricCurrent * (Dimension.Length * Dimension.Mass);
             var d2 = (Dimension.Mass * Dimension.ElectricCurrent) * Dimension.Length;
-            var equal = d1 == d2;
-            Assert.IsTrue(equal);
+            Assert.IsTrue(d1 == d2);
         }
 
         [Test]
@@ -75,22 +73,25 @@ namespace Veggerby.Units.Tests
         [Test]
         public void Dimension_DivisionDimensionRearrangeDivByDiv_ReturnsCorrect()
         {
-            var d1 = (Dimension.Length / Dimension.Mass) / (Dimension.ElectricCurrent / Dimension.Time);
-            Assert.AreEqual("LT/MI", d1.Symbol);
+            var actual = (Dimension.Length / Dimension.Mass) / (Dimension.ElectricCurrent / Dimension.Time); // (L/M)/(I/T)
+            var expected = Dimension.Div(Dimension.Mult(Dimension.Length, Dimension.Time), Dimension.Mult(Dimension.Mass, Dimension.ElectricCurrent)); // LT/MI
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_DivisionDimensionRearrangeSimpleByDiv_ReturnsCorrect()
         {
-            var d1 = Dimension.Length / (Dimension.ElectricCurrent / Dimension.Time);
-            Assert.AreEqual("LT/I", d1.Symbol);
+            var actual = Dimension.Length / (Dimension.ElectricCurrent / Dimension.Time); // L/(I/T)
+            var expected = Dimension.Div(Dimension.Mult(Dimension.Length, Dimension.Time), Dimension.ElectricCurrent); // LT/I
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_DivisionDimensionRearrangeDivBySimple_ReturnsCorrect()
         {
-            var d1 = (Dimension.Length / Dimension.ElectricCurrent) / Dimension.Time;
-            Assert.AreEqual("L/IT", d1.Symbol);
+            var actual = (Dimension.Length / Dimension.ElectricCurrent) / Dimension.Time; // (L/I)/T
+            var expected = Dimension.Div(Dimension.Length, Dimension.Mult(Dimension.Time, Dimension.ElectricCurrent)); // L/TI
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
@@ -114,81 +115,105 @@ namespace Veggerby.Units.Tests
         [Test]
         public void Dimension_PowerDimension0_ReturnsNone()
         {
-            Assert.AreEqual("", (Dimension.Time ^ 0).Symbol);
+            var actual = Dimension.Time ^ 0; // T^0
+            var expected = Dimension.None; // 1 == None
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_PowerDimension1_ReturnsBase()
         {
-            Assert.AreEqual("T", (Dimension.Time ^ 1).Symbol);
+            var actual = Dimension.Time ^ 1; // T^1
+            var expected = Dimension.Time; // T
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_PowerDimensionMinus1_ReturnsDivision()
         {
-            Assert.AreEqual("1/T", (Dimension.Time ^ -1).Symbol);
+            var actual = Dimension.Time ^ -1; // T^-1
+            var expected = Dimension.Div(Dimension.None, Dimension.Time); // 1/T
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_PowerDimensionNegative_ReturnsDivision()
         {
-            Assert.AreEqual("1/T^2", (Dimension.Time ^ -2).Symbol);
+            var actual = Dimension.Time ^ -2; // T^-2
+            var expected = Dimension.Div(Dimension.None, Dimension.Pow(Dimension.Time, 2)); // 1/T^2
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_MultiplePowerDimension_ExpandsEachPower()
         {
-            Assert.AreEqual("L^2T^2", ((Dimension.Length * Dimension.Time) ^ 2).Symbol);
+            var actual = ((Dimension.Length * Dimension.Time) ^ 2);
+            var expected = Dimension.Mult(Dimension.Pow(Dimension.Length, 2), Dimension.Pow(Dimension.Time, 2));
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_MultiplePowerDimensionWithDivision_ExpandsEachPower()
         {
-            Assert.AreEqual("L^2T^2/M^2", ((Dimension.Length * Dimension.Time / Dimension.Mass) ^ 2).Symbol);
+            var actual = ((Dimension.Length * Dimension.Time / Dimension.Mass) ^ 2); // (LT/M)^2
+            var expected = Dimension.Div(Dimension.Mult(Dimension.Pow(Dimension.Length, 2), Dimension.Pow(Dimension.Time, 2)), Dimension.Pow(Dimension.Mass, 2)); // L^2T^2/M^2;
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_MultipleIdenticalOperandsForProduct_ReduceToPower()
         {
-            Assert.AreEqual("L^3", (Dimension.Length * (Dimension.Length ^ 2)).Symbol);
+            var actual = (Dimension.Length * (Dimension.Length ^ 2)); // L*L^2
+            var expected = Dimension.Pow(Dimension.Length, 3); // L^3
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_MultipleIdenticalOperandsForMultipleProduct_ReduceToPower()
         {
-            Assert.AreEqual("L^6T", ((Dimension.Length ^ 3) * (Dimension.Length ^ 2) * Dimension.Time * Dimension.Length).Symbol);
+            var actual = ((Dimension.Length ^ 3) * (Dimension.Length ^ 2) * Dimension.Time * Dimension.Length); // L^3^L^2TL            
+            var expected = Dimension.Mult(Dimension.Pow(Dimension.Length, 6), Dimension.Time); // L^6T
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_DivisionOperationWithSameOperands_ShouldReduceOperands()
         {
-            Assert.AreEqual("L", ((Dimension.Length ^ 2) / Dimension.Length).Symbol);
+            var actual = ((Dimension.Length ^ 2) / Dimension.Length); // L^2/L            
+            var expected = Dimension.Length; // L
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_DivisionOperationWithSameOperandsAndPower_ShouldReduceOperandsCompletely()
         {
-            Assert.AreEqual("", (Dimension.Length / Dimension.Length).Symbol);
+            var actual = (Dimension.Length / Dimension.Length); // L/L
+            var expected = Dimension.None; // completely reduced
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_DivisionOperationWithSameOperandsButDifferentPowerDividend_ShouldReduceOperandsPartially()
         {
-            Assert.AreEqual("L^2", ((Dimension.Length ^ 3) / Dimension.Length).Symbol);
+            var actual = ((Dimension.Length ^ 3) / Dimension.Length); // L^3/L
+            var expected = Dimension.Pow(Dimension.Length, 2); // L^2
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Dimension_DivisionOperationWithSameOperandsButDifferentPowerDivisor_ShouldReduceOperandsPartially()
         {
-            Assert.AreEqual("1/L^2", (Dimension.Length / (Dimension.Length ^ 3)).Symbol);
+            var actual = (Dimension.Length / (Dimension.Length ^ 3)); // L/L^3
+            var expected = Dimension.Div(Dimension.None, Dimension.Pow(Dimension.Length, 2)); //  1/L^2
+            Assert.AreEqual(expected, actual);
         }
-
 
         [Test]
         public void Dimension_ComplexReduction_YieldsExpected()
         {
-            // T*L^2*M/(T^2*L^3) => M/TL
-            Assert.AreEqual("M/TL", (Dimension.Time * (((Dimension.Length ^ 2) * Dimension.Mass) / ((Dimension.Time ^ 2) * (Dimension.Length ^ 3)))).Symbol);
+            var actual = (Dimension.Time * (((Dimension.Length ^ 2) * Dimension.Mass) / ((Dimension.Time ^ 2) * (Dimension.Length ^ 3)))); // T*L^2*M/(T^2*L^3)            
+            var expected = Dimension.Div(Dimension.Mass, Dimension.Mult(Dimension.Time, Dimension.Length)); // M/TL
+            Assert.AreEqual(expected, actual);
         }
     }
 }
