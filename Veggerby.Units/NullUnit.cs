@@ -27,5 +27,10 @@ namespace Veggerby.Units
         {
             get { return Dimension.None; }
         }
+
+        internal override T Accept<T>(Visitors.Visitor<T> visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 }

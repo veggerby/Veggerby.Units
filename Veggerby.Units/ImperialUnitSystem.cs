@@ -4,8 +4,9 @@ namespace Veggerby.Units
 {
     public class ImperialUnitSystem : UnitSystem
     {
-        public const double FeetInMetres = 0.3048;
-        public const double PoundInKilogram = 0.45359237;
+        public const double FeetToMetres = 0.3048;
+        public const double PoundToKilogram = 0.45359237;
+        public const double CubicInchToPint = 34.677;
 
         //length
         private readonly Unit _ft;
@@ -86,7 +87,7 @@ namespace Veggerby.Units
         public ImperialUnitSystem()
         {
             //length
-            this._ft = new ScaleUnit("ft", "feet", FeetInMetres, Unit.SI.m, this);
+            this._ft = new ScaleUnit("ft", "feet", FeetToMetres, Unit.SI.m, this);
             this._in = new ScaleUnit("in", "inch", 1D / 12, this._ft);
             this._thou = new ScaleUnit("th", "thou", 1D / 1000, this._in);
             this._ya = new ScaleUnit("yd", "yard", 3, this._ft);
@@ -104,14 +105,14 @@ namespace Veggerby.Units
 
             //volume
             this._cubic_inch = this._in ^ 3;
-            this._pt = new ScaleUnit("pt", "pint", 34.677, this._cubic_inch);
+            this._pt = new ScaleUnit("pt", "pint", CubicInchToPint, this._cubic_inch);
             this._gi = new ScaleUnit("gi", "gill", 1D / 4, this._pt);
             this._fl_oz = new ScaleUnit("fl oz", "fluid ounce", 1D / 5, this._gi);
             this._qt = new ScaleUnit("qt", "quart", 2, this._pt);
             this._gal = new ScaleUnit("gal", "gallon", 4, this._qt);
 
             //weight
-            this._lb = new ScaleUnit("lb", "pound", PoundInKilogram, Unit.SI.kg, this);
+            this._lb = new ScaleUnit("lb", "pound", PoundToKilogram, Unit.SI.kg, this);
             this._oz = new ScaleUnit("oz", "ounce", 1D / 16, this._lb);
             this._drc = new ScaleUnit("drc", "drachm", 1D / 16, this._oz);
             this._gr = new ScaleUnit("gr", "grain", 1D / 7000, this._lb);

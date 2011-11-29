@@ -34,5 +34,10 @@ namespace Veggerby.Units
         {
             get { return this._Expression.Dimension; }
         }
+
+        internal override T Accept<T>(Visitors.Visitor<T> visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 }

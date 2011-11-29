@@ -42,5 +42,15 @@ namespace Veggerby.Units
         {
             get { return this._Base.Dimension; }
         }
+
+        public double Scale
+        {
+            get { return _Scale; }
+        }
+
+        internal override T Accept<T>(Visitors.Visitor<T> visitor)
+        {
+            return visitor.Visit(this);
+        }
     }
 }

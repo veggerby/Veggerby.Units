@@ -41,7 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicUnit.cs" />
-    <Compile Include="Conversion\UnitConversion.cs" />
+    <Compile Include="Conversion\Extensions.cs" />
+    <Compile Include="Conversion\MeasurementConversionException.cs" />
     <Compile Include="DerivedUnit.cs" />
     <Compile Include="Dimensions\BasicDimension.cs" />
     <Compile Include="Dimensions\DivisionDimension.cs" />
@@ -74,7 +75,8 @@
     <Compile Include="UnitException.cs" />
     <Compile Include="ScaleUnit.cs" />
     <Compile Include="UnitSystem.cs" />
-    <Compile Include="UnitValue.cs" />
+    <Compile Include="Measurement.cs" />
+    <Compile Include="Visitors\Visitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Strings.resx">

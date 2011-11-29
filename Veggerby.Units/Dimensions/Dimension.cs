@@ -158,5 +158,10 @@ namespace Veggerby.Units.Dimensions
         {
             return this.Symbol.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return this.Symbol;
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Veggerby.Units
         private readonly Unit _n;
 
         public Unit m { get { return this._m; } }
-        private Unit g { get { return this._g; } }
+        public Unit g { get { return this._g; } }
         public Unit kg { get { return this._kg; } }
         public Unit s { get { return this._s; } }
         public Unit A { get { return this._A; } }

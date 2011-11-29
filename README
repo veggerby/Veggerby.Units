@@ -59,3 +59,11 @@ are left out initially, since they are fairly complex, however future
 implementation of properties should leave concepts intact. Besides added 
 complexity, having a complete set of properties is also not viable for 
 initial version(s).
+
+References:
+http://en.wikipedia.org/wiki/Units_of_measurement
+
+--> Dimensional Analysis must be further investigated (reduction, etc., i.e. 
+is T*(L/T) ALWAYS the same as L? 
+http://en.wikipedia.org/wiki/Dimensional_analysis
+http://en.wikipedia.org/wiki/Nondimensionalization

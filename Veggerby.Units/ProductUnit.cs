@@ -45,6 +45,11 @@ namespace Veggerby.Units
             return this.Symbol.GetHashCode();
         }
 
+        internal override T Accept<T>(Visitors.Visitor<T> visitor)
+        {
+            return visitor.Visit(this);
+        }
+
         IEnumerable<IOperand> IProductOperation.Operands
         {
             get { return this._Operands; }

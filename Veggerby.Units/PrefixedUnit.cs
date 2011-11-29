@@ -29,12 +29,12 @@ namespace Veggerby.Units
 
         public override string Name
         {
-            get { return string.Format("{0}{1}", this._Prefix.Name, this._BaseUnit.Name); }
+            get { return string.Format("{0}{1}", this.Prefix.Name, this.BaseUnit.Name); }
         }
 
         public override string Symbol
         {
-            get { return string.Format("{0}{1}", this._Prefix.Symbol, this._BaseUnit.Symbol); }
+            get { return string.Format("{0}{1}", this.Prefix.Symbol, this.BaseUnit.Symbol); }
         }
 
         public override Dimension Dimension
@@ -45,6 +45,11 @@ namespace Veggerby.Units
         public override UnitSystem System
         {
             get { return this.BaseUnit.System; }
+        }
+
+        internal override T Accept<T>(Visitors.Visitor<T> visitor)
+        {
+            return visitor.Visit(this);
         }
     }
 }

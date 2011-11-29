@@ -70,6 +70,15 @@ namespace Veggerby.Units.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot convert {0} to {1}, dimensions are incompatible ({2} and {2}).
+        /// </summary>
+        internal static string IncompatibleDimensionsForConversion {
+            get {
+                return ResourceManager.GetString("IncompatibleDimensionsForConversion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Units are incompatible ({0} and {1}).
         /// </summary>
         internal static string IncompatibleUnits {

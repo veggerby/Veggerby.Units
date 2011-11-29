@@ -34,6 +34,11 @@ namespace Veggerby.Units
             get { return this._Base.Dimension ^ this._Exponent; }
         }
 
+        internal override T Accept<T>(Visitors.Visitor<T> visitor)
+        {
+            return visitor.Visit(this);
+        }
+
         IOperand IPowerOperation.Base
         {
             get { return this._Base; }

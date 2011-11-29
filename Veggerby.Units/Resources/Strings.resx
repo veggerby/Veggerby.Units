@@ -121,6 +121,10 @@
     <value>Dimensions are incompatible ({0} and {1})</value>
     <comment>Used by DimensionException</comment>
   </data>
+  <data name="IncompatibleDimensionsForConversion" xml:space="preserve">
+    <value>Cannot convert {0} to {1}, dimensions are incompatible ({2} and {2})</value>
+    <comment>Used by MeasurementConversionException</comment>
+  </data>
   <data name="IncompatibleUnits" xml:space="preserve">
     <value>Units are incompatible ({0} and {1})</value>
     <comment>Used by UnitException</comment>

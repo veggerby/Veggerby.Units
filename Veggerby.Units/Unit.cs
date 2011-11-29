@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
+using Veggerby.Units.Visitors;
 
 namespace Veggerby.Units
 {
@@ -153,6 +154,13 @@ namespace Veggerby.Units
         public override int GetHashCode()
         {
             return this.Symbol.GetHashCode();
+        }
+
+        internal abstract T Accept<T>(Visitor<T> visitor);
+
+        public override string ToString()
+        {
+            return this.Symbol;
         }
     }
 }
