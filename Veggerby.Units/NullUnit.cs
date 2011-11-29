@@ -18,6 +18,11 @@ namespace Veggerby.Units
             get { return string.Empty; }
         }
 
+        public override UnitSystem System
+        {
+            get { return UnitSystem.None; }
+        }
+
         public override Dimension Dimension
         {
             get { return Dimension.None; }

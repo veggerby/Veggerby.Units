@@ -25,6 +25,11 @@ namespace Veggerby.Units
             get { return string.Join(" * ", this._Operands.Select(x => x.Name)); }
         }
 
+        public override UnitSystem System
+        {
+            get { return this._Operands.Any() ? this._Operands.First().System : UnitSystem.None; }
+        }
+
         public override Dimension Dimension
         {
             get { return this._Operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None); }

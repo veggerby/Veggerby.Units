@@ -148,7 +148,7 @@ namespace Veggerby.Units.Dimensions
         {
             if (obj is Dimension)
             {
-                return string.Equals(this.Symbol, (obj as Dimension).Symbol);
+                return OperationUtility.Equals(this, obj as Dimension);
             }
 
             return false;

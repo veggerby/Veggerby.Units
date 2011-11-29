@@ -8,8 +8,12 @@ namespace Veggerby.Units
     {
         public static Unit None = new NullUnit();
 
+        public static InternationalUnitSystem SI = new InternationalUnitSystem();
+        public static ImperialUnits SI = new ImperialUnits();
+
         public abstract string Symbol { get; }
         public abstract string Name { get; }
+        public abstract UnitSystem System { get; }
         public abstract Dimension Dimension { get; }
 
         public static Unit Mult(params Unit[] operands)
@@ -63,6 +67,11 @@ namespace Veggerby.Units
             return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, Unit.None), (x, y) => x / y, d1, d2) ??
                 OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, Unit.None), (x, y) => x ^ y, d1, d2) ??
                 Mult(d1, d2);
+        }
+
+        public static Unit operator *(Prefix pre, Unit unit)
+        {
+            return new PrefixedUnit(pre, unit);
         }
 
         public static Unit operator /(int dividend, Unit divisor)
@@ -135,7 +144,7 @@ namespace Veggerby.Units
         {
             if (obj is Unit)
             {
-                return string.Equals(this.Symbol, (obj as Unit).Symbol);
+                return OperationUtility.Equals(this, (obj as Unit));
             }
 
             return false;

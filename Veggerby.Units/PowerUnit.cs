@@ -24,6 +24,11 @@ namespace Veggerby.Units
             get { return string.Format("{0} ^ {1}", this._Base.Name, this._Exponent); }
         }
 
+        public override UnitSystem System
+        {
+            get { return this._Base.System; }
+        }
+
         public override Dimension Dimension
         {
             get { return this._Base.Dimension ^ this._Exponent; }

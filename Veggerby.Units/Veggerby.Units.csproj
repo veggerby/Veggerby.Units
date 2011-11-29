@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicUnit.cs" />
+    <Compile Include="Conversion\UnitConversion.cs" />
+    <Compile Include="DerivedUnit.cs" />
     <Compile Include="Dimensions\BasicDimension.cs" />
     <Compile Include="Dimensions\DivisionDimension.cs" />
     <Compile Include="Dimensions\NullDimension.cs" />
@@ -49,8 +51,11 @@
     <Compile Include="Dimensions\DimensionException.cs" />
     <Compile Include="Dimensions\PowerDimension.cs" />
     <Compile Include="DivisionUnit.cs" />
+    <Compile Include="ImperialUnits.cs" />
     <Compile Include="NullUnit.cs" />
     <Compile Include="PowerUnit.cs" />
+    <Compile Include="Prefix.cs" />
+    <Compile Include="PrefixedUnit.cs" />
     <Compile Include="ProductUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reduction\IPowerOperation.cs" />
@@ -64,8 +69,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="InternationalUnitSystem.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="UnitException.cs" />
+    <Compile Include="ScaleUnit.cs" />
+    <Compile Include="UnitSystem.cs" />
+    <Compile Include="UnitValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Strings.resx">

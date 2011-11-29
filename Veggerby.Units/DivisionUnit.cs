@@ -24,6 +24,11 @@ namespace Veggerby.Units
             get { return string.Format("{0} / {1}", this._Dividend.Symbol == string.Empty ? "1" : this._Dividend.Name, this._Divisor.Name); }
         }
 
+        public override UnitSystem System
+        {
+            get { return this._Dividend != Unit.None ? this._Dividend.System : this._Divisor.System; }
+        }
+
         public override Dimension Dimension
         {
             get { return this._Dividend.Dimension / this._Divisor.Dimension; }

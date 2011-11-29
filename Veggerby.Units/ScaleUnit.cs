@@ -1,20 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Veggerby.Units.Dimensions;
 
 namespace Veggerby.Units
 {
-    public class BasicUnit : Unit
+    public class ScaleUnit : Unit
     {
         private readonly string _Symbol;
         private readonly string _Name;
+        private readonly double _Scale;        
+        private readonly Unit _Base;
         private readonly UnitSystem _System;
-        private readonly Dimension _Dimension;
 
-        public BasicUnit(string symbol, string name, UnitSystem system, Dimension dimension)
+        public ScaleUnit(string symbol, string name, double scale, Unit @base, UnitSystem system = null)
         {
             this._Symbol = symbol;
             this._Name = name;
+            this._Scale = scale;
+            this._Base = @base;
             this._System = system;
-            this._Dimension = dimension;
         }
 
         public override string Symbol
@@ -29,12 +35,12 @@ namespace Veggerby.Units
 
         public override UnitSystem System
         {
-            get { return this._System; }
+            get { return this._System ?? this._Base.System; }
         }
 
         public override Dimension Dimension
         {
-            get { return this._Dimension; }
+            get { return this._Base.Dimension; }
         }
     }
 }
