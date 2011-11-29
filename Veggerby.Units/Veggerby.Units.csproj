@@ -51,7 +51,7 @@
     <Compile Include="Dimensions\DimensionException.cs" />
     <Compile Include="Dimensions\PowerDimension.cs" />
     <Compile Include="DivisionUnit.cs" />
-    <Compile Include="ImperialUnits.cs" />
+    <Compile Include="ImperialUnitSystem.cs" />
     <Compile Include="NullUnit.cs" />
     <Compile Include="PowerUnit.cs" />
     <Compile Include="Prefix.cs" />

@@ -9,7 +9,7 @@ namespace Veggerby.Units
         public static Unit None = new NullUnit();
 
         public static InternationalUnitSystem SI = new InternationalUnitSystem();
-        public static ImperialUnits SI = new ImperialUnits();
+        public static ImperialUnitSystem Imperial = new ImperialUnitSystem();
 
         public abstract string Symbol { get; }
         public abstract string Name { get; }

@@ -7,6 +7,60 @@ namespace Veggerby.Units.Tests
     public class DimensionsTests
     {
         [Test]
+        public void Dimension_DimensionEquality_TestSimple()
+        {
+            Assert.IsTrue(Dimension.Length == Dimension.Length);
+        }
+
+        [Test]
+        public void Dimension_DimensionInEquality_TestSimple()
+        {
+            Assert.IsTrue(Dimension.Length != Dimension.Mass);
+        }
+
+        [Test]
+        public void Dimension_DimensionEquality_TestProduct()
+        {
+            Assert.IsTrue((Dimension.Length * Dimension.Mass) == (Dimension.Length * Dimension.Mass));
+        }
+
+        [Test]
+        public void Dimension_DimensionInEquality_TestProduct()
+        {
+            Assert.IsTrue((Dimension.Length * Dimension.Mass) != (Dimension.Time * Dimension.Mass));
+        }
+
+        [Test]
+        public void Dimension_DimensionEquality_TestDivision()
+        {
+            Assert.IsTrue((Dimension.Length / Dimension.Mass) == (Dimension.Length / Dimension.Mass));
+        }
+
+        [Test]
+        public void Dimension_DimensionInEquality_TestDivision()
+        {
+            Assert.IsTrue((Dimension.Length / Dimension.Mass) != (Dimension.Time / Dimension.Mass));
+        }
+
+        [Test]
+        public void Dimension_DimensionEquality_TestPower()
+        {
+            Assert.IsTrue((Dimension.Length ^ 2) == (Dimension.Length ^ 2));
+        }
+
+        [Test]
+        public void Dimension_DimensionInEquality_TestPowerBaseDifferent()
+        {
+            Assert.IsTrue((Dimension.Length ^ 2) != (Dimension.Time ^ 2));
+        }
+
+        [Test]
+        public void Dimension_DimensionInEquality_TestPowerExponentDifferent()
+        {
+            Assert.IsTrue((Dimension.Length ^ 2) != (Dimension.Length ^ 3));
+        }
+
+        [Test]
         public void Dimension_DimensionLength_TestSymbol()
         {
             Assert.AreEqual("L", Dimension.Length.Symbol);
