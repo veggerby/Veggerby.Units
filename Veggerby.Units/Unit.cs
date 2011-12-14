@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Veggerby.Units.Dimensions;
+﻿using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
 using Veggerby.Units.Visitors;
 
@@ -32,42 +31,42 @@ namespace Veggerby.Units
             return new PowerUnit(@base, exponent);
         }
 
-        public static Unit operator +(Unit d1, Unit d2)
+        public static Unit operator +(Unit u1, Unit u2)
         {
-            if (d1 != d2)
+            if (u1 != u2)
             {
-                throw new UnitException(d1, d2);
+                throw new UnitException(u1, u2);
             }
 
-            return d1;
+            return u1;
         }
 
-        public static Unit operator -(Unit d1, Unit d2)
+        public static Unit operator -(Unit u1, Unit u2)
         {
-            if (d1 != d2)
+            if (u1 != u2)
             {
-                throw new UnitException(d1, d2);
+                throw new UnitException(u1, u2);
             }
 
-            return d1;
+            return u1;
         }
 
-        public static Unit operator *(Unit d1, Unit d2)
+        public static Unit operator *(Unit u1, Unit u2)
         {
-            if (d1 == Unit.None) // and if d2 == None, return d2 (=None)
+            if (u1 == None) // and if u2 == None, return u2 (=None)
             {
-                return d2;
+                return u2;
             }
 
-            if (d2 == Unit.None)
+            if (u2 == None)
             {
-                return d1;
+                return u1;
             }
 
             // where to put OperationUtility.ReduceMultiplication
-            return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, Unit.None), (x, y) => x / y, d1, d2) ??
-                OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, Unit.None), (x, y) => x ^ y, d1, d2) ??
-                Mult(d1, d2);
+            return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, u1, u2) ??
+                OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x ^ y, u1, u2) ??
+                Mult(u1, u2);
         }
 
         public static Unit operator *(Prefix pre, Unit unit)
@@ -77,19 +76,19 @@ namespace Veggerby.Units
 
         public static Unit operator /(int dividend, Unit divisor)
         {
-            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, Unit.None, divisor) ??
-                Div(Unit.None, divisor);
+            return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, None, divisor) ??
+                Div(None, divisor);
         }
 
         public static Unit operator /(Unit dividend, Unit divisor)
         {
-            if (divisor == Unit.None)
+            if (divisor == None)
             {
                 return dividend;
             }
 
             return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ??
-                OperationUtility.ReduceDivision(x => x.Multiply((a, b) => a * b, Unit.None), (x, y) => x / y, (x, y) => x ^ y, dividend, divisor) ??
+                OperationUtility.ReduceDivision(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, dividend, divisor) ??
                 Div(dividend, divisor);
         }
 
@@ -102,7 +101,7 @@ namespace Veggerby.Units
 
             if (exponent == 0)
             {
-                return Unit.None;
+                return None;
             }
 
             if (exponent == 1)
@@ -110,35 +109,47 @@ namespace Veggerby.Units
                 return @base;
             }
 
-            return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, Unit.None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
+            return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
                    Pow(@base, exponent);
         }
 
-        public static bool operator ==(Unit d1, Unit d2)
+        public static bool operator ==(Unit u1, Unit u2)
         {
             // If both are null, or both are same instance, return true.
-            if (ReferenceEquals(d1, d2))
+            if (ReferenceEquals(u1, u2))
             {
                 return true;
             }
 
             // If one is null, but not both, return false.
-            if (((object)d1 == null) || ((object)d2 == null))
+            if (((object)u1 == null) || ((object)u2 == null))
             {
                 return false;
             }
 
-            return d1.Equals(d2);
+            return u1.Equals(u2);
         }
 
-        public static bool operator !=(Unit d1, Unit d2)
+        public static bool operator !=(Unit u1, Unit u2)
         {
-            return !d1.Equals(d2);
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals(u1, u2))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (u1 == null || u2 == null)
+            {
+                return false;
+            }
+
+            return !u1.Equals(u2);
         }
 
-        public static implicit operator string(Unit d)
+        public static implicit operator string(Unit u)
         {
-            return d.Symbol;
+            return u.Symbol;
         }
 
         public override bool Equals(object obj)

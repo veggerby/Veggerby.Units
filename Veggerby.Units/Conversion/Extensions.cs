@@ -27,5 +27,15 @@ namespace Veggerby.Units.Conversion
 
             return null;
         }
+
+        public static Measurement AlignUnits(this Measurement v1, Measurement v2)
+        {
+            if (v1.Unit == v2.Unit)
+            {
+                return v1;
+            }
+
+            return v1.ConvertTo(v2.Unit);
+        }
     }
 }
