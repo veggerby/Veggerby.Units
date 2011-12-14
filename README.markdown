@@ -2,20 +2,14 @@ Veggerby Units is a class library to assist in handling units of measurement.
 
 It is written in C#.
 
-* Conversion between unit systems (eg. SI units and Imperial Units).
-* Numeric operations (multiplication, division, etc.) will be reflected on 
-  units, eg. 4 km/2 min = 2 km/min.
-* Scaling in unit systems, eg. 2 km/min = 120 km/h (60 min/h).
-* Dimensionsare validated, i.e. it makes no sense to convert from 
-  SI "m/s" (length/time) to Imperial "in/lbs" (length/mass).
-* Equality across unit systems, e.g. 1 cm == 0.393700787 in.
-* It is valid to mix systems, e.g. density = mass / volume = 0.5 kg / 2 gal
-  will be automatically converted to the "left-most" system, i.e kg, so we get
-  0.0660430131 kg / L (1 gal = 3.78541178 L).
-* String interpretation, eg. "20.00 kg/L" will be interpreted as the numerical
-  value "20" and unit "kg/L" (M/L^3).
-* SI units are ALWAYS used as base representations, ie. all other unit systems
-  are related to SI units. "1 gal" is represented as "3.78541178 L".
+*  Conversion between unit systems (eg. SI units and Imperial Units).
+*  Numeric operations (multiplication, division, etc.) will be reflected on units, eg. 4 km/2 min = 2 km/min.
+*  Scaling in unit systems, eg. 2 km/min = 120 km/h (60 min/h).
+*  Dimensionsare validated, i.e. it makes no sense to convert from SI "m/s" (length/time) to Imperial "in/lbs" (length/mass).
+*  Equality across unit systems, e.g. 1 cm == 0.393700787 in.
+*  It is valid to mix systems, e.g. density = mass / volume = 0.5 kg / 2 gal will be automatically converted to the "left-most" system, i.e kg, so we get  0.0660430131 kg / L (1 gal = 3.78541178 L).
+*  String interpretation, eg. "20.00 kg/L" will be interpreted as the numerical value "20" and unit "kg/L" (M/L^3).
+*  SI units are ALWAYS used as base representations, ie. all other unit systems are related to SI units. "1 gal" is represented as "3.78541178 L".
 
 Let's explain this top-down:
  
