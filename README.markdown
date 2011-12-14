@@ -1,3 +1,5 @@
+# Veggerby.Units
+
 Veggerby Units is a class library to assist in handling units of measurement.
 
 It is written in C#.
@@ -17,36 +19,36 @@ Values have Units, eg. 1 kg
 
 Units are related to a unit system eg. SI units or Imperial Units
 
-Units are composable, eg. we can calculate with units 
-"kg * m / s^2" = Newton (N)
+Units are composable, eg. we can calculate with units
+    "kg * m / s^2" = Newton (N)
 
-Numerical operations on values w. units are reflected in units, 
-e.g. 4 km/2 min = 2 km/min
+Numerical operations on values w. units are reflected in units, e.g. 
+    4 km/2 min = 2 km/min
 
-Units are related to Dimensions (there are 8 basic dimensions), 
-eg. m / s = Length / Time.
+Units are related to Dimensions (there are 8 basic dimensions), eg. 
+    m / s = Length / Time.
 
 Dimensions are the "cornerstone" for property validation
 
 So 1 J is composed of:
 
-Unit value
-+- value = 1
-+- unit = J
-|  +- derived unit
-|  +- dimension = M*L^2/T^2
-|  +- system = SI
-|  +- composition = N * m
-|  |  +- unit = N
-|  |  |  +- derived unit
-|  |  |  +- composition = kg*m/s^2
-|  |  |  |  +- ...
-|  |  |  +- dimension = M*L/T^2
-|  |  |  +- system = SI
-|  |  +- unit = m
-|  |  |  +- base unit
-|  |  |  +- dimension = L
-|  |  |  +- system = SI
+    Unit value
+    +- value = 1
+    +- unit = J
+    |  +- derived unit
+    |  +- dimension = M*L^2/T^2
+    |  +- system = SI
+    |  +- composition = N * m
+    |  |  +- unit = N
+    |  |  |  +- derived unit
+    |  |  |  +- composition = kg*m/s^2
+    |  |  |  |  +- ...
+    |  |  |  +- dimension = M*L/T^2
+    |  |  |  +- system = SI
+    |  |  +- unit = m
+    |  |  |  +- base unit
+    |  |  |  +- dimension = L
+    |  |  |  +- system = SI
 
 Properties (e.g. does a value with unit of J represent Energy, Heat or Work) 
 are left out initially, since they are fairly complex, however future 
