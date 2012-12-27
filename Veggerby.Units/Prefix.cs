@@ -1,4 +1,7 @@
-﻿namespace Veggerby.Units
+﻿using System.Linq;
+using System.Collections.Generic;
+
+namespace Veggerby.Units
 {
     public class Prefix
     {
@@ -26,6 +29,34 @@
         public static Prefix z = new Prefix("zepto", "z", 1E-21);
         public static Prefix y = new Prefix("yocto", "y", 1E-24);
 
+        public static IEnumerable<Prefix> All
+        {
+            get
+            {
+                yield return y;
+                yield return z;
+                yield return a;
+                yield return f;
+                yield return p;
+                yield return n;
+                yield return μ;
+                yield return m;
+                yield return c;
+                yield return d;
+                yield return Empty;
+                yield return da;
+                yield return h;
+                yield return k;
+                yield return M;
+                yield return G;
+                yield return T;
+                yield return P;
+                yield return E;
+                yield return Z;
+                yield return Y;
+            }
+        }
+
         private Prefix(string name, string symbol, double factor)
         {
             this._Name = name;
@@ -50,6 +81,18 @@
         public double Factor
         {
             get { return this._Factor; }
+        }
+
+        public static implicit operator double(Prefix p)
+        {
+            return p.Factor;
+        }
+
+        public static implicit operator Prefix(double value)
+        {
+            return Prefix
+                .All
+                .SingleOrDefault(x => x.Factor == value);
         }
     }
 }

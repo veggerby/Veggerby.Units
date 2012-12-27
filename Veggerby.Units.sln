@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Veggerby.Units.Tests", "Veg
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{FE89D044-D995-4852-BCDA-E33577380F20}"
 	ProjectSection(SolutionItems) = preProject
-		README = README
+		README.markdown = README.markdown
 	EndProjectSection
 EndProject
 Global

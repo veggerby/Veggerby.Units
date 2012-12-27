@@ -1,4 +1,5 @@
-﻿using Veggerby.Units.Dimensions;
+﻿using System.Linq;
+using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
 using Veggerby.Units.Visitors;
 
@@ -69,8 +70,27 @@ namespace Veggerby.Units
                 Mult(u1, u2);
         }
 
-        public static Unit operator *(Prefix pre, Unit unit)
+        public static Unit operator *(int factor, Unit unit)
         {
+            return ((double)factor) * unit;
+        }
+        
+        public static Unit operator *(double factor, Unit unit)
+        {
+            Prefix pre = factor;
+
+            if (pre == null)
+            {
+                throw new PrefixException(factor);
+            }
+
+            return new PrefixedUnit(
+                pre,
+                unit);
+        }
+
+        public static Unit operator *(Prefix pre, Unit unit)
+        {                   
             return new PrefixedUnit(pre, unit);
         }
 

@@ -129,4 +129,8 @@
     <value>Units are incompatible ({0} and {1})</value>
     <comment>Used by UnitException</comment>
   </data>
+  <data name="InvalidPrefix" xml:space="preserve">
+    <value>Invalid unit prefix {0}</value>
+    <comment>Used by PrefixException</comment>
+  </data>
 </root>

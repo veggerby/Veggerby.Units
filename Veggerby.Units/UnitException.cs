@@ -10,4 +10,12 @@ namespace Veggerby.Units
         {
         }
     }
+
+    public class PrefixException : Exception
+    {
+        public PrefixException(double factor)
+            : base(string.Format(Strings.InvalidPrefix, factor))
+        {
+        }
+    }
 }
