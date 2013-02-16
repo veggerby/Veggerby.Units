@@ -22,7 +22,8 @@ namespace Veggerby.Units.Reduction
             return
                 Equals(o1 as IProductOperation, o2 as IProductOperation) ||
                 Equals(o1 as IDivisionOperation, o2 as IDivisionOperation) ||
-                Equals(o1 as IPowerOperation, o2 as IPowerOperation);
+                Equals(o1 as IPowerOperation, o2 as IPowerOperation) ||
+                Equals(o1 as PrefixedUnit, o2 as PrefixedUnit);
         }
 
         private static bool Equals(IProductOperation o1, IProductOperation o2)
@@ -56,6 +57,16 @@ namespace Veggerby.Units.Reduction
             }
 
             return Equals(o1.Base, o2.Base) && Equals(o1.Exponent, o2.Exponent);
+        }
+
+        private static bool Equals(PrefixedUnit o1, PrefixedUnit o2)
+        {
+            if (o1 == null || o2 == null)
+            {
+                return false;
+            }
+
+            return Equals(o1.BaseUnit, o2.BaseUnit) && Equals(o1.Prefix, o2.Prefix);
         }
 
         /// <summary>

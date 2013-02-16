@@ -293,5 +293,41 @@ namespace Veggerby.Units.Tests
             var expected = Unit.Div(Unit.SI.kg, Unit.Mult(Unit.SI.s, Unit.SI.m)); // kg/sm
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void Unit_PrefixUnits_EqualsFails()
+        {
+            var u1 = Prefix.k * Unit.SI.m;
+            var u2 = Prefix.k * Unit.SI.m;
+
+            Assert.IsTrue(u1.Equals(u2));
+        }
+
+        [Test]
+        public void Unit_PrefixUnits_EqualityFails()
+        {
+            var u1 = Prefix.k * Unit.SI.m;
+            var u2 = Prefix.k * Unit.SI.m;
+
+            Assert.IsTrue(u1 == u2);
+        }
+
+        [Test]
+        public void Unit_ScaleUnits_EqualsFails()
+        {
+            var u1 = Unit.Imperial.ft;
+            var u2 = Unit.Imperial.ft;
+
+            Assert.IsTrue(u1.Equals(u2));
+        }
+
+        [Test]
+        public void Unit_ScaleUnits_EqualityFails()
+        {
+            var u1 = Unit.Imperial.ft;
+            var u2 = Unit.Imperial.ft;
+
+            Assert.IsTrue(u1 == u2);
+        }
     }
 }
