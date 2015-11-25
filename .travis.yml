@@ -1,2 +1,8 @@
 language: csharp
 solution: Veggerby.Units.sln
+install:
+  - nuget restore Veggerby.Units.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release Veggerby.Units.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Veggerby.Units.Tests/bin/Release/Veggerby.Units.Tests.dll
