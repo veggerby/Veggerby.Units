@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Veggerby.Units.Resources;
 
 namespace Veggerby.Units.Conversion
 {
@@ -22,7 +18,7 @@ namespace Veggerby.Units.Conversion
 
             if (value.Unit.Dimension != unit.Dimension)
             {
-                throw new MeasurementConversionException(string.Format(Strings.IncompatibleDimensionsForConversion, value, unit, value.Unit.Dimension, unit.Dimension));
+                throw new MeasurementConversionException(string.Format("Cannot convert {0} to {1}, dimensions are incompatible ({2} and {2})", value, unit, value.Unit.Dimension, unit.Dimension));
             }
 
             return null;

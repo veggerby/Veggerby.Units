@@ -1,5 +1,3 @@
-using Veggerby.Units.Dimensions;
-
 namespace Veggerby.Units
 {
     public class ImperialUnitSystem : UnitSystem

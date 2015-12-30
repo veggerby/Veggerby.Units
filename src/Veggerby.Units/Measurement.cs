@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Veggerby.Units.Conversion;
+﻿using Veggerby.Units.Conversion;
 
 namespace Veggerby.Units
 {

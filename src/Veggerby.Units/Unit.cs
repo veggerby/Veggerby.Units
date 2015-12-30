@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Veggerby.Units.Dimensions;
+﻿using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
 using Veggerby.Units.Visitors;
 
