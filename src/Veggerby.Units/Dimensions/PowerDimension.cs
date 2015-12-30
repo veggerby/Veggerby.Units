@@ -3,33 +3,33 @@ namespace Veggerby.Units.Dimensions
 {
     public class PowerDimension : Dimension, IPowerOperation
     {
-        private readonly Dimension _Base;
-        private readonly int _Exponent;
+        private readonly Dimension _base;
+        private readonly int _rxponent;
 
         internal PowerDimension(Dimension @base, int exponent)
         {
-            this._Base = @base;
-            this._Exponent = exponent;
+            _base = @base;
+            _rxponent = exponent;
         }
 
         public override string Symbol
         {
-            get { return string.Format("{0}^{1}", this._Base.Symbol, this._Exponent); }
+            get { return string.Format("{0}^{1}", _base.Symbol, _rxponent); }
         }
 
         public override string Name
         {
-            get { return string.Format("{0} ^ {1}", this._Base.Name, this._Exponent); }
+            get { return string.Format("{0} ^ {1}", _base.Name, _rxponent); }
         }
 
         IOperand IPowerOperation.Base
         {
-            get { return this._Base; }
+            get { return _base; }
         }
 
         int IPowerOperation.Exponent
         {
-            get { return this._Exponent; }
+            get { return _rxponent; }
         }
     }
 }

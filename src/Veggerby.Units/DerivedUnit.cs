@@ -4,35 +4,35 @@ namespace Veggerby.Units
 {
     public class DerivedUnit : Unit
     {
-        private readonly string _Symbol;
-        private readonly string _Name;
-        private readonly Unit _Expression;
+        private readonly string _symbol;
+        private readonly string _same;
+        private readonly Unit _expression;
 
         public DerivedUnit(string symbol, string name, Unit expression)
         {
-            this._Symbol = symbol;
-            this._Name = name;
-            this._Expression = expression;
+            _symbol = symbol;
+            _same = name;
+            _expression = expression;
         }
 
         public override string Symbol
         {
-            get { return this._Symbol; }
+            get { return _symbol; }
         }
 
         public override string Name
         {
-            get { return this._Name; }
+            get { return _same; }
         }
 
         public override UnitSystem System
         {
-            get { return this._Expression.System; }
+            get { return _expression.System; }
         }
 
         public override Dimension Dimension
         {
-            get { return this._Expression.Dimension; }
+            get { return _expression.Dimension; }
         }
 
         internal override T Accept<T>(Visitors.Visitor<T> visitor)

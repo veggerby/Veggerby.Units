@@ -4,44 +4,44 @@ namespace Veggerby.Units
 {
     public class ScaleUnit : Unit
     {
-        private readonly string _Symbol;
-        private readonly string _Name;
-        private readonly double _Scale;        
-        private readonly Unit _Base;
-        private readonly UnitSystem _System;
+        private readonly string _symbol;
+        private readonly string _name;
+        private readonly double _scale;        
+        private readonly Unit _base;
+        private readonly UnitSystem _system;
 
         public ScaleUnit(string symbol, string name, double scale, Unit @base, UnitSystem system = null)
         {
-            this._Symbol = symbol;
-            this._Name = name;
-            this._Scale = scale;
-            this._Base = @base;
-            this._System = system;
+            _symbol = symbol;
+            _name = name;
+            _scale = scale;
+            _base = @base;
+            _system = system;
         }
 
         public override string Symbol
         {
-            get { return this._Symbol; }
+            get { return _symbol; }
         }
 
         public override string Name
         {
-            get { return this._Name; }
+            get { return _name; }
         }
 
         public override UnitSystem System
         {
-            get { return this._System ?? this._Base.System; }
+            get { return _system ?? _base.System; }
         }
 
         public override Dimension Dimension
         {
-            get { return this._Base.Dimension; }
+            get { return _base.Dimension; }
         }
 
         public double Scale
         {
-            get { return _Scale; }
+            get { return _scale; }
         }
 
         internal override T Accept<T>(Visitors.Visitor<T> visitor)

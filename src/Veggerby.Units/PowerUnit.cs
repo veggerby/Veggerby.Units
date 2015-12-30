@@ -5,33 +5,33 @@ namespace Veggerby.Units
 {
     public class PowerUnit : Unit, IPowerOperation
     {
-        private readonly Unit _Base;
-        private readonly int _Exponent;
+        private readonly Unit _base;
+        private readonly int _exponent;
 
         internal PowerUnit(Unit @base, int exponent)
         {
-            this._Base = @base;
-            this._Exponent = exponent;
+            _base = @base;
+            _exponent = exponent;
         }
 
         public override string Symbol
         {
-            get { return string.Format("{0}^{1}", this._Base.Symbol, this._Exponent); }
+            get { return string.Format("{0}^{1}", _base.Symbol, _exponent); }
         }
 
         public override string Name
         {
-            get { return string.Format("{0} ^ {1}", this._Base.Name, this._Exponent); }
+            get { return string.Format("{0} ^ {1}", _base.Name, _exponent); }
         }
 
         public override UnitSystem System
         {
-            get { return this._Base.System; }
+            get { return _base.System; }
         }
 
         public override Dimension Dimension
         {
-            get { return this._Base.Dimension ^ this._Exponent; }
+            get { return _base.Dimension ^ _exponent; }
         }
 
         internal override T Accept<T>(Visitors.Visitor<T> visitor)
@@ -41,12 +41,12 @@ namespace Veggerby.Units
 
         IOperand IPowerOperation.Base
         {
-            get { return this._Base; }
+            get { return _base; }
         }
 
         int IPowerOperation.Exponent
         {
-            get { return this._Exponent; }
+            get { return _exponent; }
         }
     }
 }

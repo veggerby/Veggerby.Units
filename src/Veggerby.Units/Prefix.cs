@@ -59,28 +59,28 @@ namespace Veggerby.Units
 
         private Prefix(string name, string symbol, double factor)
         {
-            this._Name = name;
-            this._Symbol = symbol;
-            this._Factor = factor;
+            _name = name;
+            _symbol = symbol;
+            _factor = factor;
         }
 
-        private readonly string _Name;
-        private readonly string _Symbol;
-        private readonly double _Factor;
+        private readonly string _name;
+        private readonly string _symbol;
+        private readonly double _factor;
 
         public string Name
         {
-            get { return this._Name; }
+            get { return _name; }
         }
 
         public string Symbol
         {
-            get { return this._Symbol; }
+            get { return _symbol; }
         }
 
         public double Factor
         {
-            get { return this._Factor; }
+            get { return _factor; }
         }
 
         public static implicit operator double(Prefix p)

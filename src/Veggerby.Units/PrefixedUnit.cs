@@ -6,41 +6,41 @@ namespace Veggerby.Units
     {
         internal PrefixedUnit(Prefix prefix, Unit baseUnit)
         {
-            this._Prefix = prefix;
-            this._BaseUnit = baseUnit;
+            _prefix = prefix;
+            _baseUnit = baseUnit;
         }
 
-        private readonly Prefix _Prefix;
-        private readonly Unit _BaseUnit;
+        private readonly Prefix _prefix;
+        private readonly Unit _baseUnit;
 
         public Prefix Prefix
         {
-            get { return this._Prefix; }
+            get { return _prefix; }
         }
 
         public Unit BaseUnit
         {
-            get { return this._BaseUnit; }
+            get { return _baseUnit; }
         }
 
         public override string Name
         {
-            get { return string.Format("{0}{1}", this.Prefix.Name, this.BaseUnit.Name); }
+            get { return string.Format("{0}{1}", Prefix.Name, BaseUnit.Name); }
         }
 
         public override string Symbol
         {
-            get { return string.Format("{0}{1}", this.Prefix.Symbol, this.BaseUnit.Symbol); }
+            get { return string.Format("{0}{1}", Prefix.Symbol, BaseUnit.Symbol); }
         }
 
         public override Dimension Dimension
         {
-            get { return this.BaseUnit.Dimension; }
+            get { return BaseUnit.Dimension; }
         }
 
         public override UnitSystem System
         {
-            get { return this.BaseUnit.System; }
+            get { return BaseUnit.System; }
         }
 
         internal override T Accept<T>(Visitors.Visitor<T> visitor)

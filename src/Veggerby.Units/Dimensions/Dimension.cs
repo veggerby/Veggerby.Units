@@ -155,12 +155,12 @@ namespace Veggerby.Units.Dimensions
 
         public override int GetHashCode()
         {
-            return this.Symbol.GetHashCode();
+            return Symbol.GetHashCode();
         }
 
         public override string ToString()
         {
-            return this.Symbol;
+            return Symbol;
         }
     }
 }

@@ -8,31 +8,31 @@ namespace Veggerby.Units
 {
     public class ProductUnit : Unit, IProductOperation
     {
-        private readonly IList<Unit> _Operands;
+        private readonly IList<Unit> _operands;
 
         public ProductUnit(Unit[] operands)
         {
-            _Operands = new ReadOnlyCollection<Unit>(OperationUtility.LinearizeMultiplication(operands).ToList());
+            _operands = new ReadOnlyCollection<Unit>(OperationUtility.LinearizeMultiplication(operands).ToList());
         }
 
         public override string Symbol
         {
-            get { return string.Join(string.Empty, this._Operands.Select(x => x.Symbol)); }
+            get { return string.Join(string.Empty, _operands.Select(x => x.Symbol)); }
         }
 
         public override string Name
         {
-            get { return string.Join(" * ", this._Operands.Select(x => x.Name)); }
+            get { return string.Join(" * ", _operands.Select(x => x.Name)); }
         }
 
         public override UnitSystem System
         {
-            get { return this._Operands.Any() ? this._Operands.First().System : UnitSystem.None; }
+            get { return _operands.Any() ? _operands.First().System : UnitSystem.None; }
         }
 
         public override Dimension Dimension
         {
-            get { return this._Operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None); }
+            get { return _operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None); }
         }
 
         public override bool Equals(object obj)
@@ -42,7 +42,7 @@ namespace Veggerby.Units
 
         public override int GetHashCode()
         {
-            return this.Symbol.GetHashCode();
+            return Symbol.GetHashCode();
         }
 
         internal override T Accept<T>(Visitors.Visitor<T> visitor)
@@ -52,7 +52,7 @@ namespace Veggerby.Units
 
         IEnumerable<IOperand> IProductOperation.Operands
         {
-            get { return this._Operands; }
+            get { return _operands; }
         }
     }
 }

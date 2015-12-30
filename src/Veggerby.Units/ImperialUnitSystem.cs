@@ -42,38 +42,38 @@ namespace Veggerby.Units
         private readonly Unit _t;
 
         //length
-        public Unit ft { get { return this._ft; } }
-        public Unit @in { get { return this._in; } }
-        public Unit thou { get { return this._thou; } }
-        public Unit ya { get { return this._ya; } }
-        public Unit ch { get { return this._ch; } }
-        public Unit fur { get { return this._fur; } }
-        public Unit mi { get { return this._mi; } }
-        public Unit lea { get { return this._lea; } }
-        public Unit rod { get { return this._rod; } }
-        public Unit link { get { return this._link; } }
+        public Unit ft { get { return _ft; } }
+        public Unit @in { get { return _in; } }
+        public Unit thou { get { return _thou; } }
+        public Unit ya { get { return _ya; } }
+        public Unit ch { get { return _ch; } }
+        public Unit fur { get { return _fur; } }
+        public Unit mi { get { return _mi; } }
+        public Unit lea { get { return _lea; } }
+        public Unit rod { get { return _rod; } }
+        public Unit link { get { return _link; } }
 
         //area
-        public Unit acre { get { return this._acre; } }
-        public Unit rood { get { return this._rood; } }
-        public Unit perch { get { return this._perch; } }
+        public Unit acre { get { return _acre; } }
+        public Unit rood { get { return _rood; } }
+        public Unit perch { get { return _perch; } }
         
         // volume
-        public Unit fl_oz { get { return this._fl_oz; } }
-        public Unit gi { get { return this._gi; } }
-        public Unit pt { get { return this._pt; } }
-        public Unit qt { get { return this._qt; } }
-        public Unit gal { get { return this._gal; } }
+        public Unit fl_oz { get { return _fl_oz; } }
+        public Unit gi { get { return _gi; } }
+        public Unit pt { get { return _pt; } }
+        public Unit qt { get { return _qt; } }
+        public Unit gal { get { return _gal; } }
 
         //weight
-        public Unit lb { get { return this._lb; } }
-        public Unit oz { get { return this._oz; } }
-        public Unit drc { get { return this._drc; } }
-        public Unit gr { get { return this._gr; } }
-        public Unit st { get { return this._st; } }
-        public Unit qtr { get { return this._qtr; } }
-        public Unit cwt { get { return this._cwt; } }
-        public Unit t { get { return this._t; } }
+        public Unit lb { get { return _lb; } }
+        public Unit oz { get { return _oz; } }
+        public Unit drc { get { return _drc; } }
+        public Unit gr { get { return _gr; } }
+        public Unit st { get { return _st; } }
+        public Unit qtr { get { return _qtr; } }
+        public Unit cwt { get { return _cwt; } }
+        public Unit t { get { return _t; } }
 
         //other
         public Unit s { get { return Unit.SI.s; } }
@@ -85,39 +85,39 @@ namespace Veggerby.Units
         public ImperialUnitSystem()
         {
             //length
-            this._ft = new ScaleUnit("ft", "feet", FeetToMetres, Unit.SI.m, this);
-            this._in = new ScaleUnit("in", "inch", 1D / 12, this._ft);
-            this._thou = new ScaleUnit("th", "thou", 1D / 1000, this._in);
-            this._ya = new ScaleUnit("yd", "yard", 3, this._ft);
-            this._ch = new ScaleUnit("ch", "chain", 22, this._ya);
-            this._fur = new ScaleUnit("fur", "furlong", 10, this._ch);
-            this._mi = new ScaleUnit("mi", "mile", 8, this._fur);
-            this._lea = new ScaleUnit("lea", "league", 3, this._mi);
-            this._rod = new ScaleUnit("rod", "rod", 1D / 4, this._ch);
-            this._link = new ScaleUnit("link", "link", 1D / 25, this._rod);
+            _ft = new ScaleUnit("ft", "feet", FeetToMetres, Unit.SI.m, this);
+            _in = new ScaleUnit("in", "inch", 1D / 12, _ft);
+            _thou = new ScaleUnit("th", "thou", 1D / 1000, _in);
+            _ya = new ScaleUnit("yd", "yard", 3, _ft);
+            _ch = new ScaleUnit("ch", "chain", 22, _ya);
+            _fur = new ScaleUnit("fur", "furlong", 10, _ch);
+            _mi = new ScaleUnit("mi", "mile", 8, _fur);
+            _lea = new ScaleUnit("lea", "league", 3, _mi);
+            _rod = new ScaleUnit("rod", "rod", 1D / 4, _ch);
+            _link = new ScaleUnit("link", "link", 1D / 25, _rod);
 
             //area
-            this._acre = new DerivedUnit("acre", "acre", this._fur * this._ch);
-            this._rood = new DerivedUnit("rood", "rood", this._fur * this._rod);
-            this._perch = new DerivedUnit("perch", "perch", this._rod ^ 2);
+            _acre = new DerivedUnit("acre", "acre", _fur * _ch);
+            _rood = new DerivedUnit("rood", "rood", _fur * _rod);
+            _perch = new DerivedUnit("perch", "perch", _rod ^ 2);
 
             //volume
-            this._cubic_inch = this._in ^ 3;
-            this._pt = new ScaleUnit("pt", "pint", CubicInchToPint, this._cubic_inch);
-            this._gi = new ScaleUnit("gi", "gill", 1D / 4, this._pt);
-            this._fl_oz = new ScaleUnit("fl oz", "fluid ounce", 1D / 5, this._gi);
-            this._qt = new ScaleUnit("qt", "quart", 2, this._pt);
-            this._gal = new ScaleUnit("gal", "gallon", 4, this._qt);
+            _cubic_inch = _in ^ 3;
+            _pt = new ScaleUnit("pt", "pint", CubicInchToPint, _cubic_inch);
+            _gi = new ScaleUnit("gi", "gill", 1D / 4, _pt);
+            _fl_oz = new ScaleUnit("fl oz", "fluid ounce", 1D / 5, _gi);
+            _qt = new ScaleUnit("qt", "quart", 2, _pt);
+            _gal = new ScaleUnit("gal", "gallon", 4, _qt);
 
             //weight
-            this._lb = new ScaleUnit("lb", "pound", PoundToKilogram, Unit.SI.kg, this);
-            this._oz = new ScaleUnit("oz", "ounce", 1D / 16, this._lb);
-            this._drc = new ScaleUnit("drc", "drachm", 1D / 16, this._oz);
-            this._gr = new ScaleUnit("gr", "grain", 1D / 7000, this._lb);
-            this._st = new ScaleUnit("st", "stone", 14, this._lb);
-            this._qtr = new ScaleUnit("qtr", "quarter", 28, this._lb);
-            this._cwt = new ScaleUnit("cwt", "hundredweight", 4, this._qtr);
-            this._t = new ScaleUnit("t", "ton", 20, this._cwt);
+            _lb = new ScaleUnit("lb", "pound", PoundToKilogram, Unit.SI.kg, this);
+            _oz = new ScaleUnit("oz", "ounce", 1D / 16, _lb);
+            _drc = new ScaleUnit("drc", "drachm", 1D / 16, _oz);
+            _gr = new ScaleUnit("gr", "grain", 1D / 7000, _lb);
+            _st = new ScaleUnit("st", "stone", 14, _lb);
+            _qtr = new ScaleUnit("qtr", "quarter", 28, _lb);
+            _cwt = new ScaleUnit("cwt", "hundredweight", 4, _qtr);
+            _t = new ScaleUnit("t", "ton", 20, _cwt);
         }
     }
 }

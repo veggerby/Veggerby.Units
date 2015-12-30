@@ -2,23 +2,23 @@ namespace Veggerby.Units.Dimensions
 {
     public class BasicDimension : Dimension
     {
-        private readonly string _Symbol;
-        private readonly string _Name;
+        private readonly string _symbol;
+        private readonly string _same;
 
         public BasicDimension(string symbol, string name)
         {
-            this._Symbol = symbol;
-            this._Name = name;
+            _symbol = symbol;
+            _same = name;
         }
 
         public override string Symbol
         {
-            get { return this._Symbol; }
+            get { return _symbol; }
         }
 
         public override string Name
         {
-            get { return this._Name; }
+            get { return _same; }
         }
     }
 }

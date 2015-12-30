@@ -183,14 +183,14 @@ namespace Veggerby.Units
 
         public override int GetHashCode()
         {
-            return this.Symbol.GetHashCode();
+            return Symbol.GetHashCode();
         }
 
         internal abstract T Accept<T>(Visitor<T> visitor);
 
         public override string ToString()
         {
-            return this.Symbol;
+            return Symbol;
         }
     }
 }

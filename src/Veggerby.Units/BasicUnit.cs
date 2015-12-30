@@ -4,37 +4,37 @@ namespace Veggerby.Units
 {
     public class BasicUnit : Unit
     {
-        private readonly string _Symbol;
-        private readonly string _Name;
-        private readonly UnitSystem _System;
-        private readonly Dimension _Dimension;
+        private readonly string _symbol;
+        private readonly string _same;
+        private readonly UnitSystem _system;
+        private readonly Dimension _dimension;
 
         public BasicUnit(string symbol, string name, UnitSystem system, Dimension dimension)
         {
-            this._Symbol = symbol;
-            this._Name = name;
-            this._System = system;
-            this._Dimension = dimension;
+            _symbol = symbol;
+            _same = name;
+            _system = system;
+            _dimension = dimension;
         }
 
         public override string Symbol
         {
-            get { return this._Symbol; }
+            get { return _symbol; }
         }
 
         public override string Name
         {
-            get { return this._Name; }
+            get { return _same; }
         }
 
         public override UnitSystem System
         {
-            get { return this._System; }
+            get { return _system; }
         }
 
         public override Dimension Dimension
         {
-            get { return this._Dimension; }
+            get { return _dimension; }
         }
 
         internal override T Accept<T>(Visitors.Visitor<T> visitor)
