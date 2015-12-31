@@ -151,7 +151,7 @@ namespace Veggerby.Units.Tests
         public void Unit_DivisionUnitRearrangeDivByDiv_ReturnsCorrect()
         {
             var actual = (Unit.SI.m / Unit.SI.kg) / (Unit.SI.A / Unit.SI.s); // (m/kg)/(A/s)
-            var expected = Unit.Div(Unit.Mult(Unit.SI.m, Unit.SI.s), Unit.Mult(Unit.SI.kg, Unit.SI.A)); // ms/kgA
+            var expected = Unit.Divide(Unit.Multiply(Unit.SI.m, Unit.SI.s), Unit.Multiply(Unit.SI.kg, Unit.SI.A)); // ms/kgA
             Assert.Equal(expected, actual);
         }
 
@@ -159,7 +159,7 @@ namespace Veggerby.Units.Tests
         public void Unit_DivisionUnitRearrangeSimpleByDiv_ReturnsCorrect()
         {
             var actual = Unit.SI.m / (Unit.SI.A / Unit.SI.s); // m/(A/s)
-            var expected = Unit.Div(Unit.Mult(Unit.SI.m, Unit.SI.s), Unit.SI.A); // ms/A
+            var expected = Unit.Divide(Unit.Multiply(Unit.SI.m, Unit.SI.s), Unit.SI.A); // ms/A
             Assert.Equal(expected, actual);
         }
 
@@ -167,7 +167,7 @@ namespace Veggerby.Units.Tests
         public void Unit_DivisionUnitRearrangeDivBySimple_ReturnsCorrect()
         {
             var actual = (Unit.SI.m / Unit.SI.A) / Unit.SI.s; // (m/A)/s
-            var expected = Unit.Div(Unit.SI.m, Unit.Mult(Unit.SI.s, Unit.SI.A)); // m/sA
+            var expected = Unit.Divide(Unit.SI.m, Unit.Multiply(Unit.SI.s, Unit.SI.A)); // m/sA
             Assert.Equal(expected, actual);
         }
 
@@ -209,7 +209,7 @@ namespace Veggerby.Units.Tests
         public void Unit_PowerUnitMinus1_ReturnsDivision()
         {
             var actual = Unit.SI.s ^ -1; // s^-1
-            var expected = Unit.Div(Unit.None, Unit.SI.s); // 1/s
+            var expected = Unit.Divide(Unit.None, Unit.SI.s); // 1/s
             Assert.Equal(expected, actual);
         }
 
@@ -217,7 +217,7 @@ namespace Veggerby.Units.Tests
         public void Unit_PowerUnitNegative_ReturnsDivision()
         {
             var actual = Unit.SI.s ^ -2; // s^-2
-            var expected = Unit.Div(Unit.None, Unit.Pow(Unit.SI.s, 2)); // 1/s^2
+            var expected = Unit.Divide(Unit.None, Unit.Power(Unit.SI.s, 2)); // 1/s^2
             Assert.Equal(expected, actual);
         }
 
@@ -225,7 +225,7 @@ namespace Veggerby.Units.Tests
         public void Unit_MultiplePowerUnit_ExpandsEachPower()
         {
             var actual = ((Unit.SI.m * Unit.SI.s) ^ 2);
-            var expected = Unit.Mult(Unit.Pow(Unit.SI.m, 2), Unit.Pow(Unit.SI.s, 2));
+            var expected = Unit.Multiply(Unit.Power(Unit.SI.m, 2), Unit.Power(Unit.SI.s, 2));
             Assert.Equal(expected, actual);
         }
 
@@ -233,7 +233,7 @@ namespace Veggerby.Units.Tests
         public void Unit_MultiplePowerUnitWithDivision_ExpandsEachPower()
         {
             var actual = ((Unit.SI.m * Unit.SI.s / Unit.SI.kg) ^ 2); // (ms/kg)^2
-            var expected = Unit.Div(Unit.Mult(Unit.Pow(Unit.SI.m, 2), Unit.Pow(Unit.SI.s, 2)), Unit.Pow(Unit.SI.kg, 2)); // m^2s^2/kg^2;
+            var expected = Unit.Divide(Unit.Multiply(Unit.Power(Unit.SI.m, 2), Unit.Power(Unit.SI.s, 2)), Unit.Power(Unit.SI.kg, 2)); // m^2s^2/kg^2;
             Assert.Equal(expected, actual);
         }
 
@@ -241,7 +241,7 @@ namespace Veggerby.Units.Tests
         public void Unit_MultipleIdenticalOperandsForProduct_ReduceToPower()
         {
             var actual = (Unit.SI.m * (Unit.SI.m ^ 2)); // m*m^2
-            var expected = Unit.Pow(Unit.SI.m, 3); // m^3
+            var expected = Unit.Power(Unit.SI.m, 3); // m^3
             Assert.Equal(expected, actual);
         }
 
@@ -249,7 +249,7 @@ namespace Veggerby.Units.Tests
         public void Unit_MultipleIdenticalOperandsForMultipleProduct_ReduceToPower()
         {
             var actual = ((Unit.SI.m ^ 3) * (Unit.SI.m ^ 2) * Unit.SI.s * Unit.SI.m); // m^3^m^2sm
-            var expected = Unit.Mult(Unit.Pow(Unit.SI.m, 6), Unit.SI.s); // m^6s
+            var expected = Unit.Multiply(Unit.Power(Unit.SI.m, 6), Unit.SI.s); // m^6s
             Assert.Equal(expected, actual);
         }
 
@@ -273,7 +273,7 @@ namespace Veggerby.Units.Tests
         public void Unit_DivisionOperationWithSameOperandsButDifferentPowerDividend_ShouldReduceOperandsPartially()
         {
             var actual = ((Unit.SI.m ^ 3) / Unit.SI.m); // m^3/m
-            var expected = Unit.Pow(Unit.SI.m, 2); // m^2
+            var expected = Unit.Power(Unit.SI.m, 2); // m^2
             Assert.Equal(expected, actual);
         }
 
@@ -281,7 +281,7 @@ namespace Veggerby.Units.Tests
         public void Unit_DivisionOperationWithSameOperandsButDifferentPowerDivisor_ShouldReduceOperandsPartially()
         {
             var actual = (Unit.SI.m / (Unit.SI.m ^ 3)); // m/m^3
-            var expected = Unit.Div(Unit.None, Unit.Pow(Unit.SI.m, 2)); //  1/m^2
+            var expected = Unit.Divide(Unit.None, Unit.Power(Unit.SI.m, 2)); //  1/m^2
             Assert.Equal(expected, actual);
         }
 
@@ -289,7 +289,7 @@ namespace Veggerby.Units.Tests
         public void Unit_ComplexReduction_YieldsExpected()
         {
             var actual = (Unit.SI.s * (((Unit.SI.m ^ 2) * Unit.SI.kg) / ((Unit.SI.s ^ 2) * (Unit.SI.m ^ 3)))); // s*m^2*kg/(s^2*m^3)            
-            var expected = Unit.Div(Unit.SI.kg, Unit.Mult(Unit.SI.s, Unit.SI.m)); // kg/sm
+            var expected = Unit.Divide(Unit.SI.kg, Unit.Multiply(Unit.SI.s, Unit.SI.m)); // kg/sm
             Assert.Equal(expected, actual);
         }
 

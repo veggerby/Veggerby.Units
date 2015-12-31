@@ -16,17 +16,17 @@ namespace Veggerby.Units
         public abstract UnitSystem System { get; }
         public abstract Dimension Dimension { get; }
 
-        public static Unit Mult(params Unit[] operands)
+        public static Unit Multiply(params Unit[] operands)
         {
             return new ProductUnit(operands);
         }
 
-        public static Unit Div(Unit dividend, Unit divisor)
+        public static Unit Divide(Unit dividend, Unit divisor)
         {
             return new DivisionUnit(dividend, divisor);
         }
 
-        public static Unit Pow(Unit @base, int exponent)
+        public static Unit Power(Unit @base, int exponent)
         {
             return new PowerUnit(@base, exponent);
         }
@@ -66,7 +66,7 @@ namespace Veggerby.Units
             // where to put OperationUtility.ReduceMultiplication
             return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, u1, u2) ??
                 OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x ^ y, u1, u2) ??
-                Mult(u1, u2);
+                Multiply(u1, u2);
         }
 
         public static Unit operator *(int factor, Unit unit)
@@ -96,7 +96,7 @@ namespace Veggerby.Units
         public static Unit operator /(int dividend, Unit divisor)
         {
             return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, None, divisor) ??
-                Div(None, divisor);
+                Divide(None, divisor);
         }
 
         public static Unit operator /(Unit dividend, Unit divisor)
@@ -108,7 +108,7 @@ namespace Veggerby.Units
 
             return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ??
                 OperationUtility.ReduceDivision(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, dividend, divisor) ??
-                Div(dividend, divisor);
+                Divide(dividend, divisor);
         }
 
         public static Unit operator ^(Unit @base, int exponent)
@@ -129,7 +129,7 @@ namespace Veggerby.Units
             }
 
             return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
-                   Pow(@base, exponent);
+                   Power(@base, exponent);
         }
 
         public static bool operator ==(Unit u1, Unit u2)
