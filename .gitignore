@@ -43,6 +43,8 @@ dlldata.c
 # DNX
 project.lock.json
 artifacts/
+buildlog
+nuget.exe
 
 *_i.c
 *_p.c
