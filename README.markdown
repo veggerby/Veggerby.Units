@@ -2,7 +2,7 @@
 
 Build status: 
 
-![Build status](https://travis-ci.org/veggerby/Veggerby.Units.svg?branch=master)
+[![Build Status](https://travis-ci.org/veggerby/Veggerby.Units.svg?branch=master)](https://travis-ci.org/veggerby/Veggerby.Units)
 
 Veggerby Units is a class library to assist in handling units of measurement.
 
