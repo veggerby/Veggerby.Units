@@ -28,19 +28,7 @@ popd
 dnvm use 1.0.0-rc1-update1
 
 dnu pack src/Veggerby.Units --configuration Release --out artifacts/build/nuget --quiet
-
-dnu publish src/Veggerby.Units --configuration Release --no-source --out artifacts/build/Veggerby.Units --runtime dnx-mono.1.0.0-rc1-update1
-
-# work around for kpm bundle returning an exit code 0 on failure
-grep "Build failed" buildlog
-rc=$?; if [[ $rc == 0 ]]; then exit 1; fi
-
-tree -if artifacts/build/Veggerby.Units | grep .nupkg | xargs rm
-pushd artifacts/build/Veggerby.Units
-tar -zcf ../../../Veggerby.Units.tar.gz .
-popd
-
-tree artifacts
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
 if (! $TRAVIS) then
     popd
