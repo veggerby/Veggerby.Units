@@ -1,5 +1,9 @@
 # Veggerby.Units
 
+Build status: 
+
+![Build status](https://travis-ci.org/veggerby/Veggerby.Units.svg?branch=master)
+
 Veggerby Units is a class library to assist in handling units of measurement.
 
 It is written in C#.
