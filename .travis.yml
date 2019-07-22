@@ -1,12 +1,11 @@
 # copied from Omisharp https://github.com/OmniSharp/omnisharp-roslyn/blob/master/.travis.yml
 language: csharp
 sudo: false
-install: curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh
-  | sh && source ~/.dnx/dnvm/dnvm.sh && dnvm upgrade
-before_script:
-  - chmod +x build.sh
+mono: none
+dotnet: 2.2.301
 script:
-- ". ./build.sh"
+- dotnet restore ./test/Veggerby.Units.Tests
+- dotnet test ./test/Veggerby.Units.Tests
 #deploy:
 #  provider: releases
 #  api_key:

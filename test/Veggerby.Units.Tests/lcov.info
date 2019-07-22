@@ -1,0 +1,1766 @@
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/BasicUnit.cs
+FN:21,System.String Veggerby.Units.BasicUnit::get_Symbol()
+FNDA:792,System.String Veggerby.Units.BasicUnit::get_Symbol()
+DA:22,792
+FN:26,System.String Veggerby.Units.BasicUnit::get_Name()
+FNDA:18,System.String Veggerby.Units.BasicUnit::get_Name()
+DA:27,18
+FN:31,Veggerby.Units.UnitSystem Veggerby.Units.BasicUnit::get_System()
+FNDA:6,Veggerby.Units.UnitSystem Veggerby.Units.BasicUnit::get_System()
+DA:32,6
+FN:36,Veggerby.Units.Dimensions.Dimension Veggerby.Units.BasicUnit::get_Dimension()
+FNDA:12,Veggerby.Units.Dimensions.Dimension Veggerby.Units.BasicUnit::get_Dimension()
+DA:37,12
+FN:40,T Veggerby.Units.BasicUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.BasicUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:41,0
+DA:42,0
+DA:43,0
+FN:11,System.Void Veggerby.Units.BasicUnit::.ctor(System.String,System.String,Veggerby.Units.UnitSystem,Veggerby.Units.Dimensions.Dimension)
+FNDA:7,System.Void Veggerby.Units.BasicUnit::.ctor(System.String,System.String,Veggerby.Units.UnitSystem,Veggerby.Units.Dimensions.Dimension)
+DA:12,7
+DA:13,7
+DA:14,7
+DA:15,7
+DA:16,7
+DA:17,7
+DA:18,7
+LF:14
+LH:11
+BRF:0
+BRH:0
+FNF:6
+FNH:5
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/DerivedUnit.cs
+FN:19,System.String Veggerby.Units.DerivedUnit::get_Symbol()
+FNDA:0,System.String Veggerby.Units.DerivedUnit::get_Symbol()
+DA:20,0
+FN:24,System.String Veggerby.Units.DerivedUnit::get_Name()
+FNDA:0,System.String Veggerby.Units.DerivedUnit::get_Name()
+DA:25,0
+FN:29,Veggerby.Units.UnitSystem Veggerby.Units.DerivedUnit::get_System()
+FNDA:0,Veggerby.Units.UnitSystem Veggerby.Units.DerivedUnit::get_System()
+DA:30,0
+FN:34,Veggerby.Units.Dimensions.Dimension Veggerby.Units.DerivedUnit::get_Dimension()
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.DerivedUnit::get_Dimension()
+DA:35,0
+FN:38,T Veggerby.Units.DerivedUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.DerivedUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:39,0
+DA:40,0
+DA:41,0
+FN:10,System.Void Veggerby.Units.DerivedUnit::.ctor(System.String,System.String,Veggerby.Units.Unit)
+FNDA:3,System.Void Veggerby.Units.DerivedUnit::.ctor(System.String,System.String,Veggerby.Units.Unit)
+DA:11,3
+DA:12,3
+DA:13,3
+DA:14,3
+DA:15,3
+DA:16,3
+LF:13
+LH:6
+BRF:0
+BRH:0
+FNF:6
+FNH:1
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/DivisionUnit.cs
+FN:18,System.String Veggerby.Units.DivisionUnit::get_Symbol()
+FNDA:3,System.String Veggerby.Units.DivisionUnit::get_Symbol()
+DA:19,3
+BRDA:19,27,0,1
+BRDA:19,27,1,0
+FN:23,System.String Veggerby.Units.DivisionUnit::get_Name()
+FNDA:3,System.String Veggerby.Units.DivisionUnit::get_Name()
+DA:24,3
+BRDA:24,27,0,1
+BRDA:24,27,1,0
+FN:28,Veggerby.Units.UnitSystem Veggerby.Units.DivisionUnit::get_System()
+FNDA:0,Veggerby.Units.UnitSystem Veggerby.Units.DivisionUnit::get_System()
+DA:29,0
+BRDA:29,17,0,0
+BRDA:29,17,1,0
+FN:33,Veggerby.Units.Dimensions.Dimension Veggerby.Units.DivisionUnit::get_Dimension()
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.DivisionUnit::get_Dimension()
+DA:34,0
+FN:37,System.Boolean Veggerby.Units.DivisionUnit::Equals(System.Object)
+FNDA:13,System.Boolean Veggerby.Units.DivisionUnit::Equals(System.Object)
+DA:38,13
+DA:39,13
+DA:40,13
+FN:42,System.Int32 Veggerby.Units.DivisionUnit::GetHashCode()
+FNDA:0,System.Int32 Veggerby.Units.DivisionUnit::GetHashCode()
+DA:43,0
+DA:44,0
+DA:45,0
+FN:47,T Veggerby.Units.DivisionUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.DivisionUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:48,0
+DA:49,0
+DA:50,0
+FN:53,Veggerby.Units.Reduction.IOperand Veggerby.Units.DivisionUnit::Veggerby.Units.Reduction.IDivisionOperation.get_Dividend()
+FNDA:84,Veggerby.Units.Reduction.IOperand Veggerby.Units.DivisionUnit::Veggerby.Units.Reduction.IDivisionOperation.get_Dividend()
+DA:54,84
+FN:58,Veggerby.Units.Reduction.IOperand Veggerby.Units.DivisionUnit::Veggerby.Units.Reduction.IDivisionOperation.get_Divisor()
+FNDA:78,Veggerby.Units.Reduction.IOperand Veggerby.Units.DivisionUnit::Veggerby.Units.Reduction.IDivisionOperation.get_Divisor()
+DA:59,78
+FN:10,System.Void Veggerby.Units.DivisionUnit::.ctor(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:29,System.Void Veggerby.Units.DivisionUnit::.ctor(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:11,29
+DA:12,29
+DA:13,29
+DA:14,29
+DA:15,29
+LF:20
+LH:12
+BRF:6
+BRH:2
+FNF:10
+FNH:6
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/ImperialUnitSystem.cs
+FN:44,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_ft()
+FNDA:12,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_ft()
+DA:45,12
+FN:45,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_in()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_in()
+DA:46,0
+FN:46,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_thou()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_thou()
+DA:47,0
+FN:47,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_ya()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_ya()
+DA:48,0
+FN:48,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_ch()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_ch()
+DA:49,0
+FN:49,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_fur()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_fur()
+DA:50,0
+FN:50,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_mi()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_mi()
+DA:51,0
+FN:51,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_lea()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_lea()
+DA:52,0
+FN:52,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_rod()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_rod()
+DA:53,0
+FN:53,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_link()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_link()
+DA:54,0
+FN:56,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_acre()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_acre()
+DA:57,0
+FN:57,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_rood()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_rood()
+DA:58,0
+FN:58,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_perch()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_perch()
+DA:59,0
+FN:61,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_fl_oz()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_fl_oz()
+DA:62,0
+FN:62,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_gi()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_gi()
+DA:63,0
+FN:63,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_pt()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_pt()
+DA:64,0
+FN:64,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_qt()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_qt()
+DA:65,0
+FN:65,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_gal()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_gal()
+DA:66,0
+FN:68,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_lb()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_lb()
+DA:69,0
+FN:69,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_oz()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_oz()
+DA:70,0
+FN:70,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_drc()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_drc()
+DA:71,0
+FN:71,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_gr()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_gr()
+DA:72,0
+FN:72,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_st()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_st()
+DA:73,0
+FN:73,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_qtr()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_qtr()
+DA:74,0
+FN:74,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_cwt()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_cwt()
+DA:75,0
+FN:75,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_t()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_t()
+DA:76,0
+FN:78,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_s()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_s()
+DA:79,0
+FN:79,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_A()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_A()
+DA:80,0
+FN:80,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_K()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_K()
+DA:81,0
+FN:81,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_cd()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_cd()
+DA:82,0
+FN:82,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_n()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.ImperialUnitSystem::get_n()
+DA:83,0
+FN:84,System.Void Veggerby.Units.ImperialUnitSystem::.ctor()
+FNDA:1,System.Void Veggerby.Units.ImperialUnitSystem::.ctor()
+DA:85,1
+DA:86,1
+DA:88,1
+DA:89,1
+DA:90,1
+DA:91,1
+DA:92,1
+DA:93,1
+DA:94,1
+DA:95,1
+DA:96,1
+DA:97,1
+DA:100,1
+DA:101,1
+DA:102,1
+DA:105,1
+DA:106,1
+DA:107,1
+DA:108,1
+DA:109,1
+DA:110,1
+DA:113,1
+DA:114,1
+DA:115,1
+DA:116,1
+DA:117,1
+DA:118,1
+DA:119,1
+DA:120,1
+DA:121,1
+LF:61
+LH:31
+BRF:0
+BRH:0
+FNF:32
+FNH:2
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/InternationalUnitSystem.cs
+FN:18,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_m()
+FNDA:207,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_m()
+DA:19,207
+FN:19,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_g()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_g()
+DA:20,0
+FN:20,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_kg()
+FNDA:78,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_kg()
+DA:21,78
+FN:21,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_s()
+FNDA:81,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_s()
+DA:22,81
+FN:22,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_A()
+FNDA:24,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_A()
+DA:23,24
+FN:23,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_K()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_K()
+DA:24,0
+FN:24,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_cd()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_cd()
+DA:25,0
+FN:25,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_n()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.InternationalUnitSystem::get_n()
+DA:26,0
+FN:27,System.Void Veggerby.Units.InternationalUnitSystem::.ctor()
+FNDA:1,System.Void Veggerby.Units.InternationalUnitSystem::.ctor()
+DA:28,1
+DA:29,1
+DA:30,1
+DA:31,1
+DA:32,1
+DA:33,1
+DA:34,1
+DA:35,1
+DA:36,1
+DA:37,1
+DA:38,1
+LF:19
+LH:15
+BRF:0
+BRH:0
+FNF:9
+FNH:5
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Measurement.cs
+FN:20,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Addition(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Addition(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:21,0
+DA:22,0
+DA:23,0
+DA:24,0
+DA:27,0
+DA:28,0
+DA:29,0
+DA:32,0
+DA:33,0
+BRDA:22,8,0,0
+BRDA:22,8,1,0
+BRDA:22,22,0,0
+BRDA:24,27,0,0
+BRDA:24,27,1,0
+BRDA:22,22,1,0
+BRDA:27,53,0,0
+BRDA:27,53,1,0
+FN:35,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Subtraction(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Subtraction(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:36,0
+DA:37,0
+DA:38,0
+DA:39,0
+DA:42,0
+DA:43,0
+DA:44,0
+DA:47,0
+DA:48,0
+BRDA:37,8,0,0
+BRDA:37,8,1,0
+BRDA:37,22,0,0
+BRDA:39,27,0,0
+BRDA:39,27,1,0
+BRDA:37,22,1,0
+BRDA:42,53,0,0
+BRDA:42,53,1,0
+FN:50,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Multiply(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Multiply(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:51,0
+DA:52,0
+DA:53,0
+FN:55,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Division(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Division(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:56,0
+DA:57,0
+DA:58,0
+FN:60,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Multiply(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Multiply(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Unit)
+DA:61,0
+DA:62,0
+DA:63,0
+FN:65,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Division(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Measurement`1::op_Division(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Unit)
+DA:66,0
+DA:67,0
+DA:68,0
+FN:70,System.Boolean Veggerby.Units.Measurement`1::op_LessThan(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::op_LessThan(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:71,0
+DA:72,0
+DA:73,0
+FN:75,System.Boolean Veggerby.Units.Measurement`1::op_LessThanOrEqual(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::op_LessThanOrEqual(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:76,0
+DA:77,0
+DA:78,0
+FN:80,System.Boolean Veggerby.Units.Measurement`1::op_GreaterThan(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::op_GreaterThan(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:81,0
+DA:82,0
+DA:83,0
+FN:85,System.Boolean Veggerby.Units.Measurement`1::op_GreaterThanOrEqual(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::op_GreaterThanOrEqual(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:86,0
+DA:87,0
+DA:88,0
+FN:90,System.Boolean Veggerby.Units.Measurement`1::op_Equality(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::op_Equality(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:91,0
+DA:93,0
+DA:94,0
+DA:95,0
+DA:99,0
+DA:100,0
+DA:101,0
+DA:104,0
+DA:105,0
+BRDA:93,7,0,0
+BRDA:93,7,1,0
+BRDA:99,15,0,0
+BRDA:99,15,1,0
+BRDA:99,26,0,0
+BRDA:99,26,1,0
+FN:107,System.Boolean Veggerby.Units.Measurement`1::op_Inequality(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::op_Inequality(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:108,0
+DA:110,0
+DA:111,0
+DA:112,0
+DA:116,0
+DA:117,0
+DA:118,0
+DA:121,0
+DA:122,0
+BRDA:110,7,0,0
+BRDA:110,7,1,0
+BRDA:116,21,0,0
+BRDA:116,21,1,0
+BRDA:116,35,0,0
+BRDA:116,35,1,0
+FN:124,T Veggerby.Units.Measurement`1::op_Implicit(Veggerby.Units.Measurement`1<T>)
+FNDA:0,T Veggerby.Units.Measurement`1::op_Implicit(Veggerby.Units.Measurement`1<T>)
+DA:125,0
+DA:126,0
+DA:127,0
+FN:130,Veggerby.Units.Unit Veggerby.Units.Measurement`1::get_Unit()
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.Measurement`1::get_Unit()
+DA:131,0
+FN:135,T Veggerby.Units.Measurement`1::get_Value()
+FNDA:0,T Veggerby.Units.Measurement`1::get_Value()
+DA:136,0
+FN:140,Veggerby.Units.Calculations.Calculator`1<T> Veggerby.Units.Measurement`1::get_Calculator()
+FNDA:0,Veggerby.Units.Calculations.Calculator`1<T> Veggerby.Units.Measurement`1::get_Calculator()
+DA:141,0
+FN:144,System.String Veggerby.Units.Measurement`1::ToString()
+FNDA:0,System.String Veggerby.Units.Measurement`1::ToString()
+DA:145,0
+DA:146,0
+DA:147,0
+FN:149,System.Boolean Veggerby.Units.Measurement`1::Equals(System.Object)
+FNDA:0,System.Boolean Veggerby.Units.Measurement`1::Equals(System.Object)
+DA:150,0
+DA:151,0
+DA:152,0
+DA:153,0
+DA:156,0
+DA:157,0
+BRDA:151,12,0,0
+BRDA:153,51,0,0
+BRDA:153,51,1,0
+BRDA:151,12,1,0
+FN:159,System.Int32 Veggerby.Units.Measurement`1::GetHashCode()
+FNDA:0,System.Int32 Veggerby.Units.Measurement`1::GetHashCode()
+DA:160,0
+DA:161,0
+DA:162,0
+FN:12,System.Void Veggerby.Units.Measurement`1::.ctor(T,Veggerby.Units.Unit,Veggerby.Units.Calculations.Calculator`1<T>)
+FNDA:0,System.Void Veggerby.Units.Measurement`1::.ctor(T,Veggerby.Units.Unit,Veggerby.Units.Calculations.Calculator`1<T>)
+DA:13,0
+DA:14,0
+DA:15,0
+DA:16,0
+DA:17,0
+DA:18,0
+FN:171,Veggerby.Units.Int32Measurement Veggerby.Units.Int32Measurement::op_Implicit(System.Int32)
+FNDA:0,Veggerby.Units.Int32Measurement Veggerby.Units.Int32Measurement::op_Implicit(System.Int32)
+DA:172,0
+DA:173,0
+DA:174,0
+FN:166,System.Void Veggerby.Units.Int32Measurement::.ctor(System.Int32,Veggerby.Units.Unit)
+FNDA:0,System.Void Veggerby.Units.Int32Measurement::.ctor(System.Int32,Veggerby.Units.Unit)
+DA:167,0
+DA:168,0
+DA:169,0
+FN:183,Veggerby.Units.DoubleMeasurement Veggerby.Units.DoubleMeasurement::op_Implicit(System.Int32)
+FNDA:0,Veggerby.Units.DoubleMeasurement Veggerby.Units.DoubleMeasurement::op_Implicit(System.Int32)
+DA:184,0
+DA:185,0
+DA:186,0
+FN:178,System.Void Veggerby.Units.DoubleMeasurement::.ctor(System.Double,Veggerby.Units.Unit)
+FNDA:0,System.Void Veggerby.Units.DoubleMeasurement::.ctor(System.Double,Veggerby.Units.Unit)
+DA:179,0
+DA:180,0
+DA:181,0
+LF:96
+LH:0
+BRF:32
+BRH:0
+FNF:24
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/NullUnit.cs
+FN:8,System.String Veggerby.Units.NullUnit::get_Symbol()
+FNDA:6,System.String Veggerby.Units.NullUnit::get_Symbol()
+DA:9,6
+FN:13,System.String Veggerby.Units.NullUnit::get_Name()
+FNDA:0,System.String Veggerby.Units.NullUnit::get_Name()
+DA:14,0
+FN:18,Veggerby.Units.UnitSystem Veggerby.Units.NullUnit::get_System()
+FNDA:0,Veggerby.Units.UnitSystem Veggerby.Units.NullUnit::get_System()
+DA:19,0
+FN:23,Veggerby.Units.Dimensions.Dimension Veggerby.Units.NullUnit::get_Dimension()
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.NullUnit::get_Dimension()
+DA:24,0
+FN:27,T Veggerby.Units.NullUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.NullUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:28,0
+DA:29,0
+DA:30,0
+LF:7
+LH:1
+BRF:0
+BRH:0
+FNF:5
+FNH:1
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/PowerUnit.cs
+FN:18,System.String Veggerby.Units.PowerUnit::get_Symbol()
+FNDA:33,System.String Veggerby.Units.PowerUnit::get_Symbol()
+DA:19,33
+FN:23,System.String Veggerby.Units.PowerUnit::get_Name()
+FNDA:3,System.String Veggerby.Units.PowerUnit::get_Name()
+DA:24,3
+FN:28,Veggerby.Units.UnitSystem Veggerby.Units.PowerUnit::get_System()
+FNDA:0,Veggerby.Units.UnitSystem Veggerby.Units.PowerUnit::get_System()
+DA:29,0
+FN:33,Veggerby.Units.Dimensions.Dimension Veggerby.Units.PowerUnit::get_Dimension()
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.PowerUnit::get_Dimension()
+DA:34,0
+FN:37,T Veggerby.Units.PowerUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.PowerUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:38,0
+DA:39,0
+DA:40,0
+FN:43,Veggerby.Units.Reduction.IOperand Veggerby.Units.PowerUnit::Veggerby.Units.Reduction.IPowerOperation.get_Base()
+FNDA:156,Veggerby.Units.Reduction.IOperand Veggerby.Units.PowerUnit::Veggerby.Units.Reduction.IPowerOperation.get_Base()
+DA:44,156
+FN:48,System.Int32 Veggerby.Units.PowerUnit::Veggerby.Units.Reduction.IPowerOperation.get_Exponent()
+FNDA:150,System.Int32 Veggerby.Units.PowerUnit::Veggerby.Units.Reduction.IPowerOperation.get_Exponent()
+DA:49,150
+FN:10,System.Void Veggerby.Units.PowerUnit::.ctor(Veggerby.Units.Unit,System.Int32)
+FNDA:60,System.Void Veggerby.Units.PowerUnit::.ctor(Veggerby.Units.Unit,System.Int32)
+DA:11,60
+DA:12,60
+DA:13,60
+DA:14,60
+DA:15,60
+LF:14
+LH:9
+BRF:0
+BRH:0
+FNF:8
+FNH:5
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Prefix.cs
+FN:72,System.String Veggerby.Units.Prefix::get_Name()
+FNDA:3,System.String Veggerby.Units.Prefix::get_Name()
+DA:73,3
+FN:77,System.String Veggerby.Units.Prefix::get_Symbol()
+FNDA:168,System.String Veggerby.Units.Prefix::get_Symbol()
+DA:78,168
+FN:82,System.Double Veggerby.Units.Prefix::get_Factor()
+FNDA:0,System.Double Veggerby.Units.Prefix::get_Factor()
+DA:83,0
+FN:86,System.Double Veggerby.Units.Prefix::op_Implicit(Veggerby.Units.Prefix)
+FNDA:0,System.Double Veggerby.Units.Prefix::op_Implicit(Veggerby.Units.Prefix)
+DA:87,0
+DA:88,0
+DA:89,0
+FN:91,Veggerby.Units.Prefix Veggerby.Units.Prefix::op_Implicit(System.Double)
+FNDA:0,Veggerby.Units.Prefix Veggerby.Units.Prefix::op_Implicit(System.Double)
+DA:92,0
+DA:93,0
+DA:94,0
+DA:95,0
+DA:96,0
+FN:98,System.Boolean Veggerby.Units.Prefix::Equals(System.Object)
+FNDA:0,System.Boolean Veggerby.Units.Prefix::Equals(System.Object)
+DA:99,0
+DA:100,0
+DA:101,0
+DA:102,0
+DA:105,0
+DA:106,0
+BRDA:100,12,0,0
+BRDA:100,12,1,0
+FN:59,System.Void Veggerby.Units.Prefix::.ctor(System.String,System.String,System.Double)
+FNDA:21,System.Void Veggerby.Units.Prefix::.ctor(System.String,System.String,System.Double)
+DA:60,21
+DA:61,21
+DA:62,21
+DA:63,21
+DA:64,21
+DA:65,21
+FN:7,System.Void Veggerby.Units.Prefix::.cctor()
+FNDA:1,System.Void Veggerby.Units.Prefix::.cctor()
+DA:8,1
+DA:10,1
+DA:11,1
+DA:12,1
+DA:13,1
+DA:14,1
+DA:15,1
+DA:16,1
+DA:17,1
+DA:18,1
+DA:19,1
+DA:21,1
+DA:22,1
+DA:23,1
+DA:24,1
+DA:25,1
+DA:26,1
+DA:27,1
+DA:28,1
+DA:29,1
+DA:30,1
+FN:34,System.Boolean Veggerby.Units.Prefix/<get_All>d__22::MoveNext()
+FNDA:0,System.Boolean Veggerby.Units.Prefix/<get_All>d__22::MoveNext()
+DA:35,0
+DA:36,0
+DA:37,0
+DA:38,0
+DA:39,0
+DA:40,0
+DA:41,0
+DA:42,0
+DA:43,0
+DA:44,0
+DA:45,0
+DA:46,0
+DA:47,0
+DA:48,0
+DA:49,0
+DA:50,0
+DA:51,0
+DA:52,0
+DA:53,0
+DA:54,0
+DA:55,0
+DA:56,0
+DA:57,0
+LF:67
+LH:29
+BRF:2
+BRH:0
+FNF:9
+FNH:4
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/PrefixedUnit.cs
+FN:17,Veggerby.Units.Prefix Veggerby.Units.PrefixedUnit::get_Prefix()
+FNDA:183,Veggerby.Units.Prefix Veggerby.Units.PrefixedUnit::get_Prefix()
+DA:18,183
+FN:22,Veggerby.Units.Unit Veggerby.Units.PrefixedUnit::get_BaseUnit()
+FNDA:186,Veggerby.Units.Unit Veggerby.Units.PrefixedUnit::get_BaseUnit()
+DA:23,186
+FN:27,System.String Veggerby.Units.PrefixedUnit::get_Name()
+FNDA:3,System.String Veggerby.Units.PrefixedUnit::get_Name()
+DA:28,3
+FN:32,System.String Veggerby.Units.PrefixedUnit::get_Symbol()
+FNDA:168,System.String Veggerby.Units.PrefixedUnit::get_Symbol()
+DA:33,168
+FN:37,Veggerby.Units.Dimensions.Dimension Veggerby.Units.PrefixedUnit::get_Dimension()
+FNDA:3,Veggerby.Units.Dimensions.Dimension Veggerby.Units.PrefixedUnit::get_Dimension()
+DA:38,3
+FN:42,Veggerby.Units.UnitSystem Veggerby.Units.PrefixedUnit::get_System()
+FNDA:0,Veggerby.Units.UnitSystem Veggerby.Units.PrefixedUnit::get_System()
+DA:43,0
+FN:46,T Veggerby.Units.PrefixedUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.PrefixedUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:47,0
+DA:48,0
+DA:49,0
+FN:6,System.Void Veggerby.Units.PrefixedUnit::.ctor(Veggerby.Units.Prefix,Veggerby.Units.Unit)
+FNDA:5,System.Void Veggerby.Units.PrefixedUnit::.ctor(Veggerby.Units.Prefix,Veggerby.Units.Unit)
+DA:7,5
+DA:8,5
+DA:9,5
+DA:10,5
+DA:11,5
+LF:14
+LH:10
+BRF:0
+BRH:0
+FNF:8
+FNH:6
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/ProductUnit.cs
+FN:19,System.String Veggerby.Units.ProductUnit::get_Symbol()
+FNDA:5,System.String Veggerby.Units.ProductUnit::get_Symbol()
+DA:20,5
+BRDA:20,18,0,1
+BRDA:20,18,1,1
+FN:24,System.String Veggerby.Units.ProductUnit::get_Name()
+FNDA:5,System.String Veggerby.Units.ProductUnit::get_Name()
+DA:25,5
+BRDA:25,18,0,1
+BRDA:25,18,1,1
+FN:29,Veggerby.Units.UnitSystem Veggerby.Units.ProductUnit::get_System()
+FNDA:3,Veggerby.Units.UnitSystem Veggerby.Units.ProductUnit::get_System()
+DA:30,3
+BRDA:30,12,0,0
+BRDA:30,12,1,1
+FN:34,Veggerby.Units.Dimensions.Dimension Veggerby.Units.ProductUnit::get_Dimension()
+FNDA:7,Veggerby.Units.Dimensions.Dimension Veggerby.Units.ProductUnit::get_Dimension()
+DA:35,7
+BRDA:35,13,0,1
+BRDA:35,13,1,1
+BRDA:35,49,0,1
+BRDA:35,49,1,1
+FN:38,System.Boolean Veggerby.Units.ProductUnit::Equals(System.Object)
+FNDA:15,System.Boolean Veggerby.Units.ProductUnit::Equals(System.Object)
+DA:39,15
+DA:40,15
+DA:41,15
+FN:43,System.Int32 Veggerby.Units.ProductUnit::GetHashCode()
+FNDA:0,System.Int32 Veggerby.Units.ProductUnit::GetHashCode()
+DA:44,0
+DA:45,0
+DA:46,0
+FN:48,T Veggerby.Units.ProductUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.ProductUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:49,0
+DA:50,0
+DA:51,0
+FN:54,System.Collections.Generic.IEnumerable`1<Veggerby.Units.Reduction.IOperand> Veggerby.Units.ProductUnit::Veggerby.Units.Reduction.IProductOperation.get_Operands()
+FNDA:129,System.Collections.Generic.IEnumerable`1<Veggerby.Units.Reduction.IOperand> Veggerby.Units.ProductUnit::Veggerby.Units.Reduction.IProductOperation.get_Operands()
+DA:55,129
+FN:12,System.Void Veggerby.Units.ProductUnit::.ctor(Veggerby.Units.Unit[])
+FNDA:40,System.Void Veggerby.Units.ProductUnit::.ctor(Veggerby.Units.Unit[])
+DA:13,40
+DA:14,40
+DA:15,40
+DA:16,40
+LF:18
+LH:12
+BRF:10
+BRH:9
+FNF:9
+FNH:7
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/ScaleUnit.cs
+FN:23,System.String Veggerby.Units.ScaleUnit::get_Symbol()
+FNDA:12,System.String Veggerby.Units.ScaleUnit::get_Symbol()
+DA:24,12
+FN:28,System.String Veggerby.Units.ScaleUnit::get_Name()
+FNDA:0,System.String Veggerby.Units.ScaleUnit::get_Name()
+DA:29,0
+FN:33,Veggerby.Units.UnitSystem Veggerby.Units.ScaleUnit::get_System()
+FNDA:0,Veggerby.Units.UnitSystem Veggerby.Units.ScaleUnit::get_System()
+DA:34,0
+BRDA:34,8,0,0
+BRDA:34,8,1,0
+FN:38,Veggerby.Units.Dimensions.Dimension Veggerby.Units.ScaleUnit::get_Dimension()
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.ScaleUnit::get_Dimension()
+DA:39,0
+FN:43,System.Double Veggerby.Units.ScaleUnit::get_Scale()
+FNDA:0,System.Double Veggerby.Units.ScaleUnit::get_Scale()
+DA:44,0
+FN:47,T Veggerby.Units.ScaleUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+FNDA:0,T Veggerby.Units.ScaleUnit::Accept(Veggerby.Units.Visitors.Visitor`1<T>)
+DA:48,0
+DA:49,0
+DA:50,0
+FN:12,System.Void Veggerby.Units.ScaleUnit::.ctor(System.String,System.String,System.Double,Veggerby.Units.Unit,Veggerby.Units.UnitSystem)
+FNDA:23,System.Void Veggerby.Units.ScaleUnit::.ctor(System.String,System.String,System.Double,Veggerby.Units.Unit,Veggerby.Units.UnitSystem)
+DA:13,23
+DA:14,23
+DA:15,23
+DA:16,23
+DA:17,23
+DA:18,23
+DA:19,23
+DA:20,23
+LF:16
+LH:9
+BRF:2
+BRH:0
+FNF:7
+FNH:2
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Unit.cs
+FN:19,Veggerby.Units.Unit Veggerby.Units.Unit::Multiply(Veggerby.Units.Unit[])
+FNDA:40,Veggerby.Units.Unit Veggerby.Units.Unit::Multiply(Veggerby.Units.Unit[])
+DA:20,40
+DA:21,40
+DA:22,40
+FN:24,Veggerby.Units.Unit Veggerby.Units.Unit::Divide(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:29,Veggerby.Units.Unit Veggerby.Units.Unit::Divide(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:25,29
+DA:26,29
+DA:27,29
+FN:29,Veggerby.Units.Unit Veggerby.Units.Unit::Power(Veggerby.Units.Unit,System.Int32)
+FNDA:60,Veggerby.Units.Unit Veggerby.Units.Unit::Power(Veggerby.Units.Unit,System.Int32)
+DA:30,60
+DA:31,60
+DA:32,60
+FN:34,Veggerby.Units.Unit Veggerby.Units.Unit::op_Addition(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.Unit::op_Addition(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:35,0
+DA:36,0
+DA:37,0
+DA:38,0
+DA:41,0
+DA:42,0
+BRDA:36,10,0,0
+BRDA:36,10,1,0
+FN:44,Veggerby.Units.Unit Veggerby.Units.Unit::op_Subtraction(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.Unit::op_Subtraction(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:45,0
+DA:46,0
+DA:47,0
+DA:48,0
+DA:51,0
+DA:52,0
+BRDA:46,10,0,0
+BRDA:46,10,1,0
+FN:54,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:36,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:55,36
+DA:56,36
+DA:57,0
+DA:58,0
+DA:61,36
+DA:62,0
+DA:63,0
+DA:67,40
+DA:68,110
+DA:69,36
+DA:70,36
+BRDA:56,14,0,0
+BRDA:56,14,1,36
+BRDA:61,37,0,0
+BRDA:61,37,1,36
+BRDA:67,53,0,1
+BRDA:67,53,1,36
+BRDA:67,84,0,1
+BRDA:67,84,1,36
+BRDA:67,129,0,35
+BRDA:67,138,0,1
+BRDA:67,138,1,35
+BRDA:67,169,0,1
+BRDA:67,169,1,35
+BRDA:67,214,0,32
+BRDA:67,129,1,36
+BRDA:67,214,1,36
+FN:72,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(System.Int32,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(System.Int32,Veggerby.Units.Unit)
+DA:73,0
+DA:74,0
+DA:75,0
+FN:77,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(System.Double,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(System.Double,Veggerby.Units.Unit)
+DA:78,0
+DA:79,0
+DA:81,0
+DA:82,0
+DA:83,0
+DA:86,0
+DA:87,0
+DA:88,0
+DA:89,0
+BRDA:81,14,0,0
+BRDA:81,14,1,0
+FN:91,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(Veggerby.Units.Prefix,Veggerby.Units.Unit)
+FNDA:5,Veggerby.Units.Unit Veggerby.Units.Unit::op_Multiply(Veggerby.Units.Prefix,Veggerby.Units.Unit)
+DA:92,5
+DA:93,5
+DA:94,5
+FN:96,Veggerby.Units.Unit Veggerby.Units.Unit::op_Division(System.Int32,Veggerby.Units.Unit)
+FNDA:2,Veggerby.Units.Unit Veggerby.Units.Unit::op_Division(System.Int32,Veggerby.Units.Unit)
+DA:97,2
+DA:98,2
+DA:99,2
+DA:100,2
+BRDA:98,7,0,1
+BRDA:98,7,1,2
+BRDA:98,38,0,1
+BRDA:98,38,1,2
+BRDA:98,75,0,2
+BRDA:98,75,1,2
+FN:102,Veggerby.Units.Unit Veggerby.Units.Unit::op_Division(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:31,Veggerby.Units.Unit Veggerby.Units.Unit::op_Division(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:103,31
+DA:104,31
+DA:105,3
+DA:106,3
+DA:109,35
+DA:110,71
+DA:111,28
+DA:112,31
+BRDA:104,14,0,3
+BRDA:104,14,1,28
+BRDA:109,30,0,1
+BRDA:109,30,1,28
+BRDA:109,61,0,1
+BRDA:109,61,1,28
+BRDA:109,94,0,25
+BRDA:109,103,0,1
+BRDA:109,103,1,25
+BRDA:109,134,0,1
+BRDA:109,134,1,25
+BRDA:109,165,0,1
+BRDA:109,165,1,25
+BRDA:109,198,0,19
+BRDA:109,94,1,28
+BRDA:109,198,1,28
+FN:114,Veggerby.Units.Unit Veggerby.Units.Unit::op_ExclusiveOr(Veggerby.Units.Unit,System.Int32)
+FNDA:131,Veggerby.Units.Unit Veggerby.Units.Unit::op_ExclusiveOr(Veggerby.Units.Unit,System.Int32)
+DA:115,131
+DA:116,131
+DA:117,2
+DA:118,2
+DA:121,129
+DA:122,1
+DA:123,1
+DA:126,128
+DA:127,75
+DA:128,75
+DA:131,68
+DA:132,53
+DA:133,131
+BRDA:116,7,0,2
+BRDA:116,7,1,129
+BRDA:121,36,0,1
+BRDA:121,36,1,128
+BRDA:126,53,0,75
+BRDA:126,53,1,53
+BRDA:131,66,0,1
+BRDA:131,66,1,53
+BRDA:131,97,0,1
+BRDA:131,97,1,53
+BRDA:131,128,0,1
+BRDA:131,128,1,53
+BRDA:131,161,0,50
+BRDA:131,161,1,53
+FN:135,System.Boolean Veggerby.Units.Unit::op_Equality(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:336,System.Boolean Veggerby.Units.Unit::op_Equality(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:136,336
+DA:138,336
+DA:139,193
+DA:140,193
+DA:144,143
+DA:145,37
+DA:146,37
+DA:149,106
+DA:150,336
+BRDA:138,7,0,193
+BRDA:138,7,1,143
+BRDA:144,15,0,143
+BRDA:144,15,1,0
+BRDA:144,26,0,37
+BRDA:144,26,1,106
+FN:152,System.Boolean Veggerby.Units.Unit::op_Inequality(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:5,System.Boolean Veggerby.Units.Unit::op_Inequality(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:153,5
+DA:155,5
+DA:156,0
+DA:157,0
+DA:161,5
+DA:162,0
+DA:163,0
+DA:166,5
+DA:167,5
+BRDA:155,7,0,0
+BRDA:155,7,1,5
+BRDA:161,21,0,5
+BRDA:161,21,1,0
+BRDA:161,35,0,0
+BRDA:161,35,1,5
+FN:169,System.String Veggerby.Units.Unit::op_Implicit(Veggerby.Units.Unit)
+FNDA:0,System.String Veggerby.Units.Unit::op_Implicit(Veggerby.Units.Unit)
+DA:170,0
+DA:171,0
+DA:172,0
+FN:174,System.Boolean Veggerby.Units.Unit::Equals(System.Object)
+FNDA:112,System.Boolean Veggerby.Units.Unit::Equals(System.Object)
+DA:175,112
+DA:176,112
+DA:177,112
+DA:178,112
+DA:181,0
+DA:182,112
+BRDA:176,12,0,112
+BRDA:176,12,1,0
+FN:184,System.Int32 Veggerby.Units.Unit::GetHashCode()
+FNDA:262,System.Int32 Veggerby.Units.Unit::GetHashCode()
+DA:185,262
+DA:186,262
+DA:187,262
+FN:191,System.String Veggerby.Units.Unit::ToString()
+FNDA:0,System.String Veggerby.Units.Unit::ToString()
+DA:192,0
+DA:193,0
+DA:194,0
+FN:8,System.Void Veggerby.Units.Unit::.cctor()
+FNDA:1,System.Void Veggerby.Units.Unit::.cctor()
+DA:9,1
+DA:11,1
+DA:12,1
+LF:108
+LH:69
+BRF:80
+BRH:67
+FNF:19
+FNH:13
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/UnitException.cs
+FN:7,System.Void Veggerby.Units.UnitException::.ctor(Veggerby.Units.Unit,Veggerby.Units.Unit)
+FNDA:0,System.Void Veggerby.Units.UnitException::.ctor(Veggerby.Units.Unit,Veggerby.Units.Unit)
+DA:8,0
+DA:9,0
+DA:10,0
+FN:15,System.Void Veggerby.Units.PrefixException::.ctor(System.Double)
+FNDA:0,System.Void Veggerby.Units.PrefixException::.ctor(System.Double)
+DA:16,0
+DA:17,0
+DA:18,0
+LF:6
+LH:0
+BRF:0
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/UnitSystem.cs
+FN:4,System.Void Veggerby.Units.UnitSystem::.cctor()
+FNDA:0,System.Void Veggerby.Units.UnitSystem::.cctor()
+DA:5,0
+LF:1
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Reduction/OperandExtensions.cs
+FN:9,System.Collections.Generic.IEnumerable`1<Veggerby.Units.Reduction.IOperand> Veggerby.Units.Reduction.OperandExtensions::ExpandMultiplication(Veggerby.Units.Reduction.IOperand)
+FNDA:392,System.Collections.Generic.IEnumerable`1<Veggerby.Units.Reduction.IOperand> Veggerby.Units.Reduction.OperandExtensions::ExpandMultiplication(Veggerby.Units.Reduction.IOperand)
+DA:10,392
+DA:11,392
+DA:12,34
+DA:13,34
+DA:16,358
+DA:17,392
+BRDA:11,12,0,34
+BRDA:11,12,1,358
+FN:19,T Veggerby.Units.Reduction.OperandExtensions::Multiply(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<T,T,T>,T)
+FNDA:39,T Veggerby.Units.Reduction.OperandExtensions::Multiply(System.Collections.Generic.IEnumerable`1<T>,System.Func`3<T,T,T>,T)
+DA:20,39
+DA:21,39
+DA:22,29
+DA:23,29
+DA:24,113
+DA:25,13
+DA:26,13
+DA:27,13
+DA:29,29
+DA:32,10
+DA:33,39
+BRDA:21,9,0,29
+BRDA:24,59,1,13
+BRDA:24,59,0,29
+BRDA:21,9,1,10
+LF:17
+LH:17
+BRF:6
+BRH:6
+FNF:2
+FNH:2
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Reduction/OperationUtility.cs
+FN:9,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IOperand,Veggerby.Units.Reduction.IOperand)
+FNDA:392,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IOperand,Veggerby.Units.Reduction.IOperand)
+DA:10,392
+DA:11,392
+DA:12,115
+DA:13,115
+DA:16,277
+DA:17,24
+DA:18,24
+DA:21,253
+DA:22,253
+DA:23,253
+DA:24,253
+DA:25,253
+DA:26,392
+BRDA:11,7,0,115
+BRDA:11,7,1,277
+BRDA:16,15,0,277
+BRDA:16,15,1,0
+BRDA:16,26,0,24
+BRDA:16,26,1,253
+BRDA:21,50,0,230
+BRDA:21,69,0,212
+BRDA:21,88,0,190
+BRDA:21,50,1,63
+BRDA:21,69,1,63
+BRDA:21,88,1,63
+FN:28,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IProductOperation,Veggerby.Units.Reduction.IProductOperation)
+FNDA:253,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IProductOperation,Veggerby.Units.Reduction.IProductOperation)
+DA:29,253
+DA:30,253
+DA:31,228
+DA:32,228
+DA:35,25
+DA:36,77
+DA:37,77
+DA:38,77
+DA:39,253
+BRDA:30,2,0,25
+BRDA:30,2,1,228
+BRDA:30,13,0,228
+BRDA:30,13,1,25
+BRDA:35,35,0,1
+BRDA:35,35,1,25
+BRDA:35,77,0,1
+BRDA:35,77,1,25
+BRDA:35,130,0,1
+BRDA:35,130,1,25
+FN:41,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IDivisionOperation,Veggerby.Units.Reduction.IDivisionOperation)
+FNDA:230,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IDivisionOperation,Veggerby.Units.Reduction.IDivisionOperation)
+DA:42,230
+DA:43,230
+DA:44,210
+DA:45,210
+DA:48,20
+DA:49,230
+BRDA:43,2,0,20
+BRDA:43,2,1,210
+BRDA:43,13,0,210
+BRDA:43,13,1,20
+BRDA:48,37,0,18
+BRDA:48,37,1,2
+FN:51,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IPowerOperation,Veggerby.Units.Reduction.IPowerOperation)
+FNDA:212,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.Reduction.IPowerOperation,Veggerby.Units.Reduction.IPowerOperation)
+DA:52,212
+DA:53,212
+DA:54,186
+DA:55,186
+DA:58,26
+DA:59,212
+BRDA:53,2,0,58
+BRDA:53,2,1,154
+BRDA:53,13,0,186
+BRDA:53,13,1,26
+BRDA:58,37,0,24
+BRDA:58,37,1,2
+FN:61,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.PrefixedUnit,Veggerby.Units.PrefixedUnit)
+FNDA:190,System.Boolean Veggerby.Units.Reduction.OperationUtility::Equals(Veggerby.Units.PrefixedUnit,Veggerby.Units.PrefixedUnit)
+DA:62,190
+DA:63,190
+DA:64,188
+DA:65,188
+DA:68,2
+DA:69,190
+BRDA:63,8,0,25
+BRDA:63,8,1,165
+BRDA:63,22,0,188
+BRDA:63,22,1,2
+BRDA:68,46,0,2
+BRDA:68,46,1,0
+FN:80,T Veggerby.Units.Reduction.OperationUtility::RearrangeMultiplication(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,T,T>,T[])
+FNDA:70,T Veggerby.Units.Reduction.OperationUtility::RearrangeMultiplication(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,T,T>,T[])
+DA:81,70
+DA:84,70
+DA:85,74
+DA:87,70
+DA:88,2
+DA:89,8
+DA:90,8
+DA:91,2
+DA:94,68
+DA:95,70
+BRDA:85,15,0,2
+BRDA:85,15,1,70
+BRDA:87,54,0,2
+BRDA:89,64,0,2
+BRDA:89,64,1,2
+BRDA:90,108,0,2
+BRDA:90,108,1,2
+BRDA:87,54,1,68
+FN:107,T Veggerby.Units.Reduction.OperationUtility::RearrangeDivision(System.Func`3<T,T,T>,System.Func`3<T,T,T>,T,T)
+FNDA:60,T Veggerby.Units.Reduction.OperationUtility::RearrangeDivision(System.Func`3<T,T,T>,System.Func`3<T,T,T>,T,T)
+DA:108,60
+DA:109,60
+DA:110,60
+DA:111,60
+DA:112,2
+DA:113,2
+DA:116,58
+DA:117,2
+DA:118,2
+DA:121,56
+DA:122,2
+DA:123,2
+DA:126,54
+DA:127,60
+BRDA:111,26,0,4
+BRDA:111,26,1,56
+BRDA:111,37,0,2
+BRDA:111,37,1,58
+BRDA:116,113,0,2
+BRDA:116,113,1,56
+BRDA:121,162,0,2
+BRDA:121,162,1,54
+FN:140,T Veggerby.Units.Reduction.OperationUtility::ReduceDivision(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,T,T>,System.Func`3<T,System.Int32,T>,T,T)
+FNDA:50,T Veggerby.Units.Reduction.OperationUtility::ReduceDivision(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,T,T>,System.Func`3<T,System.Int32,T>,T,T)
+DA:141,50
+DA:142,50
+DA:143,50
+DA:144,112
+DA:145,174
+DA:146,50
+DA:148,50
+DA:149,50
+DA:150,112
+DA:151,174
+DA:152,50
+DA:154,172
+DA:155,12
+DA:156,12
+DA:157,12
+DA:158,44
+DA:159,64
+DA:160,12
+DA:162,12
+DA:163,76
+DA:164,70
+DA:167,38
+DA:168,50
+BRDA:142,31,0,2
+BRDA:142,31,1,50
+BRDA:142,67,0,2
+BRDA:142,67,1,50
+BRDA:148,121,0,2
+BRDA:148,121,1,50
+BRDA:148,157,0,2
+BRDA:148,157,1,50
+BRDA:154,200,0,2
+BRDA:154,200,1,50
+BRDA:154,237,0,2
+BRDA:154,237,1,50
+BRDA:154,279,0,12
+BRDA:156,298,0,2
+BRDA:156,298,1,12
+BRDA:156,334,0,2
+BRDA:156,334,1,12
+BRDA:162,381,0,2
+BRDA:162,381,1,12
+BRDA:162,442,0,2
+BRDA:162,442,1,12
+BRDA:154,279,1,38
+FN:179,T Veggerby.Units.Reduction.OperationUtility::ReduceMultiplication(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,System.Int32,T>,T[])
+FNDA:68,T Veggerby.Units.Reduction.OperationUtility::ReduceMultiplication(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,System.Int32,T>,T[])
+DA:180,68
+DA:181,68
+DA:182,204
+DA:183,210
+DA:184,346
+DA:185,68
+DA:187,216
+DA:188,68
+BRDA:181,21,0,2
+BRDA:181,21,1,68
+BRDA:181,57,0,2
+BRDA:181,57,1,68
+BRDA:187,117,0,2
+BRDA:187,117,1,68
+BRDA:187,147,0,62
+BRDA:187,147,1,6
+BRDA:187,168,0,2
+BRDA:187,168,1,6
+FN:196,System.Collections.Generic.IEnumerable`1<T> Veggerby.Units.Reduction.OperationUtility::LinearizeMultiplication(T[])
+FNDA:78,System.Collections.Generic.IEnumerable`1<T> Veggerby.Units.Reduction.OperationUtility::LinearizeMultiplication(T[])
+DA:197,78
+DA:198,234
+DA:199,78
+BRDA:198,8,0,2
+BRDA:198,8,1,78
+FN:211,T Veggerby.Units.Reduction.OperationUtility::ExpandPower(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,T,T>,System.Func`3<T,System.Int32,T>,T,System.Int32)
+FNDA:104,T Veggerby.Units.Reduction.OperationUtility::ExpandPower(System.Func`2<System.Collections.Generic.IEnumerable`1<T>,T>,System.Func`3<T,T,T>,System.Func`3<T,System.Int32,T>,T,System.Int32)
+DA:212,104
+DA:213,104
+DA:214,0
+DA:215,0
+DA:218,104
+DA:219,2
+DA:220,2
+DA:223,102
+DA:224,4
+DA:225,20
+DA:228,98
+DA:229,104
+BRDA:213,38,0,0
+BRDA:213,38,1,104
+BRDA:218,118,0,2
+BRDA:218,118,1,102
+BRDA:223,224,0,4
+BRDA:223,224,1,98
+LF:110
+LH:108
+BRF:110
+BRH:107
+FNF:11
+FNH:11
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/BasicDimension.cs
+FN:15,System.String Veggerby.Units.Dimensions.BasicDimension::get_Symbol()
+FNDA:804,System.String Veggerby.Units.Dimensions.BasicDimension::get_Symbol()
+DA:16,804
+FN:20,System.String Veggerby.Units.Dimensions.BasicDimension::get_Name()
+FNDA:18,System.String Veggerby.Units.Dimensions.BasicDimension::get_Name()
+DA:21,18
+FN:7,System.Void Veggerby.Units.Dimensions.BasicDimension::.ctor(System.String,System.String)
+FNDA:7,System.Void Veggerby.Units.Dimensions.BasicDimension::.ctor(System.String,System.String)
+DA:8,7
+DA:9,7
+DA:10,7
+DA:11,7
+DA:12,7
+LF:7
+LH:7
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/Dimension.cs
+FN:27,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::Mult(Veggerby.Units.Dimensions.Dimension[])
+FNDA:38,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::Mult(Veggerby.Units.Dimensions.Dimension[])
+DA:28,38
+DA:29,38
+DA:30,38
+FN:32,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::Div(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:29,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::Div(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:33,29
+DA:34,29
+DA:35,29
+FN:37,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::Pow(Veggerby.Units.Dimensions.Dimension,System.Int32)
+FNDA:58,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::Pow(Veggerby.Units.Dimensions.Dimension,System.Int32)
+DA:38,58
+DA:39,58
+DA:40,58
+FN:42,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Addition(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Addition(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:43,0
+DA:44,0
+DA:45,0
+DA:46,0
+DA:49,0
+DA:50,0
+BRDA:44,10,0,0
+BRDA:44,10,1,0
+FN:52,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Subtraction(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:0,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Subtraction(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:53,0
+DA:54,0
+DA:55,0
+DA:56,0
+DA:59,0
+DA:60,0
+BRDA:54,10,0,0
+BRDA:54,10,1,0
+FN:62,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Multiply(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:34,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Multiply(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:63,34
+DA:64,34
+DA:65,0
+DA:66,0
+DA:69,34
+DA:70,0
+DA:71,0
+DA:75,38
+DA:76,104
+DA:77,34
+DA:78,34
+BRDA:64,14,0,0
+BRDA:64,14,1,34
+BRDA:69,37,0,0
+BRDA:69,37,1,34
+BRDA:75,53,0,1
+BRDA:75,53,1,34
+BRDA:75,84,0,1
+BRDA:75,84,1,34
+BRDA:75,129,0,33
+BRDA:75,138,0,1
+BRDA:75,138,1,33
+BRDA:75,169,0,1
+BRDA:75,169,1,33
+BRDA:75,214,0,30
+BRDA:75,129,1,34
+BRDA:75,214,1,34
+FN:80,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Division(System.Int32,Veggerby.Units.Dimensions.Dimension)
+FNDA:2,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Division(System.Int32,Veggerby.Units.Dimensions.Dimension)
+DA:81,2
+DA:82,2
+DA:83,2
+DA:84,2
+BRDA:82,7,0,1
+BRDA:82,7,1,2
+BRDA:82,38,0,1
+BRDA:82,38,1,2
+BRDA:82,75,0,2
+BRDA:82,75,1,2
+FN:86,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Division(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:31,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_Division(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:87,31
+DA:88,31
+DA:89,3
+DA:90,3
+DA:93,35
+DA:94,71
+DA:95,28
+DA:96,31
+BRDA:88,14,0,3
+BRDA:88,14,1,28
+BRDA:93,30,0,1
+BRDA:93,30,1,28
+BRDA:93,61,0,1
+BRDA:93,61,1,28
+BRDA:93,94,0,25
+BRDA:93,103,0,1
+BRDA:93,103,1,25
+BRDA:93,134,0,1
+BRDA:93,134,1,25
+BRDA:93,165,0,1
+BRDA:93,165,1,25
+BRDA:93,198,0,19
+BRDA:93,94,1,28
+BRDA:93,198,1,28
+FN:98,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_ExclusiveOr(Veggerby.Units.Dimensions.Dimension,System.Int32)
+FNDA:125,Veggerby.Units.Dimensions.Dimension Veggerby.Units.Dimensions.Dimension::op_ExclusiveOr(Veggerby.Units.Dimensions.Dimension,System.Int32)
+DA:99,125
+DA:100,125
+DA:101,2
+DA:102,2
+DA:105,123
+DA:106,1
+DA:107,1
+DA:110,122
+DA:111,71
+DA:112,71
+DA:115,66
+DA:116,51
+DA:117,125
+BRDA:100,7,0,2
+BRDA:100,7,1,123
+BRDA:105,36,0,1
+BRDA:105,36,1,122
+BRDA:110,53,0,71
+BRDA:110,53,1,51
+BRDA:115,66,0,1
+BRDA:115,66,1,51
+BRDA:115,97,0,1
+BRDA:115,97,1,51
+BRDA:115,128,0,1
+BRDA:115,128,1,51
+BRDA:115,161,0,48
+BRDA:115,161,1,51
+FN:119,System.Boolean Veggerby.Units.Dimensions.Dimension::op_Equality(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:105,System.Boolean Veggerby.Units.Dimensions.Dimension::op_Equality(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:120,105
+DA:122,105
+DA:123,4
+DA:124,4
+DA:128,101
+DA:129,0
+DA:130,0
+DA:133,101
+DA:134,105
+BRDA:122,7,0,4
+BRDA:122,7,1,101
+BRDA:128,15,0,101
+BRDA:128,15,1,0
+BRDA:128,26,0,0
+BRDA:128,26,1,101
+FN:136,System.Boolean Veggerby.Units.Dimensions.Dimension::op_Inequality(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:5,System.Boolean Veggerby.Units.Dimensions.Dimension::op_Inequality(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:137,5
+DA:138,5
+DA:139,5
+FN:141,System.String Veggerby.Units.Dimensions.Dimension::op_Implicit(Veggerby.Units.Dimensions.Dimension)
+FNDA:0,System.String Veggerby.Units.Dimensions.Dimension::op_Implicit(Veggerby.Units.Dimensions.Dimension)
+DA:142,0
+DA:143,0
+DA:144,0
+FN:146,System.Boolean Veggerby.Units.Dimensions.Dimension::Equals(System.Object)
+FNDA:105,System.Boolean Veggerby.Units.Dimensions.Dimension::Equals(System.Object)
+DA:147,105
+DA:148,105
+DA:149,105
+DA:150,105
+DA:153,0
+DA:154,105
+BRDA:148,12,0,105
+BRDA:148,12,1,0
+FN:156,System.Int32 Veggerby.Units.Dimensions.Dimension::GetHashCode()
+FNDA:262,System.Int32 Veggerby.Units.Dimensions.Dimension::GetHashCode()
+DA:157,262
+DA:158,262
+DA:159,262
+FN:161,System.String Veggerby.Units.Dimensions.Dimension::ToString()
+FNDA:0,System.String Veggerby.Units.Dimensions.Dimension::ToString()
+DA:162,0
+DA:163,0
+DA:164,0
+FN:19,System.Void Veggerby.Units.Dimensions.Dimension::.ctor()
+FNDA:133,System.Void Veggerby.Units.Dimensions.Dimension::.ctor()
+DA:20,133
+DA:21,133
+DA:22,133
+FN:9,System.Void Veggerby.Units.Dimensions.Dimension::.cctor()
+FNDA:1,System.Void Veggerby.Units.Dimensions.Dimension::.cctor()
+DA:10,1
+DA:12,1
+DA:13,1
+DA:14,1
+DA:15,1
+DA:16,1
+DA:17,1
+DA:18,1
+LF:95
+LH:70
+BRF:72
+BRH:63
+FNF:17
+FNH:13
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/DimensionException.cs
+FN:7,System.Void Veggerby.Units.Dimensions.DimensionException::.ctor(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:0,System.Void Veggerby.Units.Dimensions.DimensionException::.ctor(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:8,0
+DA:9,0
+DA:10,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/DivisionDimension.cs
+FN:17,System.String Veggerby.Units.Dimensions.DivisionDimension::get_Symbol()
+FNDA:3,System.String Veggerby.Units.Dimensions.DivisionDimension::get_Symbol()
+DA:18,3
+BRDA:18,27,0,1
+BRDA:18,27,1,0
+FN:22,System.String Veggerby.Units.Dimensions.DivisionDimension::get_Name()
+FNDA:3,System.String Veggerby.Units.Dimensions.DivisionDimension::get_Name()
+DA:23,3
+BRDA:23,27,0,1
+BRDA:23,27,1,0
+FN:26,System.Boolean Veggerby.Units.Dimensions.DivisionDimension::Equals(System.Object)
+FNDA:13,System.Boolean Veggerby.Units.Dimensions.DivisionDimension::Equals(System.Object)
+DA:27,13
+DA:28,13
+DA:29,13
+FN:31,System.Int32 Veggerby.Units.Dimensions.DivisionDimension::GetHashCode()
+FNDA:0,System.Int32 Veggerby.Units.Dimensions.DivisionDimension::GetHashCode()
+DA:32,0
+DA:33,0
+DA:34,0
+FN:37,Veggerby.Units.Reduction.IOperand Veggerby.Units.Dimensions.DivisionDimension::Veggerby.Units.Reduction.IDivisionOperation.get_Dividend()
+FNDA:84,Veggerby.Units.Reduction.IOperand Veggerby.Units.Dimensions.DivisionDimension::Veggerby.Units.Reduction.IDivisionOperation.get_Dividend()
+DA:38,84
+FN:42,Veggerby.Units.Reduction.IOperand Veggerby.Units.Dimensions.DivisionDimension::Veggerby.Units.Reduction.IDivisionOperation.get_Divisor()
+FNDA:78,Veggerby.Units.Reduction.IOperand Veggerby.Units.Dimensions.DivisionDimension::Veggerby.Units.Reduction.IDivisionOperation.get_Divisor()
+DA:43,78
+FN:9,System.Void Veggerby.Units.Dimensions.DivisionDimension::.ctor(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+FNDA:29,System.Void Veggerby.Units.Dimensions.DivisionDimension::.ctor(Veggerby.Units.Dimensions.Dimension,Veggerby.Units.Dimensions.Dimension)
+DA:10,29
+DA:11,29
+DA:12,29
+DA:13,29
+DA:14,29
+LF:15
+LH:12
+BRF:4
+BRH:2
+FNF:7
+FNH:6
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/NullDimension.cs
+FN:6,System.String Veggerby.Units.Dimensions.NullDimension::get_Symbol()
+FNDA:6,System.String Veggerby.Units.Dimensions.NullDimension::get_Symbol()
+DA:7,6
+FN:11,System.String Veggerby.Units.Dimensions.NullDimension::get_Name()
+FNDA:0,System.String Veggerby.Units.Dimensions.NullDimension::get_Name()
+DA:12,0
+LF:2
+LH:1
+BRF:0
+BRH:0
+FNF:2
+FNH:1
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/PowerDimension.cs
+FN:16,System.String Veggerby.Units.Dimensions.PowerDimension::get_Symbol()
+FNDA:33,System.String Veggerby.Units.Dimensions.PowerDimension::get_Symbol()
+DA:17,33
+FN:21,System.String Veggerby.Units.Dimensions.PowerDimension::get_Name()
+FNDA:3,System.String Veggerby.Units.Dimensions.PowerDimension::get_Name()
+DA:22,3
+FN:26,Veggerby.Units.Reduction.IOperand Veggerby.Units.Dimensions.PowerDimension::Veggerby.Units.Reduction.IPowerOperation.get_Base()
+FNDA:156,Veggerby.Units.Reduction.IOperand Veggerby.Units.Dimensions.PowerDimension::Veggerby.Units.Reduction.IPowerOperation.get_Base()
+DA:27,156
+FN:31,System.Int32 Veggerby.Units.Dimensions.PowerDimension::Veggerby.Units.Reduction.IPowerOperation.get_Exponent()
+FNDA:150,System.Int32 Veggerby.Units.Dimensions.PowerDimension::Veggerby.Units.Reduction.IPowerOperation.get_Exponent()
+DA:32,150
+FN:8,System.Void Veggerby.Units.Dimensions.PowerDimension::.ctor(Veggerby.Units.Dimensions.Dimension,System.Int32)
+FNDA:58,System.Void Veggerby.Units.Dimensions.PowerDimension::.ctor(Veggerby.Units.Dimensions.Dimension,System.Int32)
+DA:9,58
+DA:10,58
+DA:11,58
+DA:12,58
+DA:13,58
+LF:9
+LH:9
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Dimensions/ProductDimension.cs
+FN:18,System.String Veggerby.Units.Dimensions.ProductDimension::get_Symbol()
+FNDA:5,System.String Veggerby.Units.Dimensions.ProductDimension::get_Symbol()
+DA:19,5
+BRDA:19,18,0,1
+BRDA:19,18,1,1
+FN:23,System.String Veggerby.Units.Dimensions.ProductDimension::get_Name()
+FNDA:5,System.String Veggerby.Units.Dimensions.ProductDimension::get_Name()
+DA:24,5
+BRDA:24,18,0,1
+BRDA:24,18,1,1
+FN:27,System.Boolean Veggerby.Units.Dimensions.ProductDimension::Equals(System.Object)
+FNDA:16,System.Boolean Veggerby.Units.Dimensions.ProductDimension::Equals(System.Object)
+DA:28,16
+DA:29,16
+DA:30,16
+FN:32,System.Int32 Veggerby.Units.Dimensions.ProductDimension::GetHashCode()
+FNDA:0,System.Int32 Veggerby.Units.Dimensions.ProductDimension::GetHashCode()
+DA:33,0
+DA:34,0
+DA:35,0
+FN:38,System.Collections.Generic.IEnumerable`1<Veggerby.Units.Reduction.IOperand> Veggerby.Units.Dimensions.ProductDimension::Veggerby.Units.Reduction.IProductOperation.get_Operands()
+FNDA:135,System.Collections.Generic.IEnumerable`1<Veggerby.Units.Reduction.IOperand> Veggerby.Units.Dimensions.ProductDimension::Veggerby.Units.Reduction.IProductOperation.get_Operands()
+DA:39,135
+FN:11,System.Void Veggerby.Units.Dimensions.ProductDimension::.ctor(Veggerby.Units.Dimensions.Dimension[])
+FNDA:38,System.Void Veggerby.Units.Dimensions.ProductDimension::.ctor(Veggerby.Units.Dimensions.Dimension[])
+DA:12,38
+DA:13,38
+DA:14,38
+DA:15,38
+LF:13
+LH:10
+BRF:4
+BRH:4
+FNF:6
+FNH:5
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Conversion/Extensions.cs
+FN:7,Veggerby.Units.Measurement`1<T> Veggerby.Units.Conversion.Extensions::ConvertTo(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Unit)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Conversion.Extensions::ConvertTo(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Unit)
+DA:8,0
+DA:9,0
+DA:10,0
+DA:11,0
+DA:14,0
+DA:15,0
+DA:16,0
+DA:19,0
+DA:20,0
+DA:21,0
+DA:25,0
+DA:26,0
+BRDA:9,10,0,0
+BRDA:9,10,1,0
+BRDA:14,33,0,0
+BRDA:14,33,1,0
+BRDA:19,71,0,0
+BRDA:19,71,1,0
+FN:28,Veggerby.Units.Measurement`1<T> Veggerby.Units.Conversion.Extensions::AlignUnits(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+FNDA:0,Veggerby.Units.Measurement`1<T> Veggerby.Units.Conversion.Extensions::AlignUnits(Veggerby.Units.Measurement`1<T>,Veggerby.Units.Measurement`1<T>)
+DA:29,0
+DA:30,0
+DA:31,0
+DA:32,0
+DA:35,0
+DA:36,0
+BRDA:30,20,0,0
+BRDA:30,20,1,0
+LF:18
+LH:0
+BRF:8
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Conversion/MeasurementConversionException.cs
+FN:7,System.Void Veggerby.Units.Conversion.MeasurementConversionException::.ctor(System.String)
+FNDA:0,System.Void Veggerby.Units.Conversion.MeasurementConversionException::.ctor(System.String)
+DA:8,0
+DA:9,0
+DA:10,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Calculations/DoubleCalculator.cs
+FN:5,System.Double Veggerby.Units.Calculations.DoubleCalculator::Add(System.Double,System.Double)
+FNDA:0,System.Double Veggerby.Units.Calculations.DoubleCalculator::Add(System.Double,System.Double)
+DA:6,0
+DA:7,0
+DA:8,0
+FN:10,System.Double Veggerby.Units.Calculations.DoubleCalculator::Divide(System.Double,System.Double)
+FNDA:0,System.Double Veggerby.Units.Calculations.DoubleCalculator::Divide(System.Double,System.Double)
+DA:11,0
+DA:12,0
+DA:13,0
+FN:15,System.Double Veggerby.Units.Calculations.DoubleCalculator::Multiply(System.Double,System.Double)
+FNDA:0,System.Double Veggerby.Units.Calculations.DoubleCalculator::Multiply(System.Double,System.Double)
+DA:16,0
+DA:17,0
+DA:18,0
+FN:20,System.Double Veggerby.Units.Calculations.DoubleCalculator::Subtract(System.Double,System.Double)
+FNDA:0,System.Double Veggerby.Units.Calculations.DoubleCalculator::Subtract(System.Double,System.Double)
+DA:21,0
+DA:22,0
+DA:23,0
+FN:24,System.Void Veggerby.Units.Calculations.DoubleCalculator::.cctor()
+FNDA:0,System.Void Veggerby.Units.Calculations.DoubleCalculator::.cctor()
+DA:25,0
+LF:13
+LH:0
+BRF:0
+BRH:0
+FNF:5
+FNH:0
+end_of_record
+SF:/Users/jev/Documents/src/Veggerby.Units/src/Veggerby.Units/Calculations/Int32Calculator.cs
+FN:5,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Add(System.Int32,System.Int32)
+FNDA:0,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Add(System.Int32,System.Int32)
+DA:6,0
+DA:7,0
+DA:8,0
+FN:10,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Divide(System.Int32,System.Int32)
+FNDA:0,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Divide(System.Int32,System.Int32)
+DA:11,0
+DA:12,0
+DA:13,0
+FN:15,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Multiply(System.Int32,System.Int32)
+FNDA:0,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Multiply(System.Int32,System.Int32)
+DA:16,0
+DA:17,0
+DA:18,0
+FN:20,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Subtract(System.Int32,System.Int32)
+FNDA:0,System.Int32 Veggerby.Units.Calculations.Int32Calculator::Subtract(System.Int32,System.Int32)
+DA:21,0
+DA:22,0
+DA:23,0
+FN:24,System.Void Veggerby.Units.Calculations.Int32Calculator::.cctor()
+FNDA:0,System.Void Veggerby.Units.Calculations.Int32Calculator::.cctor()
+DA:25,0
+LF:13
+LH:0
+BRF:0
+BRH:0
+FNF:5
+FNH:0
+end_of_record
