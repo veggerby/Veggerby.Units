@@ -14,49 +14,15 @@ namespace Veggerby.Units
             _divisor = divisor;
         }
 
-        public override string Symbol
-        {
-            get { return string.Format("{0}/{1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Symbol, _divisor.Symbol); }
-        }
+        public override string Symbol => $"{(_dividend.Symbol == string.Empty ? "1" : _dividend.Symbol)}/{_divisor.Symbol}";
+        public override string Name => $"{(_dividend.Symbol == string.Empty ? "1" : _dividend.Name)} / {_divisor.Name}";
+        public override UnitSystem System => _dividend != Unit.None ? _dividend.System : _divisor.System;
+        public override Dimension Dimension => _dividend.Dimension / _divisor.Dimension;
+        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
+        IOperand IDivisionOperation.Dividend => _dividend;
+        IOperand IDivisionOperation.Divisor =>  _divisor;
 
-        public override string Name
-        {
-            get { return string.Format("{0} / {1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Name, _divisor.Name); }
-        }
-
-        public override UnitSystem System
-        {
-            get { return _dividend != Unit.None ? _dividend.System : _divisor.System; }
-        }
-
-        public override Dimension Dimension
-        {
-            get { return _dividend.Dimension / _divisor.Dimension; }
-        }
-
-        public override bool Equals(object obj)
-        {
-            return OperationUtility.Equals(this, obj as IDivisionOperation);
-        }
-
-        public override int GetHashCode()
-        {
-            return Symbol.GetHashCode();
-        }
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor)
-        {
-            return visitor.Visit(this);
-        }
-
-        IOperand IDivisionOperation.Dividend
-        {
-            get { return _dividend; }
-        }
-
-        IOperand IDivisionOperation.Divisor
-        {
-            get { return _divisor; }
-        }
+        public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IDivisionOperation);
+        public override int GetHashCode() => Symbol.GetHashCode();
     }
 }

@@ -143,6 +143,10 @@ namespace Veggerby.Units.Dimensions
             return d.Symbol;
         }
 
+        public override string ToString() => Symbol;
+
+        public override int GetHashCode() => Symbol.GetHashCode();
+
         public override bool Equals(object obj)
         {
             if (obj is Dimension)
@@ -151,16 +155,6 @@ namespace Veggerby.Units.Dimensions
             }
 
             return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Symbol.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return Symbol;
         }
     }
 }

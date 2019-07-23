@@ -73,7 +73,7 @@ namespace Veggerby.Units
         {
             return ((double)factor) * unit;
         }
-        
+
         public static Unit operator *(double factor, Unit unit)
         {
             Prefix pre = factor;
@@ -89,7 +89,7 @@ namespace Veggerby.Units
         }
 
         public static Unit operator *(Prefix pre, Unit unit)
-        {                   
+        {
             return new PrefixedUnit(pre, unit);
         }
 
@@ -171,6 +171,9 @@ namespace Veggerby.Units
             return u.Symbol;
         }
 
+        public override int GetHashCode() => Symbol.GetHashCode();
+        public override string ToString() => Symbol;
+
         public override bool Equals(object obj)
         {
             if (obj is Unit)
@@ -181,16 +184,6 @@ namespace Veggerby.Units
             return false;
         }
 
-        public override int GetHashCode()
-        {
-            return Symbol.GetHashCode();
-        }
-
         internal abstract T Accept<T>(Visitor<T> visitor);
-
-        public override string ToString()
-        {
-            return Symbol;
-        }
     }
 }

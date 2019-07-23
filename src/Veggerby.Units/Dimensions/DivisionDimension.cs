@@ -13,34 +13,13 @@ namespace Veggerby.Units.Dimensions
             _divisor = divisor;
         }
 
-        public override string Symbol
-        {
-            get { return string.Format("{0}/{1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Symbol, _divisor.Symbol); }
-        }
+        public override string Symbol => string.Format("{0}/{1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Symbol, _divisor.Symbol);
+        public override string Name => string.Format("{0} / {1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Name, _divisor.Name);
 
-        public override string Name
-        {
-            get { return string.Format("{0} / {1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Name, _divisor.Name); }
-        }
+        public override int GetHashCode() => Symbol.GetHashCode();
+        public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IDivisionOperation);
 
-        public override bool Equals(object obj)
-        {
-            return OperationUtility.Equals(this, obj as IDivisionOperation);
-        }
-
-        public override int GetHashCode()
-        {
-            return Symbol.GetHashCode();
-        }
-
-        IOperand IDivisionOperation.Dividend
-        {
-            get { return _dividend; }
-        }
-
-        IOperand IDivisionOperation.Divisor
-        {
-            get { return _divisor; }
-        }
+        IOperand IDivisionOperation.Dividend => _dividend;
+        IOperand IDivisionOperation.Divisor => _divisor;
     }
 }

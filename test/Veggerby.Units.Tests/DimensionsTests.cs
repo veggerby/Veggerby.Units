@@ -6,12 +6,6 @@ namespace Veggerby.Units.Tests
     public class DimensionsTests
     {
         [Fact]
-        public void Dimension_DimensionEquality_TestSimple()
-        {
-            Assert.True(Dimension.Length == Dimension.Length);
-        }
-
-        [Fact]
         public void Dimension_DimensionInEquality_TestSimple()
         {
             Assert.True(Dimension.Length != Dimension.Mass);
@@ -224,7 +218,7 @@ namespace Veggerby.Units.Tests
         [Fact]
         public void Dimension_MultipleIdenticalOperandsForMultipleProduct_ReduceToPower()
         {
-            var actual = ((Dimension.Length ^ 3) * (Dimension.Length ^ 2) * Dimension.Time * Dimension.Length); // L^3^L^2TL            
+            var actual = ((Dimension.Length ^ 3) * (Dimension.Length ^ 2) * Dimension.Time * Dimension.Length); // L^3^L^2TL
             var expected = Dimension.Mult(Dimension.Pow(Dimension.Length, 6), Dimension.Time); // L^6T
             Assert.Equal(expected, actual);
         }
@@ -232,7 +226,7 @@ namespace Veggerby.Units.Tests
         [Fact]
         public void Dimension_DivisionOperationWithSameOperands_ShouldReduceOperands()
         {
-            var actual = ((Dimension.Length ^ 2) / Dimension.Length); // L^2/L            
+            var actual = ((Dimension.Length ^ 2) / Dimension.Length); // L^2/L
             var expected = Dimension.Length; // L
             Assert.Equal(expected, actual);
         }
@@ -264,7 +258,7 @@ namespace Veggerby.Units.Tests
         [Fact]
         public void Dimension_ComplexReduction_YieldsExpected()
         {
-            var actual = (Dimension.Time * (((Dimension.Length ^ 2) * Dimension.Mass) / ((Dimension.Time ^ 2) * (Dimension.Length ^ 3)))); // T*L^2*M/(T^2*L^3)            
+            var actual = (Dimension.Time * (((Dimension.Length ^ 2) * Dimension.Mass) / ((Dimension.Time ^ 2) * (Dimension.Length ^ 3)))); // T*L^2*M/(T^2*L^3)
             var expected = Dimension.Div(Dimension.Mass, Dimension.Mult(Dimension.Time, Dimension.Length)); // M/TL
             Assert.Equal(expected, actual);
         }

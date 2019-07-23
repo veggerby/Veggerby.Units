@@ -15,44 +15,17 @@ namespace Veggerby.Units
             _operands = new ReadOnlyCollection<Unit>(OperationUtility.LinearizeMultiplication(operands).ToList());
         }
 
-        public override string Symbol
-        {
-            get { return string.Join(string.Empty, _operands.Select(x => x.Symbol)); }
-        }
+        public override string Symbol => string.Join(string.Empty, _operands.Select(x => x.Symbol));
+        public override string Name => string.Join(" * ", _operands.Select(x => x.Name));
+        public override UnitSystem System => _operands.Any() ? _operands.First().System : UnitSystem.None;
+        public override Dimension Dimension =>  _operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None);
 
-        public override string Name
-        {
-            get { return string.Join(" * ", _operands.Select(x => x.Name)); }
-        }
+        public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IProductOperation);
 
-        public override UnitSystem System
-        {
-            get { return _operands.Any() ? _operands.First().System : UnitSystem.None; }
-        }
+        public override int GetHashCode() => Symbol.GetHashCode();
 
-        public override Dimension Dimension
-        {
-            get { return _operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None); }
-        }
+        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 
-        public override bool Equals(object obj)
-        {
-            return OperationUtility.Equals(this, obj as IProductOperation);
-        }
-
-        public override int GetHashCode()
-        {
-            return Symbol.GetHashCode();
-        }
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor)
-        {
-            return visitor.Visit(this);
-        }
-
-        IEnumerable<IOperand> IProductOperation.Operands
-        {
-            get { return _operands; }
-        }
+        IEnumerable<IOperand> IProductOperation.Operands => _operands;
     }
 }

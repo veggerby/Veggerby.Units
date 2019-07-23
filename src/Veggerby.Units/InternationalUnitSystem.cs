@@ -7,34 +7,25 @@ namespace Veggerby.Units
     /// </summary>
     public class InternationalUnitSystem : UnitSystem
     {
-        private readonly Unit _m;
-        private readonly Unit _g;
-        private readonly Unit _kg;
-        private readonly Unit _s;
-        private readonly Unit _A;
-        private readonly Unit _K;
-        private readonly Unit _cd;
-        private readonly Unit _n;
-
-        public Unit m { get { return _m; } }
-        public Unit g { get { return _g; } }
-        public Unit kg { get { return _kg; } }
-        public Unit s { get { return _s; } }
-        public Unit A { get { return _A; } }
-        public Unit K { get { return _K; } }
-        public Unit cd { get { return _cd; } }
-        public Unit n { get { return _n; } }
+        public Unit m { get; }
+        public Unit g { get; }
+        public Unit kg { get; }
+        public Unit s { get; }
+        public Unit A { get; }
+        public Unit K { get; }
+        public Unit cd { get; }
+        public Unit n { get; }
 
         public InternationalUnitSystem()
         {
-            _m = new BasicUnit("m", "meter", this, Dimension.Length);
-            _g = new BasicUnit("g", "gram", this, Dimension.Mass);
-            _kg = Prefix.k * _g;
-            _s = new BasicUnit("s", "second", this, Dimension.Time);
-            _A = new BasicUnit("A", "ampere", this, Dimension.ElectricCurrent);
-            _K = new BasicUnit("K", "kelvin", this, Dimension.ThermodynamicTemperature);
-            _cd = new BasicUnit("cd", "candela", this, Dimension.LuminousIntensity);
-            _n = new BasicUnit("mol", "mole", this, Dimension.AmountOfSubstance);
+            m = new BasicUnit("m", "meter", this, Dimension.Length);
+            g = new BasicUnit("g", "gram", this, Dimension.Mass);
+            kg = Prefix.k * g;
+            s = new BasicUnit("s", "second", this, Dimension.Time);
+            A = new BasicUnit("A", "ampere", this, Dimension.ElectricCurrent);
+            K = new BasicUnit("K", "kelvin", this, Dimension.ThermodynamicTemperature);
+            cd = new BasicUnit("cd", "candela", this, Dimension.LuminousIntensity);
+            n = new BasicUnit("mol", "mole", this, Dimension.AmountOfSubstance);
         }
     }
 }

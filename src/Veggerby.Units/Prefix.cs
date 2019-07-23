@@ -59,29 +59,14 @@ namespace Veggerby.Units
 
         private Prefix(string name, string symbol, double factor)
         {
-            _name = name;
-            _symbol = symbol;
-            _factor = factor;
+            Name = name;
+            Symbol = symbol;
+            Factor = factor;
         }
 
-        private readonly string _name;
-        private readonly string _symbol;
-        private readonly double _factor;
-
-        public string Name
-        {
-            get { return _name; }
-        }
-
-        public string Symbol
-        {
-            get { return _symbol; }
-        }
-
-        public double Factor
-        {
-            get { return _factor; }
-        }
+        public string Name { get; }
+        public string Symbol { get; }
+        public double Factor { get; }
 
         public static implicit operator double(Prefix p)
         {
@@ -104,5 +89,7 @@ namespace Veggerby.Units
 
             return base.Equals(obj);
         }
+
+        public override int GetHashCode() => Factor.GetHashCode();
     }
 }
