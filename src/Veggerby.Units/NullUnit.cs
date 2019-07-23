@@ -4,29 +4,11 @@ namespace Veggerby.Units
 {
     public class NullUnit : Unit
     {
-        public override string Symbol
-        {
-            get { return string.Empty; }
-        }
+        public override string Symbol => string.Empty;
+        public override string Name => string.Empty;
+        public override UnitSystem System => UnitSystem.None;
+        public override Dimension Dimension => Dimension.None;
 
-        public override string Name
-        {
-            get { return string.Empty; }
-        }
-
-        public override UnitSystem System
-        {
-            get { return UnitSystem.None; }
-        }
-
-        public override Dimension Dimension
-        {
-            get { return Dimension.None; }
-        }
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor)
-        {
-            return visitor.Visit(this);
-        }
+        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
     }
 }

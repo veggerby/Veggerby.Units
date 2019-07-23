@@ -6,15 +6,11 @@ namespace Veggerby.Units
 {
     public class Measurement<T> where T : IComparable
     {
-        private readonly T _value;
-        private readonly Unit _unit;
-        private Calculator<T> _calculator;
-
         public Measurement(T value, Unit unit, Calculator<T> calculator)
         {
-            _value = value;
-            _unit = unit;
-            _calculator = calculator;
+            Value = value;
+            Unit = unit;
+            Calculator = calculator;
         }
 
         public static Measurement<T> operator +(Measurement<T> v1, Measurement<T> v2)
@@ -126,25 +122,11 @@ namespace Veggerby.Units
             return v.Value;
         }
 
-        public Unit Unit
-        {
-            get { return _unit; }
-        }
+        public Unit Unit { get; }
+        public T Value { get; }
+        public Calculator<T> Calculator { get; }
 
-        public T Value
-        {
-            get { return _value; }
-        }
-
-        public Calculator<T> Calculator
-        {
-            get { return _calculator; }
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0} {1}", Value, Unit);
-        }
+        public override string ToString() => $"{Value} {Unit}";
 
         public override bool Equals(object obj)
         {
@@ -156,30 +138,27 @@ namespace Veggerby.Units
             return base.Equals(obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode() ^ Unit.GetHashCode();
-        }
+        public override int GetHashCode() => Value.GetHashCode() ^ Unit.GetHashCode();
     }
-    
-    public class Int32Measurement : Measurement<int> 
+
+    public class Int32Measurement : Measurement<int>
     {
-        public Int32Measurement(int value, Unit unit) : base(value, unit, Int32Calculator.Instance) 
+        public Int32Measurement(int value, Unit unit) : base(value, unit, Int32Calculator.Instance)
         {
         }
-        
+
         public static implicit operator Int32Measurement(int v)
         {
             return new Int32Measurement(v, Unit.None);
         }
     }
-    
-    public class DoubleMeasurement : Measurement<double> 
+
+    public class DoubleMeasurement : Measurement<double>
     {
-        public DoubleMeasurement(double value, Unit unit) : base(value, unit, DoubleCalculator.Instance) 
+        public DoubleMeasurement(double value, Unit unit) : base(value, unit, DoubleCalculator.Instance)
         {
         }
-        
+
         public static implicit operator DoubleMeasurement(int v)
         {
             return new DoubleMeasurement(v, Unit.None);

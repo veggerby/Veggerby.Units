@@ -14,29 +14,12 @@ namespace Veggerby.Units.Dimensions
             _operands = new ReadOnlyCollection<Dimension>(OperationUtility.LinearizeMultiplication(operands).ToList());
         }
 
-        public override string Symbol
-        {
-            get { return string.Join(string.Empty, _operands.Select(x => x.Symbol)); }
-        }
+        public override string Symbol => string.Join(string.Empty, _operands.Select(x => x.Symbol));
+        public override string Name => string.Join(" * ", _operands.Select(x => x.Name));
 
-        public override string Name
-        {
-            get { return string.Join(" * ", _operands.Select(x => x.Name)); }
-        }
+        public override int GetHashCode() => Symbol.GetHashCode();
+        public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IProductOperation);
 
-        public override bool Equals(object obj)
-        {
-            return OperationUtility.Equals(this, obj as IProductOperation);
-        }
-
-        public override int GetHashCode()
-        {
-            return Symbol.GetHashCode();
-        }
-
-        IEnumerable<IOperand> IProductOperation.Operands
-        {
-            get { return _operands; }
-        }
+        IEnumerable<IOperand> IProductOperation.Operands => _operands;
     }
 }

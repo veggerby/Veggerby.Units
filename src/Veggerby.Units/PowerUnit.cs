@@ -14,39 +14,13 @@ namespace Veggerby.Units
             _exponent = exponent;
         }
 
-        public override string Symbol
-        {
-            get { return string.Format("{0}^{1}", _base.Symbol, _exponent); }
-        }
+        public override string Symbol => $"{_base.Symbol}^{_exponent}";
+        public override string Name => $"{_base.Name} ^ {_exponent}";
+        public override UnitSystem System => _base.System;
+        public override Dimension Dimension => _base.Dimension ^ _exponent;
+        IOperand IPowerOperation.Base => _base;
+        int IPowerOperation.Exponent => _exponent;
 
-        public override string Name
-        {
-            get { return string.Format("{0} ^ {1}", _base.Name, _exponent); }
-        }
-
-        public override UnitSystem System
-        {
-            get { return _base.System; }
-        }
-
-        public override Dimension Dimension
-        {
-            get { return _base.Dimension ^ _exponent; }
-        }
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor)
-        {
-            return visitor.Visit(this);
-        }
-
-        IOperand IPowerOperation.Base
-        {
-            get { return _base; }
-        }
-
-        int IPowerOperation.Exponent
-        {
-            get { return _exponent; }
-        }
+        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
     }
 }
