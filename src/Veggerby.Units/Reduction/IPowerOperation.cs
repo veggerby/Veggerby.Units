@@ -1,8 +1,7 @@
-namespace Veggerby.Units.Reduction
+namespace Veggerby.Units.Reduction;
+
+internal interface IPowerOperation : IOperand
 {
-    internal interface IPowerOperation : IOperand
-    {
-        IOperand Base { get; }
-        int Exponent { get; }
-    }
+    IOperand Base { get; }
+    int Exponent { get; }
 }

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Bash completion
+if [ -x "$(command -v dotnet)" ]; then
+    echo "
+function _dotnet_bash_complete()
+{
+    local cur=\"\${COMP_WORDS[COMP_CWORD]}\" IFS=\$'\n'
+    local candidates
+    read -d '' -ra candidates < <(dotnet complete --position \"\${COMP_POINT}\" \"\${COMP_LINE}\" 2>/dev/null)
+    read -d '' -ra COMPREPLY < <(compgen -W \"\${candidates[*]:-}\" -- \"\$cur\")
+}
+
+complete -f -F _dotnet_bash_complete dotnet
+" >> ~/.bashrc
+fi
+
+# Install tools
+
+if [ -x "$(command -v dotnet)" ]; then
+    dotnet tool install --global dotnet-outdated-tool
+    # dotnet tool install --global Nuke.GlobalTool
+    # dotnet tool install --global GitVersion.Tool
+    # dotnet tool install --global dotnet-ef
+
+    dotnet dev-certs https --trust
+fi
+
+check_packages() {
+    if ! dpkg -s "$@" > /dev/null 2>&1; then
+        sudo apt update
+        sudo apt-get -y install --no-install-recommends "$@"
+    fi
+}
+
+# check_packages bash-completion xdg-utils pass

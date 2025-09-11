@@ -1,8 +1,7 @@
-namespace Veggerby.Units.Reduction
+namespace Veggerby.Units.Reduction;
+
+internal interface IDivisionOperation : IOperand
 {
-    internal interface IDivisionOperation : IOperand
-    {
-        IOperand Dividend { get; }
-        IOperand Divisor { get; }
-    }
+    IOperand Dividend { get; }
+    IOperand Divisor { get; }
 }

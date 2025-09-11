@@ -1,20 +1,11 @@
 using System;
 
-namespace Veggerby.Units
-{
-    public class UnitException : Exception
-    {
-        public UnitException(Unit d1, Unit d2)
-            : base(string.Format("Cannot convert {0} to {1}, dimensions are incompatible ({2} and {2})", d1.Symbol, d2.Symbol))
-        {
-        }
-    }
+namespace Veggerby.Units;
 
-    public class PrefixException : Exception
-    {
-        public PrefixException(double factor)
-            : base(string.Format("Invalid unit prefix {0}", factor))
-        {
-        }
-    }
+public class UnitException(Unit u1, Unit u2) : Exception(string.Format("Cannot operate on {0} and {1}; incompatible dimensions ({2} vs {3})", u1?.Symbol, u2?.Symbol, u1?.Dimension, u2?.Dimension))
+{
+}
+
+public class PrefixException(double factor) : Exception(string.Format("Invalid unit prefix {0}", factor))
+{
 }

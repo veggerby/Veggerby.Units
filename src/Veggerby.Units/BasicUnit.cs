@@ -1,22 +1,13 @@
 using Veggerby.Units.Dimensions;
 
-namespace Veggerby.Units
+namespace Veggerby.Units;
+
+public class BasicUnit(string symbol, string name, UnitSystem system, Dimension dimension) : Unit
 {
-    public class BasicUnit : Unit
-    {
-        public BasicUnit(string symbol, string name, UnitSystem system, Dimension dimension)
-        {
-            Symbol = symbol;
-            Name = name;
-            System = system;
-            Dimension = dimension;
-        }
+    public override string Symbol { get; } = symbol;
+    public override string Name { get; } = name;
+    public override UnitSystem System { get; } = system;
+    public override Dimension Dimension { get; } = dimension;
 
-        public override string Symbol { get; }
-        public override string Name { get; }
-        public override UnitSystem System { get; }
-        public override Dimension Dimension { get; }
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
-    }
+    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 }

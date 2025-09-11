@@ -1,7 +1,6 @@
-﻿namespace Veggerby.Units
+﻿namespace Veggerby.Units;
+
+public class UnitSystem
 {
-    public class UnitSystem
-    {
-        public static UnitSystem None = new UnitSystem();
-    }
+    public static UnitSystem None = new();
 }

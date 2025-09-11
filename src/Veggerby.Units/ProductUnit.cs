@@ -1,31 +1,28 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
 
-namespace Veggerby.Units
+namespace Veggerby.Units;
+
+public class ProductUnit(Unit[] operands) : Unit, IProductOperation
 {
-    public class ProductUnit : Unit, IProductOperation
-    {
-        private readonly IList<Unit> _operands;
+    private readonly IList<Unit> _operands = new ReadOnlyCollection<Unit>(OperationUtility.LinearizeMultiplication(operands).ToList());
 
-        public ProductUnit(Unit[] operands)
-        {
-            _operands = new ReadOnlyCollection<Unit>(OperationUtility.LinearizeMultiplication(operands).ToList());
-        }
+    public override string Symbol => string.Join(string.Empty, _operands.Select(x => x.Symbol));
+    public override string Name => string.Join(" * ", _operands.Select(x => x.Name));
+    public override UnitSystem System => _operands.Any() ? _operands.First().System : UnitSystem.None;
+    public override Dimension Dimension => _operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None);
 
-        public override string Symbol => string.Join(string.Empty, _operands.Select(x => x.Symbol));
-        public override string Name => string.Join(" * ", _operands.Select(x => x.Name));
-        public override UnitSystem System => _operands.Any() ? _operands.First().System : UnitSystem.None;
-        public override Dimension Dimension =>  _operands.Select(x => x.Dimension).Multiply((x, y) => x * y, Dimension.None);
+    public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IProductOperation);
 
-        public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IProductOperation);
+    public override int GetHashCode() => Symbol.GetHashCode();
 
-        public override int GetHashCode() => Symbol.GetHashCode();
+    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 
-        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
+    IEnumerable<IOperand> IProductOperation.Operands => _operands;
 
-        IEnumerable<IOperand> IProductOperation.Operands => _operands;
-    }
+    internal override double GetScaleFactor() => _operands.Select(x => x.GetScaleFactor()).Aggregate(1d, (a, b) => a * b);
 }

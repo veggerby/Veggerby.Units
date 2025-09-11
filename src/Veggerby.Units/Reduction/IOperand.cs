@@ -1,6 +1,5 @@
-﻿namespace Veggerby.Units.Reduction
+﻿namespace Veggerby.Units.Reduction;
+
+internal interface IOperand
 {
-    internal interface IOperand
-    {
-    }
 }

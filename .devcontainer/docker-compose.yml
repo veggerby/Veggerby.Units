@@ -1,0 +1,19 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/base:bookworm
+    environment:
+      GH_TOKEN: ${GH_TOKEN:-}
+      NPM_AUTH_TOKEN: ${GH_TOKEN:-}
+      # Helps the dotnet cli not throwing exceptions on arm based macs
+      DOTNET_EnableWriteXorExecute: '0'
+    volumes:
+      # Forwards the local Docker socket to the container.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ../..:/workspaces:cached
+    # Keep container alive
+    command: sleep infinity
+
+networks:
+  default:
+    enable_ipv6: false
