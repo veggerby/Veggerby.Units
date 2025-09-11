@@ -151,16 +151,16 @@ public abstract class Unit : IOperand
 
     public static bool operator !=(Unit u1, Unit u2)
     {
-        // If both are null, or both are same instance, return true.
+        // If both are null, or both are same instance, they are equal => inequality false
         if (ReferenceEquals(u1, u2))
         {
-            return true;
+            return false;
         }
 
-        // If one is null, but not both, return false.
-        if (u1 == null || u2 == null)
+        // If one is null (but not both) => not equal => inequality true
+        if ((object)u1 == null || (object)u2 == null)
         {
-            return false;
+            return true;
         }
 
         return !u1.Equals(u2);

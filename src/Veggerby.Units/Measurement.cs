@@ -96,16 +96,16 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
 
     public static bool operator !=(Measurement<T> v1, Measurement<T> v2)
     {
-        // If both are null, or both are same instance, return true.
+        // If both are null, or both are same instance => equal => inequality false
         if (ReferenceEquals(v1, v2))
         {
-            return true;
+            return false;
         }
 
-        // If one is null, but not both, return false.
-        if (v1 == null || v2 == null)
+        // If one is null (but not both) => not equal => inequality true
+        if ((object)v1 == null || (object)v2 == null)
         {
-            return false;
+            return true;
         }
 
         return !v1.Equals(v2);

@@ -1,3 +1,5 @@
+using AwesomeAssertions;
+
 using Veggerby.Units.Conversion;
 
 using Xunit;
@@ -9,24 +11,40 @@ public class ConversionTests
     [Fact]
     public void Convert_Kilometre_To_Metre()
     {
+        // Arrange
         var m = new DoubleMeasurement(3.5, Prefix.k * Unit.SI.m); // 3.5 km
+
+        // Act
         var converted = m.ConvertTo(Unit.SI.m);
-        Assert.Equal(3500d, (double)converted, 10);
+
+        // Assert
+        ((double)converted).Should().BeApproximately(3500d, 1e-10);
     }
 
     [Fact]
     public void Convert_Foot_To_Metre()
     {
+        // Arrange
         var m = new DoubleMeasurement(10, Unit.Imperial.ft);
+
+        // Act
         var converted = m.ConvertTo(Unit.SI.m);
-        Assert.Equal(10 * ImperialUnitSystem.FeetToMetres, (double)converted, 10);
+
+        // Assert
+        ((double)converted).Should().BeApproximately(10 * ImperialUnitSystem.FeetToMetres, 1e-10);
     }
 
     [Fact]
     public void AlignUnits_ComparesDifferentButCompatible()
     {
+        // Arrange
         var v1 = new DoubleMeasurement(1, Prefix.k * Unit.SI.m); // 1000 m
         var v2 = new DoubleMeasurement(500, Unit.SI.m);
-        Assert.True(v2 < v1); // 500 m < 1000 m
+
+        // Act
+        var lessThan = v2 < v1; // 500 m < 1000 m
+
+        // Assert
+        lessThan.Should().BeTrue();
     }
 }
