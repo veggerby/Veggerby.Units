@@ -1,0 +1,24 @@
+mode: ContinuousDeployment
+tag-prefix: v
+
+branches:
+  main:
+    regex: ^main$
+    increment: Patch
+    is-mainline: true
+    prevent-increment-of-merged-branch-version: true
+    tag: prerelease
+    track-merge-target: false
+    is-release-branch: false
+
+ignore:
+  sha: []
+
+commit-message-incrementing: Enabled
+increment: Patch
+
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{CommitsSinceVersionSource}'
+assembly-informational-format: '{FullSemVer}'
+
+continuous-delivery-fallback-tag: prerelease
