@@ -18,7 +18,8 @@ public class ConversionTests
         var converted = m.ConvertTo(Unit.SI.m);
 
         // Assert
-        ((double)converted).Should().BeApproximately(3500d, 1e-10);
+        ((double)converted).Should().Be(3500d);
+        converted.Unit.Should().Be(Unit.SI.m);
     }
 
     [Fact]
@@ -26,12 +27,14 @@ public class ConversionTests
     {
         // Arrange
         var m = new DoubleMeasurement(10, Unit.Imperial.ft);
+        var expected = 10 * ImperialUnitSystem.FeetToMetres;
 
         // Act
         var converted = m.ConvertTo(Unit.SI.m);
 
         // Assert
-        ((double)converted).Should().BeApproximately(10 * ImperialUnitSystem.FeetToMetres, 1e-10);
+        ((double)converted).Should().Be(expected);
+        converted.Unit.Should().Be(Unit.SI.m);
     }
 
     [Fact]
@@ -42,9 +45,9 @@ public class ConversionTests
         var v2 = new DoubleMeasurement(500, Unit.SI.m);
 
         // Act
-        var lessThan = v2 < v1; // 500 m < 1000 m
+        var comparison = v2 < v1; // 500 m < 1000 m
 
         // Assert
-        lessThan.Should().BeTrue();
+        comparison.Should().BeTrue();
     }
 }
