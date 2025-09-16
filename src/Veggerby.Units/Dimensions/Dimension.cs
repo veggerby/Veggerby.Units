@@ -4,13 +4,13 @@ namespace Veggerby.Units.Dimensions;
 
 /// <summary>
 /// Base abstraction for physical dimensions (L, T, etc.) supporting algebraic composition mirroring unit
-/// operations. Structural equality is reduction based to allow commutative product comparisons.
+/// operations. Structural equality is reduction based so dimension graphs that are algebraically equivalent
+/// (e.g. L * T and T * L) compare equal. Dimensions intentionally mirror unit operator semantics but omit
+/// scaling concerns (dimensions are qualitative only).
 /// </summary>
 public abstract class Dimension : IOperand
 {
-    /// <summary>
-    /// Dimensionless property, eg. a constant (pi, e, etc.)
-    /// </summary>
+    /// <summary>Dimensionless identity (used for constants or fully cancelled expressions).</summary>
     public static readonly Dimension None = new NullDimension();
 
     /// <summary>Length (L)</summary>
@@ -55,7 +55,10 @@ public abstract class Dimension : IOperand
         return new PowerDimension(@base, exponent);
     }
 
-    /// <summary>Addition requiring identical dimensions (identity returned).</summary>
+    /// <summary>
+    /// Addition requiring identical dimensions. No coercion or inference is attempted. Returns the left
+    /// operand to avoid allocation.
+    /// </summary>
     public static Dimension operator +(Dimension d1, Dimension d2)
     {
         if (d1 != d2)
@@ -66,7 +69,10 @@ public abstract class Dimension : IOperand
         return d1;
     }
 
-    /// <summary>Subtraction requiring identical dimensions (identity returned).</summary>
+    /// <summary>
+    /// Subtraction requiring identical dimensions. Returns the left operand. Throws
+    /// <see cref="DimensionException"/> on mismatch.
+    /// </summary>
     public static Dimension operator -(Dimension d1, Dimension d2)
     {
         if (d1 != d2)
@@ -77,7 +83,7 @@ public abstract class Dimension : IOperand
         return d1;
     }
 
-    /// <summary>Multiplicative composition with reduction/cancellation when possible.</summary>
+    /// <summary>Multiplicative composition with reduction / cancellation of reciprocal factors.</summary>
     public static Dimension operator *(Dimension d1, Dimension d2)
     {
         if (d1 == Dimension.None) // and if d2 == None, return d2 (=None)
@@ -96,14 +102,14 @@ public abstract class Dimension : IOperand
             Multiply(d1, d2);
     }
 
-    /// <summary>Reciprocal (1/divisor).</summary>
+    /// <summary>Reciprocal (1/divisor) with reduction applied.</summary>
     public static Dimension operator /(int dividend, Dimension divisor)
     {
         return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, Dimension.None, divisor) ??
             Divide(Dimension.None, divisor);
     }
 
-    /// <summary>Division with reduction when possible.</summary>
+    /// <summary>Division with rearrangement and reduction (cancellation + power aggregation).</summary>
     public static Dimension operator /(Dimension dividend, Dimension divisor)
     {
         if (divisor == Dimension.None)
@@ -116,7 +122,7 @@ public abstract class Dimension : IOperand
             Divide(dividend, divisor);
     }
 
-    /// <summary>Exponentiation (negative exponents produce reciprocal).</summary>
+    /// <summary>Exponentiation (negative exponents produce reciprocal; expansion applied for composites).</summary>
     public static Dimension operator ^(Dimension @base, int exponent)
     {
         if (exponent < 0)
@@ -138,7 +144,7 @@ public abstract class Dimension : IOperand
                Power(@base, exponent);
     }
 
-    /// <summary>Structural equality (reduction aware).</summary>
+    /// <summary>Structural equality (reduction aware + commutative for products).</summary>
     public static bool operator ==(Dimension d1, Dimension d2)
     {
         // If both are null, or both are same instance, return true.

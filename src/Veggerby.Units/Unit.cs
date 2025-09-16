@@ -5,48 +5,74 @@ using Veggerby.Units.Visitors;
 namespace Veggerby.Units;
 
 /// <summary>
-/// Abstract base for all unit types (basic, derived, composite, prefixed, scaled). Supports algebraic composition via
-/// operator overloading while enforcing dimensional correctness for additive operations. Multiplicative operators use
-/// reduction utilities to minimise intermediate allocations and normalise structural equality.
+/// Abstract base for all unit varieties (basic, derived, composite, prefixed, scaled).
+/// Provides algebraic composition through operator overloads while enforcing dimensional correctness
+/// for additive operators (+ and -). Multiplicative operators (*, /, ^) delegate to <see cref="OperationUtility"/>
+/// to perform:
+/// <list type="bullet">
+/// <item><description>Flattening of nested product / division graphs</description></item>
+/// <item><description>Cancellation of reciprocal factors</description></item>
+/// <item><description>Aggregation of identical factors into powers</description></item>
+/// <item><description>Expansion / distribution of powers across composite operands</description></item>
+/// </list>
+/// This guarantees that structurally equivalent expressions reduce to the same canonical form which underpins
+/// equality and hash code semantics.
 /// </summary>
 public abstract class Unit : IOperand
 {
-    /// <summary>Dimensionless identity unit (neutral element for multiplication/division).</summary>
+    /// <summary>
+    /// Dimensionless identity unit (multiplicative identity). Acts as neutral element for * and / and as the
+    /// result of raising any unit to the power 0. Represented internally by <see cref="NullUnit"/>.
+    /// </summary>
     public static Unit None = new NullUnit();
 
-    /// <summary>Singleton instance of the SI unit system.</summary>
+    /// <summary>Singleton instance of the International (SI) unit system.</summary>
     public static InternationalUnitSystem SI = new();
-    /// <summary>Singleton subset of the Imperial unit system.</summary>
+    /// <summary>Singleton instance of the (subset) Imperial unit system.</summary>
     public static ImperialUnitSystem Imperial = new();
 
-    /// <summary>Short symbolic representation (e.g. m, kg, N·m).</summary>
+    /// <summary>Short symbolic representation (e.g. m, kg, N·m). Must be stable and pure.</summary>
     public abstract string Symbol { get; }
-    /// <summary>Human readable name.</summary>
+    /// <summary>Human readable name used for diagnostic and descriptive output.</summary>
     public abstract string Name { get; }
-    /// <summary>Owning <see cref="UnitSystem"/> or <see cref="UnitSystem.None"/> when not applicable.</summary>
+    /// <summary>Owning <see cref="UnitSystem"/> or <see cref="UnitSystem.None"/> when the unit is synthetic.</summary>
     public abstract UnitSystem System { get; }
-    /// <summary>Physical <see cref="Dimensions.Dimension"/> associated with this unit.</summary>
+    /// <summary>Physical <see cref="Dimensions.Dimension"/> associated with this unit (never null).</summary>
     public abstract Dimension Dimension { get; }
 
-    /// <summary>Creates a product of the supplied operands without reduction (internal helpers prefer reduction first).</summary>
+    /// <summary>
+    /// Creates a product of the supplied operands without performing reduction.
+    /// Prefer using the * operator which applies canonicalisation first.
+    /// </summary>
     public static Unit Multiply(params Unit[] operands)
     {
         return new ProductUnit(operands);
     }
 
-    /// <summary>Creates a division unit (dividend/divisor) without performing cancellation.</summary>
+    /// <summary>
+    /// Creates a division unit (dividend/divisor) without performing cancellation.
+    /// Prefer using the / operator which applies rearrangement and reduction.
+    /// </summary>
     public static Unit Divide(Unit dividend, Unit divisor)
     {
         return new DivisionUnit(dividend, divisor);
     }
 
-    /// <summary>Creates a power unit (@base^exponent) without expansion.</summary>
+    /// <summary>
+    /// Creates a power unit (base^exponent) without expansion or negative exponent handling.
+    /// Prefer using the ^ operator which converts negative exponents into reciprocal structures and expands
+    /// composite operands when beneficial.
+    /// </summary>
     public static Unit Power(Unit @base, int exponent)
     {
         return new PowerUnit(@base, exponent);
     }
 
-    /// <summary>Adds two units ensuring dimensional equality; returns left operand when compatible.</summary>
+    /// <summary>
+    /// Adds two units ensuring structural equality (dimension + structure). Addition never performs implicit
+    /// conversion; operands must be identical by <see cref="operator ==(Unit, Unit)"/>.
+    /// Returns the left operand to avoid allocation.
+    /// </summary>
     public static Unit operator +(Unit u1, Unit u2)
     {
         if (u1 != u2)
@@ -57,7 +83,10 @@ public abstract class Unit : IOperand
         return u1;
     }
 
-    /// <summary>Subtracts two units ensuring dimensional equality; returns left operand when compatible.</summary>
+    /// <summary>
+    /// Subtracts two units ensuring structural equality. Subtraction never performs implicit
+    /// conversion; operands must be identical. Returns the left operand to avoid allocation.
+    /// </summary>
     public static Unit operator -(Unit u1, Unit u2)
     {
         if (u1 != u2)
@@ -68,7 +97,10 @@ public abstract class Unit : IOperand
         return u1;
     }
 
-    /// <summary>Multiplies two units with reduction (cancellation / power aggregation) applied when possible.</summary>
+    /// <summary>
+    /// Multiplies two units applying canonical reduction (factor cancellation, power aggregation, flattening)
+    /// producing a minimal structural representation.
+    /// </summary>
     public static Unit operator *(Unit u1, Unit u2)
     {
         if (u1 == None) // and if u2 == None, return u2 (=None)
@@ -87,13 +119,19 @@ public abstract class Unit : IOperand
             Multiply(u1, u2);
     }
 
-    /// <summary>Applies an integer scaling factor via prefix lookup.</summary>
+    /// <summary>
+    /// Applies an integer scaling factor via prefix lookup.
+    /// Throws <see cref="PrefixException"/> if no matching decimal prefix exists.
+    /// </summary>
     public static Unit operator *(int factor, Unit unit)
     {
         return ((double)factor) * unit;
     }
 
-    /// <summary>Applies a floating point scaling factor via prefix lookup (throws when no exact prefix exists).</summary>
+    /// <summary>
+    /// Applies a floating point scaling factor via prefix lookup.
+    /// Throws <see cref="PrefixException"/> if the factor does not match a known prefix exactly.
+    /// </summary>
     public static Unit operator *(double factor, Unit unit)
     {
         Prefix pre = factor;
@@ -108,20 +146,20 @@ public abstract class Unit : IOperand
             unit);
     }
 
-    /// <summary>Applies an explicit prefix instance to a unit.</summary>
+    /// <summary>Applies an explicit prefix instance to a unit (no validation of prefix uniqueness performed).</summary>
     public static Unit operator *(Prefix pre, Unit unit)
     {
         return new PrefixedUnit(pre, unit);
     }
 
-    /// <summary>Creates a reciprocal unit (1/divisor) with reduction.</summary>
+    /// <summary>Creates a reciprocal unit (1/divisor) with reduction and cancellation applied.</summary>
     public static Unit operator /(int dividend, Unit divisor)
     {
         return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, None, divisor) ??
             Divide(None, divisor);
     }
 
-    /// <summary>Divides two units applying reduction (cancellation / power collapsing) when possible.</summary>
+    /// <summary>Divides two units applying rearrangement, cancellation and power collapsing.</summary>
     public static Unit operator /(Unit dividend, Unit divisor)
     {
         if (divisor == None)
@@ -134,7 +172,11 @@ public abstract class Unit : IOperand
             Divide(dividend, divisor);
     }
 
-    /// <summary>Raises a unit to an integer exponent. Negative exponents yield the reciprocal of the positive power.</summary>
+    /// <summary>
+    /// Raises a unit to an integer exponent. Negative exponents yield the reciprocal of the positive power.
+    /// Exponentiation distributes across composite products and divisions where that produces a simpler
+    /// canonical structure.
+    /// </summary>
     public static Unit operator ^(Unit @base, int exponent)
     {
         if (exponent < 0)
@@ -156,7 +198,7 @@ public abstract class Unit : IOperand
                Power(@base, exponent);
     }
 
-    /// <summary>Structural equality (via reduction) supporting commutative product comparison.</summary>
+    /// <summary>Structural equality (reduction + commutative normalisation for products).</summary>
     public static bool operator ==(Unit u1, Unit u2)
     {
         // If both are null, or both are same instance, return true.
@@ -174,7 +216,7 @@ public abstract class Unit : IOperand
         return u1.Equals(u2);
     }
 
-    /// <summary>Negation of structural equality.</summary>
+    /// <summary>Negation of <see cref="operator ==(Unit, Unit)"/>.</summary>
     public static bool operator !=(Unit u1, Unit u2)
     {
         // If both are null, or both are same instance, they are equal => inequality false

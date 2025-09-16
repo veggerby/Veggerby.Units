@@ -4,13 +4,21 @@ namespace Veggerby.Units.Conversion;
 
 /// <summary>
 /// Measurement conversion helpers. Conversions proceed via canonical scale factors relative to SI base units.
+/// Only integral (int) and double calculators are supported; other generic numeric types will raise
+/// <see cref="NotSupportedException"/>.
 /// </summary>
 public static class Extensions
 {
     /// <summary>
-    /// Converts a measurement to an equivalent value expressed in the target unit. Throws when dimensions are
-    /// incompatible or calculator type unsupported.
+    /// Converts a measurement to an equivalent value expressed in the target unit.
     /// </summary>
+    /// <typeparam name="T">Underlying numeric type (currently int or double supported).</typeparam>
+    /// <param name="value">Source measurement (must not be null).</param>
+    /// <param name="unit">Target unit (must not be null and must have identical dimension).</param>
+    /// <returns>A new measurement expressed in the target unit (or the original instance if already expressed in that unit).</returns>
+    /// <exception cref="ArgumentNullException">value or unit is null.</exception>
+    /// <exception cref="MeasurementConversionException">Dimensions are incompatible.</exception>
+    /// <exception cref="NotSupportedException">Underlying numeric type unsupported.</exception>
     public static Measurement<T> ConvertTo<T>(this Measurement<T> value, Unit unit) where T : IComparable
     {
         if (value == null)
@@ -63,9 +71,14 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Ensures v1 is expressed in the same unit as v2 (converting when necessary). Used internally for
-    /// relational comparisons.
+    /// Ensures <paramref name="v1"/> is expressed in the same unit as <paramref name="v2"/> (converting when necessary).
+    /// Used internally for relational comparisons; no dimension mismatch can occur because both measurements
+    /// must already be comparable for operators to be valid.
     /// </summary>
+    /// <typeparam name="T">Underlying numeric type.</typeparam>
+    /// <param name="v1">Left measurement to align.</param>
+    /// <param name="v2">Reference measurement whose unit will be matched.</param>
+    /// <returns>Either the original left measurement (if units already match) or a converted measurement.</returns>
     public static Measurement<T> AlignUnits<T>(this Measurement<T> v1, Measurement<T> v2) where T : IComparable
     {
         if (v1.Unit == v2.Unit)
