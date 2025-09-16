@@ -10,6 +10,7 @@ var switcher = new BenchmarkSwitcher(new[]
     typeof(ComplexDimensionReductionBenchmarks),
     typeof(EqualityBenchmarks),
     typeof(DivisionCancellationBenchmarks),
+    typeof(PowerDistributionBenchmarks),
 });
 var actualArgs = args.Length == 0 ? new[] { "--filter", "*MultiplyThenDivideCancellation*" } : args;
 return switcher.Run(actualArgs).Any(s => s.HasCriticalValidationErrors) ? 1 : 0;

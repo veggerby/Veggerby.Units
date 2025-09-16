@@ -37,7 +37,18 @@ public class PowerUnit : Unit, IPowerOperation, ICanonicalFactorsProvider
     internal override double GetScaleFactor() => Math.Pow(_base.GetScaleFactor(), _exponent);
 
     /// <inheritdoc />
-    public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IPowerOperation);
+    public override bool Equals(object obj)
+    {
+        if (obj is IPowerOperation po)
+        {
+            return OperationUtility.Equals(this, po);
+        }
+        if (obj is IOperand op)
+        {
+            return OperationUtility.Equals(this, op);
+        }
+        return false;
+    }
 
     /// <inheritdoc />
     public override int GetHashCode()

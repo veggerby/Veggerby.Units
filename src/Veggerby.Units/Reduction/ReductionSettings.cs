@@ -29,4 +29,10 @@ internal static class ReductionSettings
     /// faster equality and downstream reductions. Experimental; default off.
     /// </summary>
     public static bool UseFactorVector { get; set; } = false;
+
+    /// <summary>
+    /// When enabled, power expansion over products/divisions is deferred (lazy) unless exponent is negative
+    /// or further reduction requires distribution. Experimental; default off.
+    /// </summary>
+    public static bool LazyPowerExpansion { get; set; } = false;
 }

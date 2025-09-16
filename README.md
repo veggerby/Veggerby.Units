@@ -107,4 +107,3 @@ Then run only equality benchmarks comparing structural normalization cost:
 ```bash
 dotnet run -c Release --project bench/Veggerby.Units.Benchmarks -- --filter *EqualityBenchmarks*
 ```
-

@@ -22,7 +22,18 @@ public class PowerDimension : Dimension, IPowerOperation, ICanonicalFactorsProvi
     int IPowerOperation.Exponent => _exponent;
 
     /// <inheritdoc />
-    public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IPowerOperation);
+    public override bool Equals(object obj)
+    {
+        if (obj is IPowerOperation po)
+        {
+            return OperationUtility.Equals(this, po);
+        }
+        if (obj is IOperand op)
+        {
+            return OperationUtility.Equals(this, op);
+        }
+        return false;
+    }
 
     /// <inheritdoc />
     public override int GetHashCode()

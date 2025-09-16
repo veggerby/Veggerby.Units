@@ -43,30 +43,155 @@ internal static class OperationUtility
             {
                 if (ReferenceEquals(fv1.Value.Factors, fv2.Value.Factors))
                 {
-                    return true;
+                    return true; // identical cached vector
                 }
                 var a = fv1.Value.Factors;
                 var b = fv2.Value.Factors;
-                if (a.Length != b.Length)
+                if (a.Length == b.Length)
                 {
-                    return false;
-                }
-                for (int i = 0; i < a.Length; i++)
-                {
-                    if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent)
+                    bool all = true;
+                    for (int i = 0; i < a.Length; i++)
                     {
-                        return false;
+                        if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent)
+                        {
+                            all = false;
+                            break;
+                        }
+                    }
+                    if (all)
+                    {
+                        return true; // positive match
                     }
                 }
-                return true;
+                // Negative / inconclusive case: fall through for cross-type normalisation attempts.
             }
         }
 
-        return
-            Equals(o1 as IProductOperation, o2 as IProductOperation) ||
+        if (Equals(o1 as IProductOperation, o2 as IProductOperation) ||
             Equals(o1 as IDivisionOperation, o2 as IDivisionOperation) ||
             Equals(o1 as IPowerOperation, o2 as IPowerOperation) ||
-            Equals(o1 as PrefixedUnit, o2 as PrefixedUnit);
+            Equals(o1 as PrefixedUnit, o2 as PrefixedUnit))
+        {
+            return true;
+        }
+
+        if (ReductionSettings.LazyPowerExpansion)
+        {
+            if (o1 is IPowerOperation p1 && p1.Base is IProductOperation bp1 && o2 is IProductOperation prod2)
+            {
+                if (EqualsDistributedPower(bp1, p1.Exponent, prod2)) { return true; }
+                // Fallback: temporarily force distribution and compare
+                if (TryExpandAndCompare(p1, prod2)) { return true; }
+            }
+            else if (o2 is IPowerOperation p2 && p2.Base is IProductOperation bp2 && o1 is IProductOperation prod1)
+            {
+                if (EqualsDistributedPower(bp2, p2.Exponent, prod1)) { return true; }
+                if (TryExpandAndCompare(p2, prod1)) { return true; }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool EqualsDistributedPower(IProductOperation productBase, int exponent, IProductOperation distributed)
+    {
+        // Build multiplicity map for canonical (root) base operands. If the base product already
+        // contains inner power operands (e.g. m^2 * s * kg) we treat that as the base factor 'm'
+        // with multiplicity 2 so that an outer exponent ((m^2)*s*kg)^5 can match a distributed
+        // form containing m^10 (where 10 = 2 * 5).
+        var counts = new Dictionary<IOperand, int>();
+        foreach (var operand in productBase.Operands)
+        {
+            if (operand is IPowerOperation innerPow && innerPow.Exponent > 0)
+            {
+                var root = innerPow.Base;
+                if (!counts.TryGetValue(root, out var c)) { counts[root] = innerPow.Exponent; }
+                else { counts[root] = c + innerPow.Exponent; }
+            }
+            else
+            {
+                if (!counts.TryGetValue(operand, out var c)) { counts[operand] = 1; }
+                else { counts[operand] = c + 1; }
+            }
+        }
+
+        // Each distributed operand should be a power with exponent that is a multiple of the original exponent
+        foreach (var op in distributed.Operands)
+        {
+            if (op is not IPowerOperation p)
+            {
+                return false; // distributed form must be powers
+            }
+
+            // Exponent must be positive multiple of original exponent
+            if (p.Exponent <= 0 || p.Exponent % exponent != 0)
+            {
+                return false;
+            }
+            var factorMultiplicity = p.Exponent / exponent; // how many times this base appeared originally
+            // Attempt direct key first (most common case). If no direct hit, attempt structural match
+            // across existing keys (covers reference differences for equivalent base operands).
+            if (counts.TryGetValue(p.Base, out var existing))
+            {
+                var remainingDirect = existing - factorMultiplicity;
+                if (remainingDirect < 0) { return false; }
+                counts[p.Base] = remainingDirect;
+                continue;
+            }
+
+            IOperand match = null;
+            foreach (var key in counts.Keys.ToList())
+            {
+                if (counts[key] > 0 && Equals(key, p.Base))
+                {
+                    match = key;
+                    break;
+                }
+            }
+            if (match == null)
+            {
+                return false; // no structural base match
+            }
+
+            var remaining = counts[match] - factorMultiplicity;
+            if (remaining < 0) { return false; }
+            counts[match] = remaining;
+        }
+
+        // All multiplicities must be consumed
+        return counts.Values.All(v => v == 0);
+    }
+
+    private static bool TryExpandAndCompare(IPowerOperation powerOp, IProductOperation otherProduct)
+    {
+        var original = ReductionSettings.LazyPowerExpansion;
+        try
+        {
+            ReductionSettings.LazyPowerExpansion = false; // force distribution
+            // Reconstruct distributed form using existing expansion logic by calling through power delegate indirectly
+            // We do not have generic multiply here; create product from distributed base operands raised to exponent
+            if (powerOp.Base is IProductOperation bp)
+            {
+                // Determine operand kind (units or dimensions)
+                if (bp.Operands.FirstOrDefault() is Unit)
+                {
+                    var distributedUnits = bp.Operands.Select(o => (Unit)o).Select(u => u ^ powerOp.Exponent).ToArray();
+                    var expanded = distributedUnits.Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+                    return Equals(expanded as IOperand, otherProduct);
+                }
+                if (bp.Operands.FirstOrDefault() is Dimensions.Dimension)
+                {
+                    var distributedDims = bp.Operands.Select(o => (Dimensions.Dimension)o).Select(d => d ^ powerOp.Exponent).ToArray();
+                    var expanded = distributedDims.Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+                    return Equals(expanded as IOperand, otherProduct);
+                }
+            }
+        }
+        finally
+        {
+            ReductionSettings.LazyPowerExpansion = original;
+        }
+        return false;
     }
 
     private static bool Equals(IProductOperation o1, IProductOperation o2)
@@ -82,7 +207,8 @@ internal static class OperationUtility
 
         return o1.Operands
             .OrderBy(x => x.GetHashCode())
-            .Zip(o2.Operands.OrderBy(x => x.GetHashCode()), Equals)
+            .ThenBy(x => x.ToString()) // deterministic tie-breaker to avoid hash collision induced mismatches
+            .Zip(o2.Operands.OrderBy(x => x.GetHashCode()).ThenBy(x => x.ToString()), Equals)
             .All(x => x);
     }
 
@@ -360,6 +486,10 @@ internal static class OperationUtility
 
         if (@base is IProductOperation)
         {
+            if (ReductionSettings.LazyPowerExpansion)
+            {
+                return default; // caller constructs Power wrapper
+            }
             return multiply((@base as IProductOperation).Operands.Select(x => power((T)x, exponent)));
         }
 

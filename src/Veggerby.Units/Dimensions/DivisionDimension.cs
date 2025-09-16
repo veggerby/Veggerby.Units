@@ -1,4 +1,5 @@
 using System.Linq;
+
 using Veggerby.Units.Reduction;
 
 namespace Veggerby.Units.Dimensions;
