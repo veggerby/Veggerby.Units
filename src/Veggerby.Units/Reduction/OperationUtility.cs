@@ -4,8 +4,22 @@ using System.Linq;
 
 namespace Veggerby.Units.Reduction;
 
+/// <summary>
+/// Core internal algorithms for structural normalisation of unit and dimension expressions. Responsibilities:
+/// <list type="bullet">
+/// <item><description>Reassociation so that division becomes outermost (enabling simpler cancellation rules)</description></item>
+/// <item><description>Factor cancellation across products and divisions</description></item>
+/// <item><description>Aggregation of repeated factors into power expressions</description></item>
+/// <item><description>Distribution / consolidation of powers (e.g. (A*B)^n => A^n*B^n)</description></item>
+/// <item><description>Structural equality checks decoupled from public API equality to avoid recursion</description></item>
+/// </list>
+/// The utility operates purely on the marker / operation interfaces so it can be shared between Units and Dimensions.
+/// </summary>
 internal static class OperationUtility
 {
+    /// <summary>
+    /// Structural equality comparison for two operands ignoring surface type differences where canonical form would match.
+    /// </summary>
     internal static bool Equals(IOperand o1, IOperand o2)
     {
         if (ReferenceEquals(o1, o2))
@@ -69,7 +83,8 @@ internal static class OperationUtility
     }
 
     /// <summary>
-    /// Rearrange operands to ensure that any division is <u>always</u> outermost, i.e. A*(B/C) => (A*B)/C
+    /// Reassociates multiplication operands so that any embedded division becomes outermost (A*(B/C) => (A*B)/C).
+    /// Simplifies downstream cancellation logic.
     /// </summary>
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="multiply">Multiplication function <u>with</u> reduction/rearrange</param>
@@ -95,7 +110,7 @@ internal static class OperationUtility
     }
 
     /// <summary>
-    /// Rearrange operands to ensure we only have a single division operation (and it is <u>always</u> outermost, i.e. (A/B)/(C/D) => (A*D)/(B*C)
+    /// Reassociates nested division so only a single outermost division remains ( (A/B)/(C/D) => (A*D)/(B*C) ).
     /// </summary>
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="multiply">Multiplication function <u>with</u> reduction/rearrange</param>
@@ -126,9 +141,7 @@ internal static class OperationUtility
         return default;
     }
 
-    /// <summary>
-    /// Reduce a division operation, i.e. (A*C)/(A*B) => C/B
-    /// </summary>
+    /// <summary>Reduces a division by cancelling common factors ( (A*C)/(A*B) => C/B ).</summary>
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="multiply">Multiplication function <u>with</u> reduction/rearrange</param>
     /// <param name="divide">Division function <u>with</u> reduction/rearrange</param>
@@ -167,9 +180,7 @@ internal static class OperationUtility
         return default;
     }
 
-    /// <summary>
-    /// Reduce a division operation, i.e. (A*C)/(A*B) => C/B
-    /// </summary>
+    /// <summary>Aggregates repeated multiplicative factors into powers ( (A*A*A*B) => A^3*B ).</summary>
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="multiply">Multiplication function <u>with</u> reduction/rearrange</param>
     /// <param name="power">Power function <u>with</u> reduction/rearrange</param>
@@ -187,9 +198,7 @@ internal static class OperationUtility
         return powers.Any(x => x.IsReduced) ? multiply(powers.Select(x => x.Operand)) : default;
     }
 
-    /// <summary>
-    /// Ensure that multiplication operations are linear (e.g. (A*B)*(C*D*E)*F => A*B*C*D*E*F
-    /// </summary>
+    /// <summary>Flattens nested product structures ( (A*B)*(C*D*E)*F => A*B*C*D*E*F ).</summary>
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="operands">The operands to linearize</param>
     /// <returns>A linear set of operands, i.e. if multiplications occur, the operands will all be included in list</returns>
@@ -199,7 +208,8 @@ internal static class OperationUtility
     }
 
     /// <summary>
-    ///
+    /// Expands power expressions over composite structures and consolidates nested powers / division forms.
+    /// Handles cases such as (A/B)^n and (A^m)^n. Returns default when no transformation applies.
     /// </summary>
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="multiply">Multiplication function <u>with</u> reduction/rearrange</param>

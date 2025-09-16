@@ -1,7 +1,8 @@
 namespace Veggerby.Units.Visitors;
 
 // Deprecated: Scale factors now computed via Unit.GetScaleFactor overrides.
-// Retained as an empty stub to avoid breaking existing reflection or future merges.
+// Retained as an empty stub to avoid potential breaking changes for code using reflection-based discovery or
+// future merges that relied on the earlier visitor based factor accumulation.
 internal sealed class FactorVisitor : Visitor<double>
 {
     public static readonly FactorVisitor Instance = new();

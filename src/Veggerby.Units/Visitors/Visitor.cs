@@ -2,7 +2,8 @@
 
 /// <summary>
 /// Visitor pattern abstraction enabling traversal without exposing concrete unit internal state externally.
-/// Implementations should be side‑effect free.
+/// Implementations should be side‑effect free and may assume immutability of the visited structures.
+/// New unit varieties should extend this contract to avoid default switch / type checks elsewhere.
 /// </summary>
 public abstract class Visitor<T>
 {
