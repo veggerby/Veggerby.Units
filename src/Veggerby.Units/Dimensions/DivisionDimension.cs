@@ -16,7 +16,16 @@ public class DivisionDimension : Dimension, IDivisionOperation
     public override string Symbol => string.Format("{0}/{1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Symbol, _divisor.Symbol);
     public override string Name => string.Format("{0} / {1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Name, _divisor.Name);
 
-    public override int GetHashCode() => Symbol.GetHashCode();
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 23;
+            hash = hash * 31 + _dividend.GetHashCode();
+            hash = hash * 31 + (_divisor.GetHashCode() ^ unchecked((int)0xAAAAAAAA));
+            return hash ^ 0x3333AAAA;
+        }
+    }
     public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IDivisionOperation);
 
     IOperand IDivisionOperation.Dividend => _dividend;

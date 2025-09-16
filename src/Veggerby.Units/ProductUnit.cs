@@ -18,7 +18,20 @@ public class ProductUnit(Unit[] operands) : Unit, IProductOperation
 
     public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IProductOperation);
 
-    public override int GetHashCode() => Symbol.GetHashCode();
+    public override int GetHashCode()
+    {
+        // Order-insensitive hash: sort operand hash codes then combine
+        unchecked
+        {
+            int hash = 17;
+            foreach (var h in _operands.Select(o => o.GetHashCode()).OrderBy(x => x))
+            {
+                hash = hash * 31 + h;
+            }
+            // Distinguish product from other composite forms minimally
+            return hash ^ 0x55555555;
+        }
+    }
 
     internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 

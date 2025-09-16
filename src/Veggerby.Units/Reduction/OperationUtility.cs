@@ -217,7 +217,16 @@ internal static class OperationUtility
 
         if (@base is IDivisionOperation)
         {
-            return divide(power((T)(@base as IDivisionOperation).Dividend, exponent), power((T)(@base as IDivisionOperation).Divisor, exponent));
+            var dividend = (T)(@base as IDivisionOperation).Dividend;
+            var divisor = (T)(@base as IDivisionOperation).Divisor;
+
+            // If dividend is a NullUnit/NullDimension (symbol empty) treat any power as identity (1^n == 1)
+            if (dividend is NullUnit || dividend is Dimensions.NullDimension)
+            {
+                return divide(dividend, power(divisor, exponent));
+            }
+
+            return divide(power(dividend, exponent), power(divisor, exponent));
         }
 
         if (@base is IProductOperation)

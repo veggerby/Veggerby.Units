@@ -23,7 +23,17 @@ public class DivisionUnit : Unit, IDivisionOperation
     IOperand IDivisionOperation.Divisor => _divisor;
 
     public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IDivisionOperation);
-    public override int GetHashCode() => Symbol.GetHashCode();
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            // Order matters for division; incorporate a prime and tag
+            int hash = 23;
+            hash = hash * 31 + _dividend.GetHashCode();
+            hash = hash * 31 + (_divisor.GetHashCode() ^ unchecked((int)0xAAAAAAAA));
+            return hash ^ 0x33333333;
+        }
+    }
 
     internal override double GetScaleFactor() => _dividend.GetScaleFactor() / _divisor.GetScaleFactor();
 }

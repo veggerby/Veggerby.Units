@@ -26,4 +26,17 @@ public class PowerUnit : Unit, IPowerOperation
     internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 
     internal override double GetScaleFactor() => Math.Pow(_base.GetScaleFactor(), _exponent);
+
+    public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IPowerOperation);
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 29;
+            hash = hash * 37 + _base.GetHashCode();
+            hash = hash * 37 + _exponent.GetHashCode();
+            return hash ^ 0x77777777;
+        }
+    }
 }
