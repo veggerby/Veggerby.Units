@@ -19,6 +19,7 @@ internal static class OperationUtility
 {
     /// <summary>
     /// Structural equality comparison for two operands ignoring surface type differences where canonical form would match.
+    /// Complexity: O(n log n) for product comparison due to ordered hash based zip (n = operand count in product).
     /// </summary>
     internal static bool Equals(IOperand o1, IOperand o2)
     {
@@ -118,6 +119,7 @@ internal static class OperationUtility
     /// <param name="dividend">The dividend</param>
     /// <param name="divisor">The divisor</param>
     /// <returns>A rearrange operand <b>if</b> any rearranging has occurred, otherwise default(T)</returns>
+    /// <remarks>Complexity: O(1) pattern inspection; no enumeration except nested apply.</remarks>
     internal static T RearrangeDivision<T>(Func<T, T, T> multiply, Func<T, T, T> divide, T dividend, T divisor)
         where T : IOperand
     {
@@ -149,6 +151,7 @@ internal static class OperationUtility
     /// <param name="dividend">The dividend</param>
     /// <param name="divisor">The divisor</param>
     /// <returns>A reduced operand <b>if</b> any reduction has occurred, otherwise default(T)</returns>
+    /// <remarks>Complexity: O(n log n) grouping (n = total flattened factors across dividend &amp; divisor).</remarks>
     internal static T ReduceDivision<T>(Func<IEnumerable<T>, T> multiply, Func<T, T, T> divide, Func<T, int, T> pow, T dividend, T divisor)
         where T : IOperand
     {
@@ -186,6 +189,7 @@ internal static class OperationUtility
     /// <param name="power">Power function <u>with</u> reduction/rearrange</param>
     /// <param name="operands">The operands to reduce</param>
     /// <returns>A reduced operand <b>if</b> any reduction has occurred, otherwise default(T)</returns>
+    /// <remarks>Complexity: O(n) factor enumeration then grouping (hash-based). n = total flattened multiplicative factors.</remarks>
     internal static T ReduceMultiplication<T>(Func<IEnumerable<T>, T> multiply, Func<T, int, T> power, params T[] operands)
         where T : IOperand
     {
@@ -202,6 +206,7 @@ internal static class OperationUtility
     /// <typeparam name="T">The type of operand</typeparam>
     /// <param name="operands">The operands to linearize</param>
     /// <returns>A linear set of operands, i.e. if multiplications occur, the operands will all be included in list</returns>
+    /// <remarks>Complexity: O(n) with n flattened multiplicative terms.</remarks>
     internal static IEnumerable<T> LinearizeMultiplication<T>(params T[] operands) where T : IOperand
     {
         return operands.SelectMany(x => x.ExpandMultiplication().OfType<T>());
@@ -218,6 +223,7 @@ internal static class OperationUtility
     /// <param name="base">The power base operand</param>
     /// <param name="exponent">The power exponent</param>
     /// <returns>An operand representing expanded power operation</returns>
+    /// <remarks>Complexity: O(k) where k = operand count in product or division base; O(1) for simple or nested power.</remarks>
     internal static T ExpandPower<T>(Func<IEnumerable<T>, T> multiply, Func<T, T, T> divide, Func<T, int, T> power, T @base, int exponent) where T : IOperand
     {
         if (@base is IPowerOperation)
