@@ -11,4 +11,10 @@ internal static class ReductionSettings
     /// will use the pooled <see cref="ExponentMap{T}"/> implementation instead of LINQ GroupBy.
     /// </summary>
     public static bool UseExponentMapForReduction { get; set; } = false;
+
+    /// <summary>
+    /// When true product equality uses a hash-bucket multiset comparison instead of the existing
+    /// sort+zip path. Experimental; default off until benchmarks prove benefit.
+    /// </summary>
+    public static bool EqualityUsesMap { get; set; } = false;
 }

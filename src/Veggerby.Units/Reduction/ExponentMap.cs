@@ -38,6 +38,10 @@ internal sealed class ExponentMap<T>
 
     public IEnumerable<KeyValuePair<T, int>> Entries() => _map;
 
+    public bool TryGetValue(T key, out int value) => _map.TryGetValue(key, out value);
+
+    public bool ContainsKey(T key) => _map.ContainsKey(key);
+
     private ExponentMap<T> Reset()
     {
         _map.Clear();
