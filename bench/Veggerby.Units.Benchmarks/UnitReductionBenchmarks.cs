@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 namespace Veggerby.Units.Benchmarks;
 
 [MemoryDiagnoser]
+[BenchmarkCategory("reduction")]
 public class UnitReductionBenchmarks
 {
     private readonly Unit _a = Unit.SI.m;

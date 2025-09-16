@@ -5,6 +5,7 @@ using Veggerby.Units.Dimensions;
 namespace Veggerby.Units.Benchmarks;
 
 [MemoryDiagnoser]
+[BenchmarkCategory("reduction")]
 public class DimensionReductionBenchmarks
 {
     private readonly Dimension _l = Dimension.Length;

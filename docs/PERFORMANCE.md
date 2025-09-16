@@ -79,9 +79,18 @@ Current hotspots are typically in:
 * Avoid micro-optimizations that reduce clarity unless benchmark data shows ≥10% improvement in both time and allocation.
 * Revert speculative changes that hurt readability without measurable gain.
 
-## ExponentMap Prototype
+## ExponentMap Prototype & Feature Flag
 
-`ExponentMap<T>` exists as a prototype but is not integrated after an attempted in-place swap caused recursion complexity. Future safe adoption would require localized usage guarded by thorough tests and profiling evidence.
+`ExponentMap<T>` can be enabled at runtime for A/B testing via:
+
+```csharp
+Veggerby.Units.Reduction.ReductionSettings.UseExponentMapForReduction = true; // BEFORE using operators
+```
+
+When enabled, `ReduceMultiplication` and `ReduceDivision` switch from LINQ GroupBy aggregation to pooled
+dictionary accumulation. Use the `EqualityBenchmarks` with `UseExponentMap=true/false` parameter to compare.
+
+Do not enable by default until benchmarks show ≥10% improvement (time + allocations) with all tests green.
 
 ## Troubleshooting
 

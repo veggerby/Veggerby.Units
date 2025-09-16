@@ -84,3 +84,27 @@ References:
 is T*(L/T) ALWAYS the same as L?
 <https://en.wikipedia.org/wiki/Dimensional_analysis>
 <https://en.wikipedia.org/wiki/Nondimensionalization>
+
+## Performance
+
+Benchmarks are located under `bench/` and use BenchmarkDotNet. Running without arguments executes a quick
+smoke filter (fastest reduction scenario). For full details see `docs/PERFORMANCE.md`.
+
+Full run:
+
+```bash
+dotnet run -c Release --project bench/Veggerby.Units.Benchmarks
+```
+
+Enable experimental ExponentMap path (A/B only):
+
+```csharp
+Veggerby.Units.Reduction.ReductionSettings.UseExponentMapForReduction = true;
+```
+
+Then run only equality benchmarks comparing structural normalization cost:
+
+```bash
+dotnet run -c Release --project bench/Veggerby.Units.Benchmarks -- --filter *EqualityBenchmarks*
+```
+

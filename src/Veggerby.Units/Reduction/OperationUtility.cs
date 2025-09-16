@@ -155,6 +155,73 @@ internal static class OperationUtility
     internal static T ReduceDivision<T>(Func<IEnumerable<T>, T> multiply, Func<T, T, T> divide, Func<T, int, T> pow, T dividend, T divisor)
         where T : IOperand
     {
+        if (ReductionSettings.UseExponentMapForReduction)
+        {
+            var map = ExponentMap<T>.Rent();
+            var hadCommon = false;
+
+            foreach (var d in dividend.ExpandMultiplication())
+            {
+                if (d is IPowerOperation p)
+                {
+                    map.Add((T)p.Base, p.Exponent);
+                }
+                else
+                {
+                    map.Add((T)d, 1);
+                }
+            }
+
+            foreach (var d in divisor.ExpandMultiplication())
+            {
+                if (d is IPowerOperation p)
+                {
+                    if (!hadCommon && map.Entries().Any(x => ReferenceEquals(x.Key, p.Base)))
+                    {
+                        hadCommon = true;
+                    }
+                    map.Add((T)p.Base, -p.Exponent);
+                }
+                else
+                {
+                    if (!hadCommon && map.Entries().Any(x => ReferenceEquals(x.Key, d)))
+                    {
+                        hadCommon = true;
+                    }
+                    map.Add((T)d, -1);
+                }
+            }
+
+            if (hadCommon)
+            {
+                try
+                {
+                    var positives = new List<T>();
+                    var negatives = new List<T>();
+                    foreach (var kv in map.Entries())
+                    {
+                        if (kv.Value > 0)
+                        {
+                            positives.Add(pow(kv.Key, kv.Value));
+                        }
+                        else if (kv.Value < 0)
+                        {
+                            negatives.Add(pow(kv.Key, -kv.Value));
+                        }
+                    }
+
+                    return divide(multiply(positives), multiply(negatives));
+                }
+                finally
+                {
+                    map.Return();
+                }
+            }
+
+            map.Return();
+            return default;
+        }
+
         var dividends = dividend
             .ExpandMultiplication()
             .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
@@ -193,6 +260,51 @@ internal static class OperationUtility
     internal static T ReduceMultiplication<T>(Func<IEnumerable<T>, T> multiply, Func<T, int, T> power, params T[] operands)
         where T : IOperand
     {
+        if (ReductionSettings.UseExponentMapForReduction)
+        {
+            var map = ExponentMap<T>.Rent();
+            var reduced = false;
+            foreach (var operand in operands.SelectMany(x => x.ExpandMultiplication()))
+            {
+                if (operand is IPowerOperation p)
+                {
+                    if (!reduced && map.Entries().Any(x => ReferenceEquals(x.Key, p.Base)))
+                    {
+                        reduced = true;
+                    }
+                    map.Add((T)p.Base, p.Exponent);
+                }
+                else
+                {
+                    if (!reduced && map.Entries().Any(x => ReferenceEquals(x.Key, operand)))
+                    {
+                        reduced = true;
+                    }
+                    map.Add((T)operand, 1);
+                }
+            }
+
+            if (reduced)
+            {
+                try
+                {
+                    var list = new List<T>();
+                    foreach (var kv in map.Entries())
+                    {
+                        list.Add(power(kv.Key, kv.Value));
+                    }
+                    return multiply(list);
+                }
+                finally
+                {
+                    map.Return();
+                }
+            }
+
+            map.Return();
+            return default;
+        }
+
         var powers = operands
             .SelectMany(x => x.ExpandMultiplication())
             .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
