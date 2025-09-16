@@ -1,4 +1,5 @@
 using BenchmarkDotNet.Attributes;
+
 using Veggerby.Units.Reduction;
 
 namespace Veggerby.Units.Benchmarks;
