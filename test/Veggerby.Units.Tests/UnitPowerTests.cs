@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class UnitPowerTests
 {
     [Fact]
-    public void Unit_PowerUnit_ReturnsCorrectType()
+    public void GivenUnit_WhenRaisedToPositiveExponent_ThenResultIsPowerUnit()
     {
         // Arrange
         var unit = Unit.SI.m ^ 2;
@@ -18,7 +18,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_PowerUnit_ReturnsCorrectSymbol()
+    public void GivenPowerUnit_WhenAccessingSymbol_ThenReturnsExpectedSymbol()
     {
         // Arrange
         var unit = Unit.SI.m ^ 2;
@@ -31,7 +31,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_PowerUnit_ReturnsCorrectName()
+    public void GivenPowerUnit_WhenAccessingName_ThenReturnsExpectedName()
     {
         // Arrange
         var unit = Unit.SI.m ^ 2;
@@ -44,7 +44,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_PowerUnit0_ReturnsNone()
+    public void GivenUnit_WhenRaisedToZero_ThenResultIsNone()
     {
         // Arrange
         var expected = Unit.None; // 1 == None
@@ -57,7 +57,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_PowerUnit1_ReturnsBase()
+    public void GivenUnit_WhenRaisedToOne_ThenResultIsBaseUnit()
     {
         // Arrange
         var expected = Unit.SI.s; // s
@@ -70,7 +70,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_PowerUnitMinus1_ReturnsDivision()
+    public void GivenUnit_WhenRaisedToMinusOne_ThenResultIsReciprocal()
     {
         // Arrange
         var expected = Unit.Divide(Unit.None, Unit.SI.s); // 1/s
@@ -83,7 +83,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_PowerUnitNegative_ReturnsDivision()
+    public void GivenUnit_WhenRaisedToNegativeExponent_ThenResultIsReciprocalPower()
     {
         // Arrange
         var expected = Unit.Divide(Unit.None, Unit.Power(Unit.SI.s, 2)); // 1/s^2
@@ -96,7 +96,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_MultiplePowerUnit_ExpandsEachPower()
+    public void GivenProductUnit_WhenRaisedToExponent_ThenExponentDistributesAcrossFactors()
     {
         // Arrange
         var expected = Unit.Multiply(Unit.Power(Unit.SI.m, 2), Unit.Power(Unit.SI.s, 2));
@@ -109,7 +109,7 @@ public class UnitPowerTests
     }
 
     [Fact]
-    public void Unit_MultiplePowerUnitWithDivision_ExpandsEachPower()
+    public void GivenProductWithDivision_WhenRaisedToExponent_ThenExponentDistributesAcrossAllOperands()
     {
         // Arrange
         var expected = Unit.Divide(Unit.Multiply(Unit.Power(Unit.SI.m, 2), Unit.Power(Unit.SI.s, 2)), Unit.Power(Unit.SI.kg, 2)); // m^2s^2/kg^2;

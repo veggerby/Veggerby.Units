@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests.Units;
 public class ConversionRoundTripTests
 {
     [Fact]
-    public void Given_IntMeasurement_When_RoundTripConversion_Then_ValueExact()
+    public void GivenIntMeasurement_WhenRoundTripConverted_ThenValueIsExact()
     {
         // Arrange
         var original = new Int32Measurement(1, Prefix.k * Unit.SI.m); // 1000 m
@@ -23,7 +23,7 @@ public class ConversionRoundTripTests
     }
 
     [Fact]
-    public void Given_DoubleMeasurement_When_RoundTripConversion_Then_ValueWithinTolerance()
+    public void GivenDoubleMeasurement_WhenRoundTripConverted_ThenValueWithinTolerance()
     {
         // Arrange
         var original = new DoubleMeasurement(3.14159265, Unit.SI.m);

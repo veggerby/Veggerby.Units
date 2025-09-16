@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class DimensionProductTests
 {
     [Fact]
-    public void Dimension_ProductDimension_ReturnsCorrectType()
+    public void GivenTwoDimensions_WhenMultiplying_ThenResultIsProductDimension()
     {
         // Arrange
         var dimension = Dimension.Length * Dimension.Mass;
@@ -20,7 +20,7 @@ public class DimensionProductTests
     }
 
     [Fact]
-    public void Dimension_ProductDimension_ReturnsCorrectSymbol()
+    public void GivenProductDimension_WhenAccessingSymbol_ThenConcatenatesOperandSymbols()
     {
         // Arrange
         var dimension = Dimension.Length * Dimension.Mass;
@@ -33,7 +33,7 @@ public class DimensionProductTests
     }
 
     [Fact]
-    public void Dimension_ProductDimension_ReturnsCorrectName()
+    public void GivenProductDimension_WhenAccessingName_ThenJoinsOperandNamesWithAsterisk()
     {
         // Arrange
         var dimension = Dimension.Length * Dimension.Mass;
@@ -46,7 +46,7 @@ public class DimensionProductTests
     }
 
     [Fact]
-    public void Dimension_ProductDimension_IsCommutative()
+    public void GivenTwoDimensions_WhenMultiplyingInDifferentOrders_ThenProductsAreEqual()
     {
         // Arrange
         var d1 = Dimension.Length * Dimension.Mass;
@@ -60,7 +60,7 @@ public class DimensionProductTests
     }
 
     [Fact]
-    public void Dimension_ProductDimension_IsCommutativeWithMultiple()
+    public void GivenThreeDimensions_WhenAssociativelyAndCommutativelyRearranged_ThenProductsAreEqual()
     {
         // Arrange
         var d1 = Dimension.ElectricCurrent * (Dimension.Length * Dimension.Mass);

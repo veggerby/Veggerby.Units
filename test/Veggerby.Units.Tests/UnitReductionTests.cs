@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class UnitReductionTests
 {
     [Fact]
-    public void Unit_MultipleIdenticalOperandsForProduct_ReduceToPower()
+    public void GivenProductWithRepeatedOperand_WhenReducing_ThenConvertsToPower()
     {
         // Arrange
         var expected = Unit.Power(Unit.SI.m, 3); // m^3
@@ -20,7 +20,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_MultipleIdenticalOperandsForMultipleProduct_ReduceToPower()
+    public void GivenProductChainWithRepeatedOperands_WhenReducing_ThenAggregatesToPower()
     {
         // Arrange
         var expected = Unit.Multiply(Unit.Power(Unit.SI.m, 6), Unit.SI.s); // m^6s
@@ -33,7 +33,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_DivisionOperationWithSameOperands_ShouldReduceOperands()
+    public void GivenDivisionWithSameOperandsDifferentPowers_WhenReducing_ThenSubtractsExponents()
     {
         // Arrange
         var expected = Unit.SI.m; // m
@@ -46,7 +46,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_DivisionOperationWithSameOperandsAndPower_ShouldReduceOperandsCompletely()
+    public void GivenDivisionOfIdenticalUnits_WhenReducing_ThenCancelsToNone()
     {
         // Arrange
         var expected = Unit.None; // completely reduced
@@ -59,7 +59,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_DivisionOperationWithSameOperandsButDifferentPowerDividend_ShouldReduceOperandsPartially()
+    public void GivenDivisionWhereDividendHasHigherPower_WhenReducing_ThenResultHasRemainingPositivePower()
     {
         // Arrange
         var expected = Unit.Power(Unit.SI.m, 2); // m^2
@@ -72,7 +72,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_DivisionOperationWithSameOperandsButDifferentPowerDivisor_ShouldReduceOperandsPartially()
+    public void GivenDivisionWhereDivisorHasHigherPower_WhenReducing_ThenResultIsReciprocalPower()
     {
         // Arrange
         var expected = Unit.Divide(Unit.None, Unit.Power(Unit.SI.m, 2)); //  1/m^2
@@ -85,7 +85,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_ComplexReduction_YieldsExpected()
+    public void GivenComplexExpression_WhenReducing_ThenYieldsExpectedCanonicalForm()
     {
         // Arrange
         var expected = Unit.Divide(Unit.SI.kg, Unit.Multiply(Unit.SI.s, Unit.SI.m)); // kg/sm
@@ -99,7 +99,7 @@ public class UnitReductionTests
 
     // Additional explicit reduction scenarios (previously in ReductionTests)
     [Fact]
-    public void Unit_ProductAndDivisionWithCancellation_ReducesToSingleUnit()
+    public void GivenProductContainingDivisionPair_WhenReducing_ThenIntermediateCancelsLeavingSingleUnit()
     {
         // Arrange
         var expected = Unit.SI.kg; // m * (kg / m) => kg
@@ -112,7 +112,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_ProductDivisionChain_ReducesToSingleUnit()
+    public void GivenInterleavedProductDivisionChain_WhenReducing_ThenAllIntermediateUnitsCancel()
     {
         // Arrange
         var expected = Unit.SI.kg; // (m * kg / s) * (s / m) => kg
@@ -125,7 +125,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_ProductAndDivisionMultipleCancellation_ReducesToRemaining()
+    public void GivenProductAndDivisionWithMultipleSharedOperands_WhenReducing_ThenOnlyUniqueUnitRemains()
     {
         // Arrange
         var expected = Unit.SI.kg; // (m * s * kg)/(m * s) => kg
@@ -138,7 +138,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_NestedCancellation_ReducesToNone()
+    public void GivenBalancedProductAndDivisionOperands_WhenReducing_ThenAllCancelToNone()
     {
         // Arrange
         var expected = Unit.None; // (m * s)/(m * s) => 1
@@ -151,7 +151,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_ProductWithPowerCancellation_ReducesCompletely()
+    public void GivenProductWithPowerAndMatchingDivisor_WhenReducing_ThenCancelsCompletely()
     {
         // Arrange
         var expected = Unit.None; // (m * m^2) / m^3 => 1
@@ -164,7 +164,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_ProductWithPartialPowerCancellation_ReducesExponent()
+    public void GivenDivisionOfDifferingPowers_WhenReducing_ThenRemainingPositiveExponentReflectsDifference()
     {
         // Arrange
         var expected = Unit.Power(Unit.SI.m, 2); // (m^4)/(m^2) => m^2
@@ -177,7 +177,7 @@ public class UnitReductionTests
     }
 
     [Fact]
-    public void Unit_MixedProductPowerDivision_ReducesToPower()
+    public void GivenMixedProductPowerDivision_WhenReducing_ThenResultsInPower()
     {
         // Arrange
         var expected = Unit.Power(Unit.SI.m, 2); // (m^3 * s)/(m * s) => m^2

@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class UnitProductTests
 {
     [Fact]
-    public void Unit_ProductUnit_ReturnsCorrectType()
+    public void GivenTwoUnits_WhenMultiplying_ThenResultIsProductUnit()
     {
         // Arrange
         var unit = Unit.SI.m * Unit.SI.kg;
@@ -20,7 +20,7 @@ public class UnitProductTests
     }
 
     [Fact]
-    public void Unit_ProductUnit_ReturnsCorrectSymbol()
+    public void GivenProductUnit_WhenAccessingSymbol_ThenConcatenatesOperandSymbols()
     {
         // Arrange
         var unit = Unit.SI.m * Unit.SI.kg;
@@ -33,7 +33,7 @@ public class UnitProductTests
     }
 
     [Fact]
-    public void Unit_ProductUnit_ReturnsCorrectName()
+    public void GivenProductUnit_WhenAccessingName_ThenJoinsOperandNamesWithAsterisk()
     {
         // Arrange
         var unit = Unit.SI.m * Unit.SI.kg;
@@ -46,7 +46,7 @@ public class UnitProductTests
     }
 
     [Fact]
-    public void Unit_ProductUnit_ReturnsCorrectDimension()
+    public void GivenProductUnit_WhenAccessingDimension_ThenMultipliesOperandDimensions()
     {
         // Arrange
         var unit = Unit.SI.m * Unit.SI.kg;
@@ -59,7 +59,7 @@ public class UnitProductTests
     }
 
     [Fact]
-    public void Unit_ProductUnit_ReturnsCorrectSystem()
+    public void GivenProductUnit_WhenAccessingSystem_ThenUsesFirstOperandSystem()
     {
         // Arrange
         var unit = Unit.SI.m * Unit.SI.kg;
@@ -72,7 +72,7 @@ public class UnitProductTests
     }
 
     [Fact]
-    public void Unit_ProductUnit_IsCommutative()
+    public void GivenTwoUnits_WhenMultiplyingInDifferentOrders_ThenProductsAreEqual()
     {
         // Arrange
         var d1 = Unit.SI.m * Unit.SI.kg;
@@ -86,7 +86,7 @@ public class UnitProductTests
     }
 
     [Fact]
-    public void Unit_ProductUnit_IsCommutativeWithMultiple()
+    public void GivenThreeUnits_WhenAssociativelyAndCommutativelyRearranged_ThenProductsAreEqual()
     {
         // Arrange
         var d1 = Unit.SI.A * (Unit.SI.m * Unit.SI.kg);

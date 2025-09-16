@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class DimensionMetadataTests
 {
     [Fact]
-    public void Dimension_DimensionLength_TestSymbol()
+    public void GivenLengthDimension_WhenAccessingSymbol_ThenReturnsL()
     {
         // Arrange
         var dimension = Dimension.Length;
@@ -22,7 +22,7 @@ public class DimensionMetadataTests
     }
 
     [Fact]
-    public void Dimension_DimensionLength_TestName()
+    public void GivenLengthDimension_WhenAccessingName_ThenReturnsLength()
     {
         // Arrange
         var dimension = Dimension.Length;

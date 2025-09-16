@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class PrefixTests
 {
     [Fact]
-    public void Prefix_InvalidFactor_Throws()
+    public void GivenInvalidNumericFactor_WhenApplyingAsPrefix_ThenThrowsPrefixException()
     {
         // Arrange
         var act = () => { var _ = 42 * Unit.SI.m; }; // 42 not a defined prefix
@@ -20,7 +20,7 @@ public class PrefixTests
     }
 
     [Fact]
-    public void Prefix_RoundTrip_DoubleToPrefix()
+    public void GivenDoubleFactor_WhenConvertedToPrefix_ThenReturnsMatchingPrefix()
     {
         // Arrange
         var expected = Prefix.k;
@@ -33,7 +33,7 @@ public class PrefixTests
     }
 
     [Fact]
-    public void Prefix_All_AreUniqueByFactor()
+    public void GivenAllDefinedPrefixes_WhenInspectingFactors_ThenAllFactorsAreUnique()
     {
         // Arrange
         var factors = Prefix.All.Select(p => p.Factor).ToList();

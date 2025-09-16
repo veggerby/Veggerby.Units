@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class DimensionEqualityTests
 {
     [Fact]
-    public void Dimension_DimensionInEquality_TestSimple()
+    public void GivenDifferentBasicDimensions_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length;
@@ -23,7 +23,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionEquality_TestProduct()
+    public void GivenEquivalentProductDimensions_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length * Dimension.Mass;
@@ -37,7 +37,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionInEquality_TestProduct()
+    public void GivenDifferentProductDimensions_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length * Dimension.Mass;
@@ -51,7 +51,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionEquality_TestDivision()
+    public void GivenEquivalentDivisionDimensions_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length / Dimension.Mass;
@@ -65,7 +65,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionInEquality_TestDivision()
+    public void GivenDifferentDivisionDimensions_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length / Dimension.Mass;
@@ -79,7 +79,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionEquality_TestPower()
+    public void GivenEquivalentPowerDimensions_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length ^ 2;
@@ -93,7 +93,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionInEquality_TestPowerBaseDifferent()
+    public void GivenPowerDimensionsWithDifferentBases_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length ^ 2;
@@ -107,7 +107,7 @@ public class DimensionEqualityTests
     }
 
     [Fact]
-    public void Dimension_DimensionInEquality_TestPowerExponentDifferent()
+    public void GivenPowerDimensionsWithDifferentExponents_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Dimension.Length ^ 2;

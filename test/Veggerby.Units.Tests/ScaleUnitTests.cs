@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class ScaleUnitTests
 {
     [Fact]
-    public void ScaleUnit_Equality_SameScaleAndBase()
+    public void GivenTwoIdenticalScaleUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var ft1 = Unit.Imperial.ft; // base definition
@@ -23,7 +23,7 @@ public class ScaleUnitTests
     }
 
     [Fact]
-    public void ScaleUnit_ConvertToSameUnit_ReturnsSameReference()
+    public void GivenScaleMeasurement_WhenConvertingToSameUnit_ThenReturnsSameReference()
     {
         // Arrange
         var value = new DoubleMeasurement(10, Unit.Imperial.ft);

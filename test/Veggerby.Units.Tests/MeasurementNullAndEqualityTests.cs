@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class MeasurementNullAndEqualityTests
 {
     [Fact]
-    public void Measurement_Add_NullLeft_ReturnsRight()
+    public void GivenNullLeftMeasurement_WhenAdding_ThenReturnsRightMeasurement()
     {
         // Arrange
         Int32Measurement left = null;
@@ -21,7 +21,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Add_NullRight_ReturnsLeft()
+    public void GivenNullRightMeasurement_WhenAdding_ThenReturnsLeftMeasurement()
     {
         // Arrange
         var left = new Int32Measurement(5, Unit.SI.m);
@@ -35,7 +35,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Add_BothNull_ReturnsNull()
+    public void GivenBothNullMeasurements_WhenAdding_ThenResultIsNull()
     {
         // Arrange
         Int32Measurement left = null;
@@ -49,7 +49,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Subtract_NullRight_ReturnsLeft()
+    public void GivenNullRightMeasurement_WhenSubtracting_ThenReturnsLeftMeasurement()
     {
         // Arrange
         var left = new Int32Measurement(5, Unit.SI.m);
@@ -63,7 +63,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Subtract_BothNull_ReturnsNull()
+    public void GivenBothNullMeasurements_WhenSubtracting_ThenResultIsNull()
     {
         // Arrange
         Int32Measurement left = null;
@@ -77,7 +77,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Equality_NullNull_True()
+    public void GivenBothNullMeasurements_WhenCheckingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         DoubleMeasurement a = null;
@@ -91,7 +91,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Inequality_NullNull_False()
+    public void GivenBothNullMeasurements_WhenCheckingInequalityOperator_ThenReturnsFalse()
     {
         // Arrange
         DoubleMeasurement a = null;
@@ -105,7 +105,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Equality_DifferentConvertibleUnits_False()
+    public void GivenConvertibleButDifferentUnitInstances_WhenCheckingEquality_ThenReturnsFalse()
     {
         // Arrange
         var a = new DoubleMeasurement(1000, Unit.SI.m);
@@ -119,7 +119,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_ImplicitConversion_ReturnsValue()
+    public void GivenMeasurement_WhenImplictlyConvertedToPrimitive_ThenReturnsUnderlyingValue()
     {
         // Arrange
         var m = new DoubleMeasurement(2.5, Unit.SI.s);
@@ -132,7 +132,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_ImplicitConstruction_FromInt()
+    public void GivenIntLiteral_WhenImplicitlyCreatingInt32Measurement_ThenUnitIsNone()
     {
         // Arrange
         Int32Measurement m = 7; // implicit to Unit.None
@@ -144,7 +144,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_ImplicitConstruction_DoubleFromInt()
+    public void GivenIntLiteral_WhenImplicitlyCreatingDoubleMeasurement_ThenUnitIsNone()
     {
         // Arrange
         DoubleMeasurement m = 9; // implicit to Unit.None
@@ -156,7 +156,7 @@ public class MeasurementNullAndEqualityTests
     }
 
     [Fact]
-    public void Measurement_Subtract_DifferentUnits_Throws()
+    public void GivenMeasurementsWithDifferentUnits_WhenSubtracting_ThenThrowsUnitException()
     {
         // Arrange
         var a = new Int32Measurement(5, Unit.SI.m);

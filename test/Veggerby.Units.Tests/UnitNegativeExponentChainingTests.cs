@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class UnitNegativeExponentChainingTests
 {
     [Fact]
-    public void Unit_ChainedNegativeExponent_Reduces()
+    public void GivenNegativeExponentAppliedThenRaised_WhenReducing_ThenResultIsCombinedNegativeExponent()
     {
         // Arrange
         var baseUnit = Unit.SI.m;

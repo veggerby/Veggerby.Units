@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class UnitEqualityTests
 {
     [Fact]
-    public void Unit_UnitEquality_TestSimple()
+    public void GivenIdenticalBaseUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m;
@@ -23,7 +23,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitInEquality_TestSimple()
+    public void GivenDifferentBaseUnits_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m;
@@ -37,7 +37,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitEquality_TestProduct()
+    public void GivenEquivalentProductUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m * Unit.SI.kg;
@@ -51,7 +51,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitInEquality_TestProduct()
+    public void GivenDifferentProductUnits_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m * Unit.SI.kg;
@@ -65,7 +65,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitEquality_TestDivision()
+    public void GivenEquivalentDivisionUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m / Unit.SI.kg;
@@ -79,7 +79,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitInEquality_TestDivision()
+    public void GivenDifferentDivisionUnits_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m / Unit.SI.kg;
@@ -93,7 +93,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitEquality_TestPower()
+    public void GivenEquivalentPowerUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m ^ 2;
@@ -107,7 +107,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitInEquality_TestPowerBaseDifferent()
+    public void GivenDifferentPowerBases_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m ^ 2;
@@ -121,7 +121,7 @@ public class UnitEqualityTests
     }
 
     [Fact]
-    public void Unit_UnitInEquality_TestPowerExponentDifferent()
+    public void GivenDifferentPowerExponents_WhenComparingInequalityOperator_ThenReturnsTrue()
     {
         // Arrange
         var left = Unit.SI.m ^ 2;

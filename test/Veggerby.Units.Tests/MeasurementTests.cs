@@ -12,7 +12,7 @@ namespace Veggerby.Units.Tests;
 public class MeasurementTests
 {
     [Fact]
-    public void Add_SameUnit_AddsValues()
+    public void GivenTwoMeasurementsWithSameUnit_WhenAdding_ThenValuesSumAndUnitPreserved()
     {
         // Arrange
         var m1 = new Int32Measurement(2, Unit.SI.m);
@@ -27,7 +27,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Add_DifferentUnits_Throws()
+    public void GivenMeasurementsWithDifferentUnits_WhenAdding_ThenThrowsUnitException()
     {
         // Arrange
         var m1 = new Int32Measurement(2, Unit.SI.m);
@@ -41,7 +41,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Subtract_NullOperands_ReturnsOther()
+    public void GivenNullLeftOperand_WhenSubtracting_ThenReturnsRightOperand()
     {
         // Arrange
         Int32Measurement m1 = null;
@@ -55,7 +55,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Multiply_MultipliesValuesAndUnits()
+    public void GivenTwoMeasurements_WhenMultiplying_ThenValuesAndUnitsAreMultiplied()
     {
         // Arrange
         var m1 = new DoubleMeasurement(2.5, Unit.SI.m);
@@ -70,7 +70,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Divide_DividesValuesAndUnits()
+    public void GivenTwoMeasurements_WhenDividing_ThenValuesAndUnitsAreDivided()
     {
         // Arrange
         var m1 = new DoubleMeasurement(10, Unit.SI.m);
@@ -85,7 +85,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Comparison_AlignsUnitsBeforeComparing()
+    public void GivenConvertibleMeasurements_WhenComparing_ThenUnitsAlignForComparison()
     {
         // Arrange
         var bigger = new DoubleMeasurement(1, Prefix.k * Unit.SI.m); // 1000 m
@@ -105,7 +105,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Equality_WithDifferentInstancesSameValueAndUnit_IsTrue()
+    public void GivenDifferentInstancesSameValueSameUnit_WhenCheckingEquality_ThenReturnsTrue()
     {
         // Arrange
         var m1 = new DoubleMeasurement(5, Unit.SI.s);
@@ -119,7 +119,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void ConvertTo_IncompatibleDimension_Throws()
+    public void GivenMeasurement_WhenConvertingToIncompatibleDimension_ThenThrowsConversionException()
     {
         // Arrange
         var time = new DoubleMeasurement(5, Unit.SI.s);
@@ -132,7 +132,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void ConvertTo_SameUnit_ReturnsSameInstance()
+    public void GivenMeasurement_WhenConvertingToSameUnit_ThenReturnsSameReference()
     {
         // Arrange
         var distance = new DoubleMeasurement(5, Unit.SI.m);
@@ -145,7 +145,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void ConvertTo_IntMeasurement_RoundsResult()
+    public void GivenIntMeasurementWithPrefix_WhenConverting_ThenResultIsRounded()
     {
         // Arrange
         var distance = new Int32Measurement(1, Prefix.k * Unit.SI.m); // 1000 m
@@ -158,7 +158,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Unit_Addition_WithSameUnits_ReturnsSameUnit()
+    public void GivenTwoIdenticalUnits_WhenAdding_ThenReturnsSameUnitReference()
     {
         // Arrange
         var u1 = Unit.SI.m;
@@ -172,7 +172,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Unit_Addition_WithDifferentUnits_Throws()
+    public void GivenDifferentUnits_WhenAdding_ThenThrowsUnitException()
     {
         // Arrange
         var u1 = Unit.SI.m;
@@ -186,7 +186,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Unit_Subtraction_WithSameUnits_ReturnsSameUnit()
+    public void GivenTwoIdenticalUnits_WhenSubtracting_ThenReturnsSameUnitReference()
     {
         // Arrange
         var u1 = Unit.SI.m;
@@ -200,7 +200,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Unit_Subtraction_WithDifferentUnits_Throws()
+    public void GivenDifferentUnits_WhenSubtracting_ThenThrowsUnitException()
     {
         // Arrange
         var u1 = Unit.SI.m;
@@ -214,7 +214,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void ConvertTo_NullValue_Throws()
+    public void GivenNullMeasurement_WhenConverting_ThenThrowsArgumentNullException()
     {
         // Arrange
         DoubleMeasurement value = null;
@@ -227,7 +227,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void ConvertTo_NullTargetUnit_Throws()
+    public void GivenMeasurement_WhenConvertingToNullUnit_ThenThrowsArgumentNullException()
     {
         // Arrange
         var value = new DoubleMeasurement(1, Unit.SI.m);
@@ -240,7 +240,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Unit_Inequality_WithNullAndNonNull_ReturnsTrue()
+    public void GivenNullAndNonNullUnit_WhenComparingInequality_ThenReturnsTrue()
     {
         // Arrange
         Unit u1 = null;
@@ -254,7 +254,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Measurement_Inequality_WithNullAndNonNull_ReturnsTrue()
+    public void GivenNullAndNonNullMeasurement_WhenComparingInequality_ThenReturnsTrue()
     {
         // Arrange
         DoubleMeasurement m1 = null;
@@ -268,7 +268,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void PrefixedUnit_EqualityAndHashCode()
+    public void GivenEquivalentPrefixedUnits_WhenCheckingEqualityAndHashCode_ThenBothMatch()
     {
         // Arrange
         var u1 = Prefix.k * Unit.SI.m; // km
@@ -284,7 +284,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void NegativePower_CreatesDivisionStructure()
+    public void GivenNegativeExponent_WhenRaisingUnit_ThenCreatesReciprocalPowerStructure()
     {
         // Arrange
         var expected = Unit.None / (Unit.SI.m ^ 2); // 1/m^2
@@ -297,7 +297,7 @@ public class MeasurementTests
     }
 
     [Fact]
-    public void Division_NoCommonOperands_NoReductionOccurs()
+    public void GivenDivisionWithNoCommonOperands_WhenReducing_ThenStructureRemainsUnchanged()
     {
         // Arrange
         var dividend = Unit.SI.m * Unit.SI.kg; // m*kg

@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class UnitDivisionTests
 {
     [Fact]
-    public void Unit_DivisionUnit_ReturnsCorrectType()
+    public void GivenTwoUnits_WhenDividing_ThenResultIsDivisionUnit()
     {
         // Arrange
         var unit = Unit.SI.m / Unit.SI.kg;
@@ -18,7 +18,7 @@ public class UnitDivisionTests
     }
 
     [Fact]
-    public void Unit_DivisionUnit_ReturnsCorrectSymbol()
+    public void GivenDivisionUnit_WhenAccessingSymbol_ThenReturnsQuotientSymbol()
     {
         // Arrange
         var unit = Unit.SI.m / Unit.SI.s;
@@ -31,7 +31,7 @@ public class UnitDivisionTests
     }
 
     [Fact]
-    public void Unit_DivisionUnit_ReturnsCorrectName()
+    public void GivenDivisionUnit_WhenAccessingName_ThenReturnsQuotientName()
     {
         // Arrange
         var unit = Unit.SI.m / Unit.SI.s;
@@ -44,7 +44,7 @@ public class UnitDivisionTests
     }
 
     [Fact]
-    public void Unit_DivisionUnitRearrangeDivByDiv_ReturnsCorrect()
+    public void GivenDivisionOfDivision_WhenRearranged_ThenYieldsExpectedCanonicalDivision()
     {
         // Arrange
         var expected = Unit.Divide(Unit.Multiply(Unit.SI.m, Unit.SI.s), Unit.Multiply(Unit.SI.kg, Unit.SI.A)); // ms/kgA
@@ -57,7 +57,7 @@ public class UnitDivisionTests
     }
 
     [Fact]
-    public void Unit_DivisionUnitRearrangeSimpleByDiv_ReturnsCorrect()
+    public void GivenSimpleDividedByDivision_WhenRearranged_ThenYieldsExpectedCanonicalDivision()
     {
         // Arrange
         var expected = Unit.Divide(Unit.Multiply(Unit.SI.m, Unit.SI.s), Unit.SI.A); // ms/A
@@ -70,7 +70,7 @@ public class UnitDivisionTests
     }
 
     [Fact]
-    public void Unit_DivisionUnitRearrangeDivBySimple_ReturnsCorrect()
+    public void GivenDivisionDividedBySimple_WhenRearranged_ThenYieldsExpectedCanonicalDivision()
     {
         // Arrange
         var expected = Unit.Divide(Unit.SI.m, Unit.Multiply(Unit.SI.s, Unit.SI.A)); // m/sA

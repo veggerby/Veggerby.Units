@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests.Units;
 public class NegativeExponentChainingTests
 {
     [Fact]
-    public void Given_NegativeExponentAppliedTwice_When_Reduced_Then_ResultIsInverseSquare()
+    public void GivenNegativeExponentAppliedTwice_WhenReduced_ThenResultIsInverseSquare()
     {
         // Arrange
         var baseUnit = Unit.SI.m;

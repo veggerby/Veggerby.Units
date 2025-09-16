@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class UnitIdentityTests
 {
     [Fact]
-    public void Unit_Multiply_NoneLeft_ReturnsRight()
+    public void GivenNoneOnLeft_WhenMultiplying_ThenReturnsRightOperand()
     {
         // Arrange
         var expected = Unit.SI.m;
@@ -20,7 +20,7 @@ public class UnitIdentityTests
     }
 
     [Fact]
-    public void Unit_Multiply_NoneRight_ReturnsLeft()
+    public void GivenNoneOnRight_WhenMultiplying_ThenReturnsLeftOperand()
     {
         // Arrange
         var expected = Unit.SI.m;
@@ -33,7 +33,7 @@ public class UnitIdentityTests
     }
 
     [Fact]
-    public void Unit_Divide_ByNone_ReturnsDividend()
+    public void GivenDivisionByNone_WhenDividing_ThenReturnsDividend()
     {
         // Arrange
         var expected = Unit.SI.kg;
@@ -46,7 +46,7 @@ public class UnitIdentityTests
     }
 
     [Fact]
-    public void Unit_IntDivide_OneOverUnit()
+    public void GivenLiteralOne_WhenDividingByUnit_ThenCreatesReciprocal()
     {
         // Arrange
         var expected = Unit.None / Unit.SI.m; // structure from operator
@@ -59,7 +59,7 @@ public class UnitIdentityTests
     }
 
     [Fact]
-    public void Unit_IntDivide_TwoBehavesLikeOne_Documented()
+    public void GivenLiteralGreaterThanOne_WhenDividingByUnit_ThenCurrentBehaviorMatchesOneOverUnit()
     {
         // Arrange
         var expected = 1 / Unit.SI.m; // current implementation ignores int value

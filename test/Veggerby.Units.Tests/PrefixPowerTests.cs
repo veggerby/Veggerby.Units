@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class PrefixPowerTests
 {
     [Fact]
-    public void PrefixedUnit_Power_DoesNotAlterPrefixAssociation()
+    public void GivenPrefixedUnit_WhenRaisedToPower_ThenPrefixRelationshipIsPreserved()
     {
         // Arrange
         var prefixed = Prefix.k * Unit.SI.m; // km

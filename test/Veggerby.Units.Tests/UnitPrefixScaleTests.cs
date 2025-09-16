@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests;
 public class UnitPrefixScaleTests
 {
     [Fact]
-    public void Unit_PrefixUnits_EqualsFails()
+    public void GivenTwoEquivalentPrefixedUnits_WhenCallingEquals_ThenReturnsTrue()
     {
         // Arrange
         var u1 = Prefix.k * Unit.SI.m;
@@ -21,7 +21,7 @@ public class UnitPrefixScaleTests
     }
 
     [Fact]
-    public void Unit_PrefixUnits_EqualityFails()
+    public void GivenTwoEquivalentPrefixedUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var u1 = Prefix.k * Unit.SI.m;
@@ -35,7 +35,7 @@ public class UnitPrefixScaleTests
     }
 
     [Fact]
-    public void Unit_ScaleUnits_EqualsFails()
+    public void GivenTwoEquivalentScaleUnits_WhenCallingEquals_ThenReturnsTrue()
     {
         // Arrange
         var u1 = Unit.Imperial.ft;
@@ -49,7 +49,7 @@ public class UnitPrefixScaleTests
     }
 
     [Fact]
-    public void Unit_ScaleUnits_EqualityFails()
+    public void GivenTwoEquivalentScaleUnits_WhenComparingEqualityOperator_ThenReturnsTrue()
     {
         // Arrange
         var u1 = Unit.Imperial.ft;

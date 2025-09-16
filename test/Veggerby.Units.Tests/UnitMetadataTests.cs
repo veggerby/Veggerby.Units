@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class UnitMetadataTests
 {
     [Fact]
-    public void Unit_UnitMeter_TestSymbol()
+    public void GivenMetreUnit_WhenAccessingSymbol_ThenReturnsM()
     {
         // Arrange
         var unit = Unit.SI.m;
@@ -22,7 +22,7 @@ public class UnitMetadataTests
     }
 
     [Fact]
-    public void Unit_UnitMeter_TestName()
+    public void GivenMetreUnit_WhenAccessingName_ThenReturnsMeter()
     {
         // Arrange
         var unit = Unit.SI.m;
@@ -35,7 +35,7 @@ public class UnitMetadataTests
     }
 
     [Fact]
-    public void Unit_UnitMeter_TestSystem()
+    public void GivenMetreUnit_WhenAccessingSystem_ThenReturnsSiSystem()
     {
         // Arrange
         var unit = Unit.SI.m;
@@ -48,7 +48,7 @@ public class UnitMetadataTests
     }
 
     [Fact]
-    public void Unit_UnitMeter_TestDimension()
+    public void GivenMetreUnit_WhenAccessingDimension_ThenReturnsLengthDimension()
     {
         // Arrange
         var unit = Unit.SI.m;

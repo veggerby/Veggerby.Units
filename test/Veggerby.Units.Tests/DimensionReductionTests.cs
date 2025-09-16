@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class DimensionReductionTests
 {
     [Fact]
-    public void Dimension_MultipleIdenticalOperandsForProduct_ReduceToPower()
+    public void GivenProductWithRepeatedDimension_WhenReducing_ThenConvertsToPower()
     {
         // Arrange
         var expected = Dimension.Power(Dimension.Length, 3); // L^3
@@ -22,7 +22,7 @@ public class DimensionReductionTests
     }
 
     [Fact]
-    public void Dimension_MultipleIdenticalOperandsForMultipleProduct_ReduceToPower()
+    public void GivenProductChainWithRepeatedDimensions_WhenReducing_ThenAggregatesToPower()
     {
         // Arrange
         var expected = Dimension.Multiply(Dimension.Power(Dimension.Length, 6), Dimension.Time); // L^6T
@@ -35,7 +35,7 @@ public class DimensionReductionTests
     }
 
     [Fact]
-    public void Dimension_DivisionOperationWithSameOperands_ShouldReduceOperands()
+    public void GivenDivisionWithSameDimensionsDifferentPowers_WhenReducing_ThenSubtractsExponents()
     {
         // Arrange
         var expected = Dimension.Length; // L
@@ -48,7 +48,7 @@ public class DimensionReductionTests
     }
 
     [Fact]
-    public void Dimension_DivisionOperationWithSameOperandsAndPower_ShouldReduceOperandsCompletely()
+    public void GivenDivisionOfIdenticalDimensions_WhenReducing_ThenCancelsToNone()
     {
         // Arrange
         var expected = Dimension.None; // completely reduced
@@ -61,7 +61,7 @@ public class DimensionReductionTests
     }
 
     [Fact]
-    public void Dimension_DivisionOperationWithSameOperandsButDifferentPowerDividend_ShouldReduceOperandsPartially()
+    public void GivenDivisionWhereDividendHasHigherPower_WhenReducing_ThenResultHasRemainingPositivePower()
     {
         // Arrange
         var expected = Dimension.Power(Dimension.Length, 2); // L^2
@@ -74,7 +74,7 @@ public class DimensionReductionTests
     }
 
     [Fact]
-    public void Dimension_DivisionOperationWithSameOperandsButDifferentPowerDivisor_ShouldReduceOperandsPartially()
+    public void GivenDivisionWhereDivisorHasHigherPower_WhenReducing_ThenResultIsReciprocalPower()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.None, Dimension.Power(Dimension.Length, 2)); //  1/L^2
@@ -87,7 +87,7 @@ public class DimensionReductionTests
     }
 
     [Fact]
-    public void Dimension_ComplexReduction_YieldsExpected()
+    public void GivenComplexDimensionExpression_WhenReducing_ThenYieldsExpectedCanonicalForm()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.Mass, Dimension.Multiply(Dimension.Time, Dimension.Length)); // M/TL

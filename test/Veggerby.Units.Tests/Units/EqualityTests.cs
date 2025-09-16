@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests.Units;
 public class EqualityTests
 {
     [Fact]
-    public void Given_SameBaseUnits_When_Compared_Then_AreEqual()
+    public void GivenSameBaseUnits_WhenCompared_ThenAreEqual()
     {
         // Arrange
         var left = Unit.SI.m;

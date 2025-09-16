@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class DimensionDivisionTests
 {
     [Fact]
-    public void Dimension_DivisionDimension_ReturnsCorrectType()
+    public void GivenTwoDimensions_WhenDividing_ThenResultIsDivisionDimension()
     {
         // Arrange
         var dimension = Dimension.Length / Dimension.Mass;
@@ -20,7 +20,7 @@ public class DimensionDivisionTests
     }
 
     [Fact]
-    public void Dimension_DivisionDimension_ReturnsCorrectSymbol()
+    public void GivenDivisionDimension_WhenAccessingSymbol_ThenReturnsQuotientSymbol()
     {
         // Arrange
         var dimension = Dimension.Length / Dimension.Time;
@@ -33,7 +33,7 @@ public class DimensionDivisionTests
     }
 
     [Fact]
-    public void Dimension_DivisionDimension_ReturnsCorrectName()
+    public void GivenDivisionDimension_WhenAccessingName_ThenReturnsQuotientName()
     {
         // Arrange
         var dimension = Dimension.Length / Dimension.Time;
@@ -46,7 +46,7 @@ public class DimensionDivisionTests
     }
 
     [Fact]
-    public void Dimension_DivisionDimensionRearrangeDivByDiv_ReturnsCorrect()
+    public void GivenDivisionOfDivision_WhenRearranged_ThenYieldsExpectedCanonicalDivision()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.Multiply(Dimension.Length, Dimension.Time), Dimension.Multiply(Dimension.Mass, Dimension.ElectricCurrent)); // LT/MI
@@ -59,7 +59,7 @@ public class DimensionDivisionTests
     }
 
     [Fact]
-    public void Dimension_DivisionDimensionRearrangeSimpleByDiv_ReturnsCorrect()
+    public void GivenSimpleDividedByDivision_WhenRearranged_ThenYieldsExpectedCanonicalDivision()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.Multiply(Dimension.Length, Dimension.Time), Dimension.ElectricCurrent); // LT/I
@@ -72,7 +72,7 @@ public class DimensionDivisionTests
     }
 
     [Fact]
-    public void Dimension_DivisionDimensionRearrangeDivBySimple_ReturnsCorrect()
+    public void GivenDivisionDividedBySimple_WhenRearranged_ThenYieldsExpectedCanonicalDivision()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.Length, Dimension.Multiply(Dimension.Time, Dimension.ElectricCurrent)); // L/TI

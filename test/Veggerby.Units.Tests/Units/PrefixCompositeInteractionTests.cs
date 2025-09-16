@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests.Units;
 public class PrefixCompositeInteractionTests
 {
     [Fact]
-    public void Given_KiloMetreTimesMetreDividedByMetreSquared_When_Reduced_Then_ResultIsKiloMetreOverMetre()
+    public void GivenKiloMetreTimesMetreDividedByMetreSquared_WhenReduced_ThenResultIsKiloMetreOverMetre()
     {
         // Arrange
         var km = Prefix.k * Unit.SI.m; // km

@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class ConversionTests
 {
     [Fact]
-    public void Convert_Kilometre_To_Metre()
+    public void GivenKilometreMeasurement_WhenConvertingToMetres_ThenScalesByThousand()
     {
         // Arrange
         var m = new DoubleMeasurement(3.5, Prefix.k * Unit.SI.m); // 3.5 km
@@ -23,7 +23,7 @@ public class ConversionTests
     }
 
     [Fact]
-    public void Convert_Foot_To_Metre()
+    public void GivenFootMeasurement_WhenConvertingToMetres_ThenAppliesFeetToMetresFactor()
     {
         // Arrange
         var m = new DoubleMeasurement(10, Unit.Imperial.ft);
@@ -38,7 +38,7 @@ public class ConversionTests
     }
 
     [Fact]
-    public void AlignUnits_ComparesDifferentButCompatible()
+    public void GivenCompatibleMeasurements_WhenComparing_ThenAlignmentAllowsValueComparison()
     {
         // Arrange
         var v1 = new DoubleMeasurement(1, Prefix.k * Unit.SI.m); // 1000 m

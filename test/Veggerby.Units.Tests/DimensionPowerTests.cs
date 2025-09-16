@@ -9,7 +9,7 @@ namespace Veggerby.Units.Tests;
 public class DimensionPowerTests
 {
     [Fact]
-    public void Dimension_PowerDimension_ReturnsCorrectType()
+    public void GivenDimension_WhenRaisedToPositiveExponent_ThenResultIsPowerDimension()
     {
         // Arrange
         var dimension = Dimension.Length ^ 2;
@@ -20,7 +20,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_PowerDimension_ReturnsCorrectSymbol()
+    public void GivenPowerDimension_WhenAccessingSymbol_ThenReturnsExpectedSymbol()
     {
         // Arrange
         var dimension = Dimension.Length ^ 2;
@@ -33,7 +33,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_PowerDimension_ReturnsCorrectName()
+    public void GivenPowerDimension_WhenAccessingName_ThenReturnsExpectedName()
     {
         // Arrange
         var dimension = Dimension.Length ^ 2;
@@ -46,7 +46,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_PowerDimension0_ReturnsNone()
+    public void GivenDimension_WhenRaisedToZero_ThenResultIsNone()
     {
         // Arrange
         var expected = Dimension.None; // 1 == None
@@ -59,7 +59,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_PowerDimension1_ReturnsBase()
+    public void GivenDimension_WhenRaisedToOne_ThenResultIsBaseDimension()
     {
         // Arrange
         var expected = Dimension.Time; // T
@@ -72,7 +72,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_PowerDimensionMinus1_ReturnsDivision()
+    public void GivenDimension_WhenRaisedToMinusOne_ThenResultIsReciprocal()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.None, Dimension.Time); // 1/T
@@ -85,7 +85,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_PowerDimensionNegative_ReturnsDivision()
+    public void GivenDimension_WhenRaisedToNegativeExponent_ThenResultIsReciprocalPower()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.None, Dimension.Power(Dimension.Time, 2)); // 1/T^2
@@ -98,7 +98,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_MultiplePowerDimension_ExpandsEachPower()
+    public void GivenProductDimension_WhenRaisedToExponent_ThenExponentDistributesAcrossFactors()
     {
         // Arrange
         var expected = Dimension.Multiply(Dimension.Power(Dimension.Length, 2), Dimension.Power(Dimension.Time, 2));
@@ -111,7 +111,7 @@ public class DimensionPowerTests
     }
 
     [Fact]
-    public void Dimension_MultiplePowerDimensionWithDivision_ExpandsEachPower()
+    public void GivenProductWithDivision_WhenRaisedToExponent_ThenExponentDistributesAcrossAllOperands()
     {
         // Arrange
         var expected = Dimension.Divide(Dimension.Multiply(Dimension.Power(Dimension.Length, 2), Dimension.Power(Dimension.Time, 2)), Dimension.Power(Dimension.Mass, 2)); // L^2T^2/M^2;

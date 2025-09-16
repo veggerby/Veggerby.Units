@@ -7,7 +7,7 @@ namespace Veggerby.Units.Tests.Units;
 public class HashCodeConsistencyTests
 {
     [Fact]
-    public void Given_IdenticalProductUnits_When_GetHashCode_Then_EqualsImpliesSameHash()
+    public void GivenIdenticalProductUnits_WhenGettingHashCode_ThenEqualsImpliesSameHash()
     {
         // Arrange
         var u1 = Unit.SI.m * Unit.SI.s;
@@ -23,7 +23,7 @@ public class HashCodeConsistencyTests
     }
 
     [Fact]
-    public void Given_IdenticalPowerUnits_When_GetHashCode_Then_EqualsImpliesSameHash()
+    public void GivenIdenticalPowerUnits_WhenGettingHashCode_ThenEqualsImpliesSameHash()
     {
         // Arrange
         var u1 = Unit.SI.m ^ 3;
