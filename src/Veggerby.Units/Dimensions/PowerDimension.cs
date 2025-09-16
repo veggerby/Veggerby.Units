@@ -1,6 +1,7 @@
 using Veggerby.Units.Reduction;
 namespace Veggerby.Units.Dimensions;
 
+/// <summary>Composite dimension representing a base raised to an integer exponent.</summary>
 public class PowerDimension : Dimension, IPowerOperation
 {
     private readonly Dimension _base;
@@ -12,14 +13,18 @@ public class PowerDimension : Dimension, IPowerOperation
         _exponent = exponent;
     }
 
+    /// <inheritdoc />
     public override string Symbol => $"{_base.Symbol}^{_exponent}";
+    /// <inheritdoc />
     public override string Name => $"{_base.Name} ^ {_exponent}";
 
     IOperand IPowerOperation.Base => _base;
     int IPowerOperation.Exponent => _exponent;
 
+    /// <inheritdoc />
     public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IPowerOperation);
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         unchecked

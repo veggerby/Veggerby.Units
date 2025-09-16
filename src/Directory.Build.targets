@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotesFile Condition="'$(PackageReleaseNotesFile)' == ''">RELEASE_NOTES.md</PackageReleaseNotesFile>
+  </PropertyGroup>
+
+  <Target Name="LoadReleaseNotes" BeforeTargets="Pack"
+          Condition="Exists('$(PackageReleaseNotesFile)')">
+    <PropertyGroup>
+      <PackageReleaseNotes>
+        $([System.IO.File]::ReadAllText('$(PackageReleaseNotesFile)'))
+      </PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+</Project>

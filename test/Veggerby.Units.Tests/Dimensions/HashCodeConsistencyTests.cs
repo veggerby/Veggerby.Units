@@ -1,5 +1,7 @@
 using AwesomeAssertions;
+
 using Veggerby.Units.Dimensions;
+
 using Xunit;
 
 namespace Veggerby.Units.Tests.Dimensions;

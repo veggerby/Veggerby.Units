@@ -2,8 +2,15 @@
 
 namespace Veggerby.Units.Conversion;
 
+/// <summary>
+/// Measurement conversion helpers. Conversions proceed via canonical scale factors relative to SI base units.
+/// </summary>
 public static class Extensions
 {
+    /// <summary>
+    /// Converts a measurement to an equivalent value expressed in the target unit. Throws when dimensions are
+    /// incompatible or calculator type unsupported.
+    /// </summary>
     public static Measurement<T> ConvertTo<T>(this Measurement<T> value, Unit unit) where T : IComparable
     {
         if (value == null)
@@ -55,6 +62,10 @@ public static class Extensions
         return new Measurement<T>((T)newValue, unit, value.Calculator);
     }
 
+    /// <summary>
+    /// Ensures v1 is expressed in the same unit as v2 (converting when necessary). Used internally for
+    /// relational comparisons.
+    /// </summary>
     public static Measurement<T> AlignUnits<T>(this Measurement<T> v1, Measurement<T> v2) where T : IComparable
     {
         if (v1.Unit == v2.Unit)

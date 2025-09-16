@@ -1,5 +1,7 @@
 using System.Linq;
+
 using AwesomeAssertions;
+
 using Xunit;
 
 namespace Veggerby.Units.Tests;

@@ -2,6 +2,7 @@ using Veggerby.Units.Reduction;
 
 namespace Veggerby.Units.Dimensions;
 
+/// <summary>Composite dimension representing dividend/divisor.</summary>
 public class DivisionDimension : Dimension, IDivisionOperation
 {
     private readonly Dimension _dividend;
@@ -13,9 +14,12 @@ public class DivisionDimension : Dimension, IDivisionOperation
         _divisor = divisor;
     }
 
+    /// <inheritdoc />
     public override string Symbol => string.Format("{0}/{1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Symbol, _divisor.Symbol);
+    /// <inheritdoc />
     public override string Name => string.Format("{0} / {1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Name, _divisor.Name);
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         unchecked
@@ -26,6 +30,7 @@ public class DivisionDimension : Dimension, IDivisionOperation
             return hash ^ 0x3333AAAA;
         }
     }
+    /// <inheritdoc />
     public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IDivisionOperation);
 
     IOperand IDivisionOperation.Dividend => _dividend;
