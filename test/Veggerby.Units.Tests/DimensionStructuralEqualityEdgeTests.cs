@@ -1,17 +1,19 @@
 using AwesomeAssertions;
 
+using Veggerby.Units.Dimensions;
+
 using Xunit;
 
 namespace Veggerby.Units.Tests;
 
-public class UnitStructuralEqualityEdgeTests
+public class DimensionStructuralEqualityEdgeTests
 {
     [Fact]
     public void GivenProductsWithDifferentAuthoringOrder_WhenComparingEqualityOperator_ThenTheyAreEqual()
     {
         // Arrange
-        var left = Unit.SI.m * Unit.SI.s * Unit.SI.kg;
-        var right = Unit.SI.kg * Unit.SI.m * Unit.SI.s;
+        var left = Dimension.Length * Dimension.Time * Dimension.Mass;
+        var right = Dimension.Mass * Dimension.Length * Dimension.Time;
 
         // Act
         var equal = left == right;
@@ -24,8 +26,8 @@ public class UnitStructuralEqualityEdgeTests
     public void GivenNestedDivisionPatternsThatNormalizeSameStructure_WhenComparingEqualityOperator_ThenTheyAreEqual()
     {
         // Arrange
-        var left = (Unit.SI.m / Unit.SI.s) / (Unit.SI.kg / Unit.SI.kg); // => (m/s)/(kg/kg) => (m/s)/(1) => m/s
-        var right = Unit.SI.m / Unit.SI.s;
+        var left = (Dimension.Length / Dimension.Time) / (Dimension.Mass / Dimension.Mass); // => (L/T)/(M/M) => L/T
+        var right = Dimension.Length / Dimension.Time;
 
         // Act
         var equal = left == right;
@@ -38,8 +40,8 @@ public class UnitStructuralEqualityEdgeTests
     public void GivenEquivalentCompositeViaPowerDistribution_WhenComparingEqualityOperator_ThenTheyAreEqual()
     {
         // Arrange
-        var left = (Unit.SI.m * Unit.SI.s) ^ 2; // (m*s)^2 => m^2 * s^2
-        var right = (Unit.SI.m ^ 2) * (Unit.SI.s ^ 2);
+        var left = (Dimension.Length * Dimension.Time) ^ 3; // (L*T)^3 => L^3 * T^3
+        var right = (Dimension.Length ^ 3) * (Dimension.Time ^ 3);
 
         // Act
         var equal = left == right;
@@ -52,8 +54,8 @@ public class UnitStructuralEqualityEdgeTests
     public void GivenDifferentExponentCombinationResults_WhenComparingInequalityOperator_ThenTheyAreNotEqual()
     {
         // Arrange
-        var left = (Unit.SI.m ^ 2) ^ 3; // => m^6
-        var right = Unit.SI.m ^ 5;      // m^5
+        var left = (Dimension.Length ^ 2) ^ 3; // => L^6
+        var right = Dimension.Length ^ 5;      // L^5
 
         // Act
         var notEqual = left != right;
@@ -63,11 +65,11 @@ public class UnitStructuralEqualityEdgeTests
     }
 
     [Fact]
-    public void GivenDivisionWithCancelledNullUnit_WhenComparingEqualityOperator_ThenTheyAreEqual()
+    public void GivenDivisionWithCancelledNoneDimension_WhenComparingEqualityOperator_ThenTheyAreEqual()
     {
         // Arrange
-        var left = (Unit.None / Unit.SI.m) ^ 2;   // (1/m)^2 => 1/m^2
-        var right = Unit.None / (Unit.SI.m ^ 2);  // 1/m^2
+        var left = (Dimension.None / Dimension.Length) ^ 2;   // (1/L)^2 => 1/L^2
+        var right = Dimension.None / (Dimension.Length ^ 2);  // 1/L^2
 
         // Act
         var equal = left == right;
