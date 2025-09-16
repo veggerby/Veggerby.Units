@@ -2,7 +2,7 @@ using Veggerby.Units.Reduction;
 namespace Veggerby.Units.Dimensions;
 
 /// <summary>Composite dimension representing a base raised to an integer exponent.</summary>
-public class PowerDimension : Dimension, IPowerOperation
+public class PowerDimension : Dimension, IPowerOperation, ICanonicalFactorsProvider
 {
     private readonly Dimension _base;
     private readonly int _exponent;
@@ -34,5 +34,13 @@ public class PowerDimension : Dimension, IPowerOperation
             hash = hash * 37 + _exponent.GetHashCode();
             return hash ^ 0x7777AAAA;
         }
+    }
+    FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
+    {
+        if (!ReductionSettings.UseFactorVector)
+        {
+            return null;
+        }
+        return new FactorVector<IOperand>(new[] { ((IOperand)_base, _exponent) });
     }
 }

@@ -33,6 +33,35 @@ internal static class OperationUtility
             return false;
         }
 
+        if (ReductionSettings.UseFactorVector &&
+            o1 is ICanonicalFactorsProvider c1 &&
+            o2 is ICanonicalFactorsProvider c2)
+        {
+            var fv1 = c1.GetCanonicalFactors();
+            var fv2 = c2.GetCanonicalFactors();
+            if (fv1.HasValue && fv2.HasValue)
+            {
+                if (ReferenceEquals(fv1.Value.Factors, fv2.Value.Factors))
+                {
+                    return true;
+                }
+                var a = fv1.Value.Factors;
+                var b = fv2.Value.Factors;
+                if (a.Length != b.Length)
+                {
+                    return false;
+                }
+                for (int i = 0; i < a.Length; i++)
+                {
+                    if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         return
             Equals(o1 as IProductOperation, o2 as IProductOperation) ||
             Equals(o1 as IDivisionOperation, o2 as IDivisionOperation) ||

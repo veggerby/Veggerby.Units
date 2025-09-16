@@ -23,4 +23,10 @@ internal static class ReductionSettings
     /// generic ExponentMap reduction flag. Experimental; default off.
     /// </summary>
     public static bool DivisionSinglePass { get; set; } = false;
+
+    /// <summary>
+    /// Enables allocation of and caching of canonical factor vectors on composite units/dimensions for
+    /// faster equality and downstream reductions. Experimental; default off.
+    /// </summary>
+    public static bool UseFactorVector { get; set; } = false;
 }

@@ -9,7 +9,7 @@ namespace Veggerby.Units;
 /// Composite unit representing an integer exponent applied to a base unit.
 /// Negative exponents are represented as division outside this type (handled by operator ^).
 /// </summary>
-public class PowerUnit : Unit, IPowerOperation
+public class PowerUnit : Unit, IPowerOperation, ICanonicalFactorsProvider
 {
     private readonly Unit _base;
     private readonly int _exponent;
@@ -49,5 +49,14 @@ public class PowerUnit : Unit, IPowerOperation
             hash = hash * 37 + _exponent.GetHashCode();
             return hash ^ 0x77777777;
         }
+    }
+    FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
+    {
+        if (!ReductionSettings.UseFactorVector)
+        {
+            return null;
+        }
+        // Single factor representation
+        return new FactorVector<IOperand>(new[] { ((IOperand)_base, _exponent) });
     }
 }

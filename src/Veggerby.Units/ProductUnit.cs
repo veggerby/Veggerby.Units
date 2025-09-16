@@ -12,9 +12,10 @@ namespace Veggerby.Units;
 /// Internally flattens nested product structures to maintain a linear operand list for reduction and equality.
 /// </summary>
 /// <param name="operands">Units to multiply (Unit.None is ignored).</param>
-public class ProductUnit(Unit[] operands) : Unit, IProductOperation
+public class ProductUnit(Unit[] operands) : Unit, IProductOperation, ICanonicalFactorsProvider
 {
     private readonly IList<Unit> _operands = new ReadOnlyCollection<Unit>(OperationUtility.LinearizeMultiplication(operands).ToList());
+    private FactorVector<IOperand>? _cachedFactors;
 
     /// <inheritdoc />
     public override string Symbol => string.Join(string.Empty, _operands.Select(x => x.Symbol));
@@ -48,6 +49,25 @@ public class ProductUnit(Unit[] operands) : Unit, IProductOperation
     internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 
     IEnumerable<IOperand> IProductOperation.Operands => _operands;
+    FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
+    {
+        if (!ReductionSettings.UseFactorVector)
+        {
+            return null;
+        }
+        if (_cachedFactors.HasValue)
+        {
+            return _cachedFactors;
+        }
+        var arr = _operands
+            .GroupBy(o => o, (k, g) => (Base: (IOperand)k, Exponent: g.Count()))
+            .OrderBy(t => t.Base.GetType().FullName)
+            .ThenBy(t => (t.Base as Unit)?.Symbol ?? string.Empty)
+            .Select(t => (t.Base, t.Exponent))
+            .ToArray();
+        _cachedFactors = new FactorVector<IOperand>(arr);
+        return _cachedFactors;
+    }
 
     internal override double GetScaleFactor() => _operands.Select(x => x.GetScaleFactor()).Aggregate(1d, (a, b) => a * b);
 }
