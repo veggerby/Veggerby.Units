@@ -224,101 +224,35 @@ internal static class OperationUtility
     internal static T ReduceDivision<T>(Func<IEnumerable<T>, T> multiply, Func<T, T, T> divide, Func<T, int, T> pow, T dividend, T divisor)
         where T : IOperand
     {
-        if (ReductionSettings.UseExponentMapForReduction || ReductionSettings.DivisionSinglePass)
+        var mapDiv = ExponentMap<T>.Rent();
+        try
         {
-            var map = ExponentMap<T>.Rent();
-            var cancellation = false;
-
-            // Dividend (+)
-            foreach (var term in dividend.ExpandMultiplication())
+            var cancellation = Factorization.AccumulateDivision(mapDiv, dividend, divisor);
+            if (!cancellation)
             {
-                if (term is IPowerOperation p)
+                return default;
+            }
+
+            var positives = new List<T>();
+            var negatives = new List<T>();
+            foreach (var kv in Factorization.EnumerateNonZero(mapDiv))
+            {
+                if (kv.Value > 0)
                 {
-                    map.Add((T)p.Base, p.Exponent);
+                    positives.Add(pow(kv.Key, kv.Value));
                 }
-                else
+                else if (kv.Value < 0)
                 {
-                    map.Add((T)term, 1);
+                    negatives.Add(pow(kv.Key, -kv.Value));
                 }
             }
 
-            // Divisor (-)
-            foreach (var term in divisor.ExpandMultiplication())
-            {
-                if (term is IPowerOperation p)
-                {
-                    if (!cancellation && map.ContainsKey((T)p.Base))
-                    {
-                        cancellation = true;
-                    }
-                    map.Add((T)p.Base, -p.Exponent);
-                }
-                else
-                {
-                    if (!cancellation && map.ContainsKey((T)term))
-                    {
-                        cancellation = true;
-                    }
-                    map.Add((T)term, -1);
-                }
-            }
-
-            if (cancellation)
-            {
-                try
-                {
-                    var positives = new List<T>();
-                    var negatives = new List<T>();
-                    foreach (var kv in map.Entries())
-                    {
-                        if (kv.Value > 0)
-                        {
-                            positives.Add(pow(kv.Key, kv.Value));
-                        }
-                        else if (kv.Value < 0)
-                        {
-                            negatives.Add(pow(kv.Key, -kv.Value));
-                        }
-                    }
-
-                    return divide(multiply(positives), multiply(negatives));
-                }
-                finally
-                {
-                    map.Return();
-                }
-            }
-
-            map.Return(); // no cancellation => no reduction
-            return default;
+            return divide(multiply(positives), multiply(negatives));
         }
-
-        var dividends = dividend
-            .ExpandMultiplication()
-            .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
-            .Select(g => new { Operand = g.Key, Exponent = g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1) })
-            .ToList();
-
-        var divisors = divisor
-            .ExpandMultiplication()
-            .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
-            .Select(g => new { Operand = g.Key, Exponent = -g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1) })
-            .ToList();
-
-        if (dividends.Select(x => x.Operand).Intersect(divisors.Select(x => x.Operand)).Any())
+        finally
         {
-            var result = dividends
-                .Concat(divisors)
-                .GroupBy(x => x.Operand)
-                .Select(g => new { Operand = g.Key, Exponent = g.Sum(x => x.Exponent) })
-                .ToList();
-
-            return divide(
-                multiply(result.Where(x => x.Exponent > 0).Select(x => pow((T)x.Operand, x.Exponent))),
-                multiply(result.Where(x => x.Exponent < 0).Select(x => pow((T)x.Operand, -x.Exponent))));
+            mapDiv.Return();
         }
-
-        return default;
     }
 
     /// <summary>Aggregates repeated multiplicative factors into powers ( (A*A*A*B) => A^3*B ).</summary>
@@ -331,58 +265,25 @@ internal static class OperationUtility
     internal static T ReduceMultiplication<T>(Func<IEnumerable<T>, T> multiply, Func<T, int, T> power, params T[] operands)
         where T : IOperand
     {
-        if (ReductionSettings.UseExponentMapForReduction)
+        var mapMul = ExponentMap<T>.Rent();
+        try
         {
-            var map = ExponentMap<T>.Rent();
-            var reduced = false;
-            foreach (var operand in operands.SelectMany(x => x.ExpandMultiplication()))
+            var reduced = Factorization.AccumulateProduct(mapMul, operands);
+            if (!reduced)
             {
-                if (operand is IPowerOperation p)
-                {
-                    if (!reduced && map.Entries().Any(x => ReferenceEquals(x.Key, p.Base)))
-                    {
-                        reduced = true;
-                    }
-                    map.Add((T)p.Base, p.Exponent);
-                }
-                else
-                {
-                    if (!reduced && map.Entries().Any(x => ReferenceEquals(x.Key, operand)))
-                    {
-                        reduced = true;
-                    }
-                    map.Add((T)operand, 1);
-                }
+                return default;
             }
-
-            if (reduced)
+            var list = new List<T>();
+            foreach (var kv in Factorization.EnumerateNonZero(mapMul))
             {
-                try
-                {
-                    var list = new List<T>();
-                    foreach (var kv in map.Entries())
-                    {
-                        list.Add(power(kv.Key, kv.Value));
-                    }
-                    return multiply(list);
-                }
-                finally
-                {
-                    map.Return();
-                }
+                list.Add(power(kv.Key, kv.Value));
             }
-
-            map.Return();
-            return default;
+            return multiply(list);
         }
-
-        var powers = operands
-            .SelectMany(x => x.ExpandMultiplication())
-            .GroupBy(x => x is IPowerOperation ? (x as IPowerOperation).Base : x)
-            .Select(g => new { IsReduced = g.Count() > 1, Operand = power((T)g.Key, g.Sum(x => x is IPowerOperation ? (x as IPowerOperation).Exponent : 1)) })
-            .ToList();
-
-        return powers.Any(x => x.IsReduced) ? multiply(powers.Select(x => x.Operand)) : default;
+        finally
+        {
+            mapMul.Return();
+        }
     }
 
     /// <summary>Flattens nested product structures ( (A*B)*(C*D*E)*F => A*B*C*D*E*F ).</summary>
