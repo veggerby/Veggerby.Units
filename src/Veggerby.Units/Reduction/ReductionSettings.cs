@@ -17,4 +17,10 @@ internal static class ReductionSettings
     /// sort+zip path. Experimental; default off until benchmarks prove benefit.
     /// </summary>
     public static bool EqualityUsesMap { get; set; } = false;
+
+    /// <summary>
+    /// When true division reduction uses a single-pass exponent accumulation (map-based) regardless of the
+    /// generic ExponentMap reduction flag. Experimental; default off.
+    /// </summary>
+    public static bool DivisionSinglePass { get; set; } = false;
 }

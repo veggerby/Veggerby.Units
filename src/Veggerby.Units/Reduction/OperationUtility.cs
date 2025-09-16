@@ -224,44 +224,46 @@ internal static class OperationUtility
     internal static T ReduceDivision<T>(Func<IEnumerable<T>, T> multiply, Func<T, T, T> divide, Func<T, int, T> pow, T dividend, T divisor)
         where T : IOperand
     {
-        if (ReductionSettings.UseExponentMapForReduction)
+        if (ReductionSettings.UseExponentMapForReduction || ReductionSettings.DivisionSinglePass)
         {
             var map = ExponentMap<T>.Rent();
-            var hadCommon = false;
+            var cancellation = false;
 
-            foreach (var d in dividend.ExpandMultiplication())
+            // Dividend (+)
+            foreach (var term in dividend.ExpandMultiplication())
             {
-                if (d is IPowerOperation p)
+                if (term is IPowerOperation p)
                 {
                     map.Add((T)p.Base, p.Exponent);
                 }
                 else
                 {
-                    map.Add((T)d, 1);
+                    map.Add((T)term, 1);
                 }
             }
 
-            foreach (var d in divisor.ExpandMultiplication())
+            // Divisor (-)
+            foreach (var term in divisor.ExpandMultiplication())
             {
-                if (d is IPowerOperation p)
+                if (term is IPowerOperation p)
                 {
-                    if (!hadCommon && map.Entries().Any(x => ReferenceEquals(x.Key, p.Base)))
+                    if (!cancellation && map.ContainsKey((T)p.Base))
                     {
-                        hadCommon = true;
+                        cancellation = true;
                     }
                     map.Add((T)p.Base, -p.Exponent);
                 }
                 else
                 {
-                    if (!hadCommon && map.Entries().Any(x => ReferenceEquals(x.Key, d)))
+                    if (!cancellation && map.ContainsKey((T)term))
                     {
-                        hadCommon = true;
+                        cancellation = true;
                     }
-                    map.Add((T)d, -1);
+                    map.Add((T)term, -1);
                 }
             }
 
-            if (hadCommon)
+            if (cancellation)
             {
                 try
                 {
@@ -287,7 +289,7 @@ internal static class OperationUtility
                 }
             }
 
-            map.Return();
+            map.Return(); // no cancellation => no reduction
             return default;
         }
 
