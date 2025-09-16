@@ -19,20 +19,28 @@ internal static class OperationUtility
 {
     /// <summary>
     /// Structural equality comparison for two operands ignoring surface type differences where canonical form would match.
-    /// Complexity: O(n log n) for product comparison due to ordered hash based zip (n = operand count in product).
+    /// Adds a canonicalization step for (Product)^n forms when lazy power expansion is enabled to remove
+    /// nondeterminism before performing the raw structural comparison.
     /// </summary>
     internal static bool Equals(IOperand o1, IOperand o2)
     {
-        if (ReferenceEquals(o1, o2))
-        {
-            return true;
-        }
+        if (ReferenceEquals(o1, o2)) { return true; }
+        if (o1 == null || o2 == null) { return false; }
 
-        if (o1 == null || o2 == null)
+        if (ReductionSettings.LazyPowerExpansion)
         {
-            return false;
+            var c1 = CanonicalizePowerProduct(o1);
+            var c2 = CanonicalizePowerProduct(o2);
+            if (!ReferenceEquals(c1, o1) || !ReferenceEquals(c2, o2))
+            {
+                return RawEquals(c1, c2);
+            }
         }
+        return RawEquals(o1, o2);
+    }
 
+    private static bool RawEquals(IOperand o1, IOperand o2)
+    {
         if (ReductionSettings.UseFactorVector &&
             o1 is ICanonicalFactorsProvider c1 &&
             o2 is ICanonicalFactorsProvider c2)
@@ -41,10 +49,7 @@ internal static class OperationUtility
             var fv2 = c2.GetCanonicalFactors();
             if (fv1.HasValue && fv2.HasValue)
             {
-                if (ReferenceEquals(fv1.Value.Factors, fv2.Value.Factors))
-                {
-                    return true; // identical cached vector
-                }
+                if (ReferenceEquals(fv1.Value.Factors, fv2.Value.Factors)) { return true; }
                 var a = fv1.Value.Factors;
                 var b = fv2.Value.Factors;
                 if (a.Length == b.Length)
@@ -52,18 +57,10 @@ internal static class OperationUtility
                     bool all = true;
                     for (int i = 0; i < a.Length; i++)
                     {
-                        if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent)
-                        {
-                            all = false;
-                            break;
-                        }
+                        if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent) { all = false; break; }
                     }
-                    if (all)
-                    {
-                        return true; // positive match
-                    }
+                    if (all) { return true; }
                 }
-                // Negative / inconclusive case: fall through for cross-type normalisation attempts.
             }
         }
 
@@ -80,17 +77,43 @@ internal static class OperationUtility
             if (o1 is IPowerOperation p1 && p1.Base is IProductOperation bp1 && o2 is IProductOperation prod2)
             {
                 if (EqualsDistributedPower(bp1, p1.Exponent, prod2)) { return true; }
-                // Fallback: temporarily force distribution and compare
-                if (TryExpandAndCompare(p1, prod2)) { return true; }
+                if (CompareWithForcedDistribution(p1, prod2)) { return true; }
             }
             else if (o2 is IPowerOperation p2 && p2.Base is IProductOperation bp2 && o1 is IProductOperation prod1)
             {
                 if (EqualsDistributedPower(bp2, p2.Exponent, prod1)) { return true; }
-                if (TryExpandAndCompare(p2, prod1)) { return true; }
+                if (CompareWithForcedDistribution(p2, prod1)) { return true; }
             }
         }
-
         return false;
+    }
+
+    private static IOperand CanonicalizePowerProduct(IOperand operand)
+    {
+        if (operand is IPowerOperation p && p.Exponent > 1 && p.Base is IProductOperation prod)
+        {
+            var first = prod.Operands.FirstOrDefault();
+            if (first == null) { return operand; }
+            if (first is Unit)
+            {
+                var distributed = prod.Operands
+                    .Select(o => (Unit)o)
+                    .Select(u => u ^ p.Exponent)
+                    .OrderBy(u => u.Symbol)
+                    .Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+                return distributed ?? operand;
+            }
+            if (first is Dimensions.Dimension)
+            {
+                var distributed = prod.Operands
+                    .Select(o => (Dimensions.Dimension)o)
+                    .Select(d => d ^ p.Exponent)
+                    .OrderBy(d => d.Symbol)
+                    .Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+                return distributed ?? operand;
+            }
+        }
+        return operand;
     }
 
     private static bool EqualsDistributedPower(IProductOperation productBase, int exponent, IProductOperation distributed)
@@ -162,34 +185,39 @@ internal static class OperationUtility
         return counts.Values.All(v => v == 0);
     }
 
-    private static bool TryExpandAndCompare(IPowerOperation powerOp, IProductOperation otherProduct)
+    /// <summary>
+    /// Compares a lazy power (Product)^n with a candidate distributed product by constructing a deterministic
+    /// distributed form (without mutating global feature flags). Only used as a fallback when structural multiplicity
+    /// matching fails, ensuring we do not depend on global state flips.
+    /// </summary>
+    private static bool CompareWithForcedDistribution(IPowerOperation powerOp, IProductOperation otherProduct)
     {
-        var original = ReductionSettings.LazyPowerExpansion;
-        try
+        if (powerOp.Base is not IProductOperation bp || !bp.Operands.Any())
         {
-            ReductionSettings.LazyPowerExpansion = false; // force distribution
-            // Reconstruct distributed form using existing expansion logic by calling through power delegate indirectly
-            // We do not have generic multiply here; create product from distributed base operands raised to exponent
-            if (powerOp.Base is IProductOperation bp)
-            {
-                // Determine operand kind (units or dimensions)
-                if (bp.Operands.FirstOrDefault() is Unit)
-                {
-                    var distributedUnits = bp.Operands.Select(o => (Unit)o).Select(u => u ^ powerOp.Exponent).ToArray();
-                    var expanded = distributedUnits.Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
-                    return Equals(expanded as IOperand, otherProduct);
-                }
-                if (bp.Operands.FirstOrDefault() is Dimensions.Dimension)
-                {
-                    var distributedDims = bp.Operands.Select(o => (Dimensions.Dimension)o).Select(d => d ^ powerOp.Exponent).ToArray();
-                    var expanded = distributedDims.Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
-                    return Equals(expanded as IOperand, otherProduct);
-                }
-            }
+            return false;
         }
-        finally
+
+        var first = bp.Operands.First();
+        if (first is Unit)
         {
-            ReductionSettings.LazyPowerExpansion = original;
+            // Build distributed canonical product: sort factor base symbols for determinism
+            var distributedUnits = bp.Operands
+                .Select(o => (Unit)o)
+                .Select(u => u ^ powerOp.Exponent)
+                .OrderBy(u => u.Symbol)
+                .ToArray();
+            var expanded = distributedUnits.Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+            return Equals(expanded as IOperand, otherProduct);
+        }
+        if (first is Dimensions.Dimension)
+        {
+            var distributedDims = bp.Operands
+                .Select(o => (Dimensions.Dimension)o)
+                .Select(d => d ^ powerOp.Exponent)
+                .OrderBy(d => d.Symbol)
+                .ToArray();
+            var expanded = distributedDims.Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+            return Equals(expanded as IOperand, otherProduct);
         }
         return false;
     }
