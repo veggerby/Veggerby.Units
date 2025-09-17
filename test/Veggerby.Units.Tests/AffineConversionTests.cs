@@ -49,4 +49,57 @@ public class AffineConversionTests
         ok.Should().BeFalse();
         converted.Should().BeNull();
     }
+
+    [Fact]
+    public void GivenFahrenheitMeasurement_WhenConvertingToKelvin_ThenUsesScaleAndOffset()
+    {
+        // Arrange
+        var tempF = new DoubleMeasurement(32d, Unit.Imperial.F); // freezing point
+
+        // Act
+        var tempK = tempF.ConvertTo(Unit.SI.K);
+
+        // Assert
+        ((double)tempK).Should().BeApproximately(273.15d, 1e-10);
+    }
+
+    [Fact]
+    public void GivenKelvinMeasurement_WhenConvertingToFahrenheit_ThenInverseApplied()
+    {
+        // Arrange
+        var tempK = new DoubleMeasurement(310.15d, Unit.SI.K); // 37 °C (body temperature)
+
+        // Act
+        var tempF = tempK.ConvertTo(Unit.Imperial.F);
+
+        // Assert
+        ((double)tempF).Should().BeApproximately(98.6d, 1e-9);
+    }
+
+    [Fact]
+    public void GivenCelsiusMeasurement_WhenConvertingToFahrenheitAndBack_ThenRoundTripStable()
+    {
+        // Arrange
+        var original = new DoubleMeasurement(12.34d, Unit.SI.C);
+
+        // Act
+        var f = original.ConvertTo(Unit.Imperial.F);
+        var roundTrip = f.ConvertTo(Unit.SI.C);
+
+        // Assert
+        ((double)roundTrip).Should().BeApproximately(12.34d, 1e-10);
+    }
+
+    [Fact]
+    public void GivenFahrenheitMeasurement_WhenConvertToCelsiusViaKelvinPath_EqualsDirectFormula()
+    {
+        // Arrange
+        var f = new DoubleMeasurement(77d, Unit.Imperial.F);
+
+        // Act
+        var c = f.ConvertTo(Unit.SI.C);
+
+        // Assert (77°F -> 25°C)
+        ((double)c).Should().BeApproximately(25d, 1e-10);
+    }
 }

@@ -81,6 +81,8 @@ public class ImperialUnitSystem : UnitSystem
     public Unit A => Unit.SI.A;
     /// <summary>Kelvin (reuses SI).</summary>
     public Unit K => Unit.SI.K;
+    /// <summary>Fahrenheit – affine temperature unit (°F) referenced to Kelvin.</summary>
+    public Unit F { get; }
     /// <summary>Candela (reuses SI).</summary>
     public Unit cd => Unit.SI.cd;
     /// <summary>Mole (reuses SI).</summary>
@@ -125,5 +127,8 @@ public class ImperialUnitSystem : UnitSystem
         qtr = new ScaleUnit("qtr", "quarter", 28, lb);
         cwt = new ScaleUnit("cwt", "hundredweight", 4, qtr);
         t = new ScaleUnit("t", "ton", 20, cwt);
+
+        // temperature (affine) – defined relative to absolute Kelvin base. K = (F * 5/9) + 255.3722222222222
+        F = new AffineUnit("°F", "fahrenheit", K, 5d / 9d, 255.3722222222222d);
     }
 }
