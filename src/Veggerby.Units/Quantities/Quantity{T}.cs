@@ -68,12 +68,41 @@ public sealed class Quantity<T> where T : IComparable
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
     public static Quantity<T> operator +(Quantity<T> left, Quantity<T> right)
     {
-        var result = Add(left, right, requireSameKind: true);
-        if (!result.Kind.AllowDirectAddition)
+        if (left == null) { return right; }
+        if (right == null) { return left; }
+
+        // Same kind path
+        if (ReferenceEquals(left.Kind, right.Kind))
         {
-            throw new InvalidOperationException($"Addition of quantities of kind '{result.Kind.Name}' is not semantically supported.");
+            if (!left.Kind.AllowDirectAddition)
+            {
+                throw new InvalidOperationException($"Addition of quantities of kind '{left.Kind.Name}' is not semantically supported.");
+            }
+            var rAligned = right.Measurement.ConvertTo(left.Measurement.Unit);
+            return new Quantity<T>(left.Measurement + rAligned, left.Kind, strictDimensionCheck: false);
         }
-        return result;
+
+        // Mixed: Point ± Vector -> Point (support both orders for +)
+        if (ReferenceEquals(left.Kind.DifferenceResultKind, right.Kind))
+        {
+            // left = point, right = vector
+            var basePoint = left.Measurement.ConvertTo(left.Kind.CanonicalUnit);
+            var delta = right.Measurement.ConvertTo(left.Kind.DifferenceResultKind.CanonicalUnit);
+            var sum = basePoint + delta;
+            var back = sum.ConvertTo(left.Measurement.Unit);
+            return new Quantity<T>(back, left.Kind, strictDimensionCheck: true);
+        }
+        if (ReferenceEquals(right.Kind.DifferenceResultKind, left.Kind))
+        {
+            // right = point, left = vector
+            var basePoint = right.Measurement.ConvertTo(right.Kind.CanonicalUnit);
+            var delta = left.Measurement.ConvertTo(right.Kind.DifferenceResultKind.CanonicalUnit);
+            var sum = basePoint + delta;
+            var back = sum.ConvertTo(right.Measurement.Unit);
+            return new Quantity<T>(back, right.Kind, strictDimensionCheck: true);
+        }
+
+        throw new InvalidOperationException($"Cannot add {left.Kind.Name} and {right.Kind.Name}.");
     }
 
     /// <summary>
@@ -83,11 +112,81 @@ public sealed class Quantity<T> where T : IComparable
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
     public static Quantity<T> operator -(Quantity<T> left, Quantity<T> right)
     {
-        var result = Sub(left, right, requireSameKind: true);
-        if (!result.Kind.AllowDirectSubtraction)
+        if (left == null) { return right == null ? null : new Quantity<T>(right.Measurement, right.Kind); }
+        if (right == null) { return left; }
+
+        if (ReferenceEquals(left.Kind, right.Kind))
         {
-            throw new InvalidOperationException($"Direct subtraction producing '{result.Kind.Name}' is not semantically supported; use a domain specific delta operation if applicable.");
+            if (left.Kind.AllowDirectSubtraction)
+            {
+                var rAligned = right.Measurement.ConvertTo(left.Measurement.Unit);
+                return new Quantity<T>(left.Measurement - rAligned, left.Kind, strictDimensionCheck: false);
+            }
+            if (left.Kind.DifferenceResultKind != null)
+            {
+                // Point - Point -> Vector
+                var aBase = left.Measurement.ConvertTo(left.Kind.DifferenceResultKind.CanonicalUnit);
+                var bBase = right.Measurement.ConvertTo(left.Kind.DifferenceResultKind.CanonicalUnit);
+                var diff = aBase - bBase;
+                return new Quantity<T>(diff, left.Kind.DifferenceResultKind, strictDimensionCheck: true);
+            }
+            throw new InvalidOperationException($"Direct subtraction producing '{left.Kind.Name}' is not semantically supported.");
         }
-        return result;
+
+        // Mixed: Point - Vector -> Point (vector kind must equal DifferenceResultKind of point)
+        if (ReferenceEquals(left.Kind.DifferenceResultKind, right.Kind))
+        {
+            var basePoint = left.Measurement.ConvertTo(left.Kind.CanonicalUnit);
+            var delta = right.Measurement.ConvertTo(left.Kind.DifferenceResultKind.CanonicalUnit);
+            var result = basePoint - delta; // subtract delta
+            var back = result.ConvertTo(left.Measurement.Unit);
+            return new Quantity<T>(back, left.Kind, strictDimensionCheck: true);
+        }
+
+        throw new InvalidOperationException($"Cannot subtract {right.Kind.Name} from {left.Kind.Name}.");
+    }
+
+    private static bool IsDimensionless(Unit u) => ReferenceEquals(u, Unit.None) || ReferenceEquals(u.Dimension, Veggerby.Units.Dimensions.Dimension.None);
+
+    /// <summary>Scale by a dimensionless measurement (vector semantics only; point-like kinds forbidden).</summary>
+    /// <summary>
+    /// Multiplies a quantity by a dimensionless scalar measurement preserving semantic kind for vector-like kinds.
+    /// Throws when the scalar has a dimension or when attempting to scale a point-like kind (e.g. absolute temperature).
+    /// </summary>
+    public static Quantity<T> operator *(Quantity<T> quantity, Measurement<T> scalar)
+    {
+        if (!IsDimensionless(scalar.Unit))
+        {
+            throw new InvalidOperationException("Scaling requires a dimensionless scalar.");
+        }
+        if (quantity.Kind.DifferenceResultKind != null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
+        {
+            throw new InvalidOperationException($"Cannot scale point-like kind {quantity.Kind.Name}.");
+        }
+        return new Quantity<T>(quantity.Measurement * scalar, quantity.Kind, strictDimensionCheck: false);
+    }
+
+    /// <summary>
+    /// Multiplies a dimensionless scalar measurement by a quantity (commutative convenience). See
+    /// <see cref="operator *(Quantity{T}, Measurement{T})"/> for rules.
+    /// </summary>
+    public static Quantity<T> operator *(Measurement<T> scalar, Quantity<T> quantity) => quantity * scalar;
+
+    /// <summary>Divide by a dimensionless scalar (vector semantics only; point-like kinds forbidden).</summary>
+    /// <summary>
+    /// Divides a quantity by a dimensionless scalar measurement preserving semantic kind for vector-like kinds.
+    /// Throws when the scalar has a dimension or when attempting to scale a point-like kind.
+    /// </summary>
+    public static Quantity<T> operator /(Quantity<T> quantity, Measurement<T> scalar)
+    {
+        if (!IsDimensionless(scalar.Unit))
+        {
+            throw new InvalidOperationException("Scaling requires a dimensionless scalar.");
+        }
+        if (quantity.Kind.DifferenceResultKind != null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
+        {
+            throw new InvalidOperationException($"Cannot scale point-like kind {quantity.Kind.Name}.");
+        }
+        return new Quantity<T>(quantity.Measurement / scalar, quantity.Kind, strictDimensionCheck: false);
     }
 }

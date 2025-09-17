@@ -12,6 +12,97 @@ namespace Veggerby.Units.Tests.Quantities;
 public class TemperatureSemanticsTests
 {
     [Fact]
+    public void GivenAbsolutes_WhenSubtract_ThenDeltaKind()
+    {
+        // Arrange
+        var t2 = TemperatureQuantity.Absolute(20.0, Unit.SI.C);
+        var t1 = TemperatureQuantity.Absolute(10.0, Unit.SI.C);
+
+        // Act
+        var d = t2 - t1;
+
+        // Assert
+        d.Kind.Should().BeSameAs(QuantityKinds.TemperatureDelta);
+        d.Measurement.Unit.Should().Be(Unit.SI.K);
+        d.Measurement.Value.Should().BeApproximately(10.0, 1e-12);
+    }
+
+    [Fact]
+    public void GivenFahrenheitAbsolutes_WhenSubtract_ThenDeltaScaled()
+    {
+        // Arrange
+        var t70 = TemperatureQuantity.Absolute(70.0, Unit.Imperial.F);
+        var t60 = TemperatureQuantity.Absolute(60.0, Unit.Imperial.F);
+
+        // Act
+        var d = t70 - t60;
+
+        // Assert
+        d.Kind.Should().BeSameAs(QuantityKinds.TemperatureDelta);
+        var dK = d.Measurement.ConvertTo(Unit.SI.K);
+        dK.Value.Should().BeApproximately(10.0 * 5.0 / 9.0, 1e-10);
+    }
+
+    [Fact]
+    public void GivenAbsoluteAndDelta_WhenAdd_ThenAbsolute()
+    {
+        // Arrange
+        var t = TemperatureQuantity.Absolute(300.0, Unit.SI.K);
+        var d = TemperatureQuantity.Delta(5.0);
+
+        // Act
+        var t2 = t + d;
+
+        // Assert
+        t2.Kind.Should().BeSameAs(QuantityKinds.TemperatureAbsolute);
+        t2.Measurement.Value.Should().BeApproximately(305.0, 1e-12);
+    }
+
+    [Fact]
+    public void GivenDeltaAndAbsolute_WhenAdd_ThenAbsolute()
+    {
+        // Arrange
+        var d = TemperatureQuantity.Delta(5.0);
+        var t = TemperatureQuantity.Absolute(300.0, Unit.SI.K);
+
+        // Act
+        var t2 = d + t;
+
+        // Assert
+        t2.Kind.Should().BeSameAs(QuantityKinds.TemperatureAbsolute);
+        t2.Measurement.Value.Should().BeApproximately(305.0, 1e-12);
+    }
+
+    [Fact]
+    public void GivenAbsoluteAndDelta_WhenSubtract_ThenAbsolute()
+    {
+        // Arrange
+        var t = TemperatureQuantity.Absolute(300.0, Unit.SI.K);
+        var d = TemperatureQuantity.Delta(5.0);
+
+        // Act
+        var t2 = t - d;
+
+        // Assert
+        t2.Kind.Should().BeSameAs(QuantityKinds.TemperatureAbsolute);
+        t2.Measurement.Value.Should().BeApproximately(295.0, 1e-12);
+    }
+
+    [Fact]
+    public void GivenAbsolute_WhenScaleWithDimensionless_ThenThrows()
+    {
+        // Arrange
+        var t = TemperatureQuantity.Absolute(300.0, Unit.SI.K);
+        var scalar = new DoubleMeasurement(2.0, Unit.None);
+
+        // Act
+        var act = () => _ = t * scalar;
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
     public void GivenFahrenheitPair_WhenDelta_ThenScaledKelvin()
     {
         // Arrange

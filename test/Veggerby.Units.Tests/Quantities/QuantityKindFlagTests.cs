@@ -40,17 +40,18 @@ public class QuantityKindFlagTests
     }
 
     [Fact]
-    public void GivenKindWithSubtractionDisallowed_WhenMinusOperator_ThenThrows()
+    public void GivenAbsoluteTemperatures_WhenMinusOperator_ThenDeltaProduced()
     {
         // Arrange
         var t1 = TemperatureQuantity.Absolute(20.0, Unit.SI.K);
         var t2 = TemperatureQuantity.Absolute(5.0, Unit.SI.K);
 
         // Act
-        var act = () => _ = t1 - t2; // prohibited: subtraction should yield ΔT via TemperatureOps.Delta
+        var delta = t1 - t2;
 
         // Assert
-        act.Should().Throw<InvalidOperationException>();
+        delta.Kind.Should().BeSameAs(QuantityKinds.TemperatureDelta);
+        delta.Measurement.Value.Should().BeApproximately(15.0, 1e-12);
     }
 
     [Fact]

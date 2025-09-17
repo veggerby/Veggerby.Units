@@ -5,8 +5,8 @@ namespace Veggerby.Units.Quantities;
 /// </summary>
 public static partial class QuantityKinds
 {
-    /// <summary>Absolute temperature (affine): K, °C, °F.</summary>
-    public static readonly QuantityKind TemperatureAbsolute = new("TemperatureAbsolute", Unit.SI.K, "T_abs", allowDirectAddition: false, allowDirectSubtraction: false);
     /// <summary>Temperature difference (linear): canonical K (Δ°C == K scale, Δ°F scaled).</summary>
     public static readonly QuantityKind TemperatureDelta = new("TemperatureDelta", Unit.SI.K, "ΔT");
+    /// <summary>Absolute temperature (affine): K, °C, °F. Point − Point → ΔT.</summary>
+    public static readonly QuantityKind TemperatureAbsolute = new("TemperatureAbsolute", Unit.SI.K, "T_abs", allowDirectAddition: false, allowDirectSubtraction: false, differenceResultKind: TemperatureDelta);
 }
