@@ -11,9 +11,13 @@ public static class QuantityKindInferenceRegistry
 {
     private static readonly Dictionary<(QuantityKind, QuantityKindBinaryOperator, QuantityKind), QuantityKind> _map = new();
     private static readonly List<QuantityKindInference> _rules = new();
+    private static bool _sealed;
 
     /// <summary>When true, registering a rule that overwrites an existing mapping throws instead of replacing it.</summary>
     public static bool StrictConflictDetection { get; set; } = true;
+
+    /// <summary>Returns true when further registrations are disallowed.</summary>
+    public static bool IsSealed => _sealed;
 
     static QuantityKindInferenceRegistry()
     {
@@ -58,6 +62,11 @@ public static class QuantityKindInferenceRegistry
             throw new ArgumentNullException(nameof(inf));
         }
 
+        if (_sealed)
+        {
+            throw new InvalidOperationException("QuantityKindInferenceRegistry is sealed; no further rules can be registered.");
+        }
+
         AddOrConflict(inf.Left, inf.Operator, inf.Right, inf.Result);
         _rules.Add(inf);
 
@@ -91,4 +100,7 @@ public static class QuantityKindInferenceRegistry
 
     /// <summary>Enumerates currently registered canonical (non-symmetric duplicate) rules.</summary>
     public static IEnumerable<QuantityKindInference> EnumerateRules() => _rules.ToList();
+
+    /// <summary>Prevents further modification of the registry. Idempotent.</summary>
+    public static void Seal() => _sealed = true;
 }

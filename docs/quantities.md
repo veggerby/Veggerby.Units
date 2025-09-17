@@ -228,4 +228,88 @@ If an unexpected exception occurs for multiplication/division:
 
 ---
 
+## Comparison Semantics (Relational Operators)
+
+Relational operators on `Quantity<T>` (`<`, `<=`, `>`, `>=`, `CompareTo`) require **same semantic kind** (not just dimension). This prevents silently ordering incomparable concepts that share units (Energy vs Torque).
+
+Behavior:
+
+* Same kind: values are *unit‑aligned* to the left operand's unit (via underlying measurement conversion) then compared.
+* Different kind: throws `InvalidOperationException` immediately (even if dimensions match).
+* Equality (`==`, `!=`) remains structural (same kind + same underlying measurement unit/value) – no cross‑kind equality allowed.
+
+Example:
+
+```csharp
+var e1 = Quantity.Energy(10.0);
+var e2 = Quantity.Energy(15.0);
+bool less = e1 < e2;              // true
+
+var torque = Quantity.Torque(15.0); // same unit (J) but different kind
+// e1 < torque -> throws InvalidOperationException
+```
+
+Rationale: ordering heterogeneous semantics often reflects a modeling bug (e.g. ranking torque magnitudes against energies).
+
+## Try* APIs (Non-Throwing Arithmetic Attempts)
+
+For scenarios (e.g. UI pipelines, bulk computations) where exception control flow is too expensive or noisy, non‑throwing wrappers are provided:
+
+| API | Purpose |
+|-----|---------|
+| `TryAdd(a, b, out result, requireSameKind)` | Mirrors `+` with optional same-kind enforcement. |
+| `TrySubtract(a, b, out result, requireSameKind)` | Mirrors `-` semantics. |
+| `TryMultiply(a, b, out result)` | Attempts semantic multiply (inference or fallback). |
+| `TryDivide(a, b, out result)` | Attempts semantic divide. |
+
+They return `false` instead of throwing for semantic violations (cross-kind add, missing inference rule, absolute scaling, etc.) and set `result` to `null`.
+
+Example:
+
+```csharp
+if (!Quantity<double>.TryMultiply(Quantity.Force(5.0), Quantity.Length(2.0), out var work))
+{
+    // handle unsupported semantic combination
+}
+else
+{
+    Console.WriteLine(work.Kind.Name); // Energy
+}
+```
+
+Use these when exploring or filtering potential operations; prefer throwing operators in core domain logic to surface errors early.
+
+## Inference Registry Sealing
+
+`QuantityKindInferenceRegistry.Seal()` locks the registry against further mutation (additional rule registrations). After sealing, any call to `Register` throws. This enables libraries to finalize a deterministic semantic environment (e.g. after application startup) and prevent late dynamic plugins from altering behavior unexpectedly.
+
+Recommended lifecycle:
+
+```csharp
+// During startup
+QuantityKindInferenceRegistry.Register(/* custom rule(s) */);
+// ... other registrations
+QuantityKindInferenceRegistry.Seal();
+
+// Later (runtime) – attempts to register now fail
+```
+
+Use `IsSealed` to introspect if sealing already occurred (idempotent startup components).
+
+Rationale: keeps semantic algebra stable, reproducible, and auditable in long‑running processes or multi‑module applications.
+
+## Temperature Mean Helper
+
+`TemperatureMean.Mean(params Quantity<double>[] absolutes)` safely averages absolute temperatures by converting each to Kelvin, averaging linearly, then returning an absolute in the first sample's unit. Rejects non‑absolute kinds. Returns `null` for empty input.
+
+```csharp
+var t1 = TemperatureQuantity.Absolute(25.0, Unit.SI.C);  // 25 °C
+var t2 = TemperatureQuantity.Absolute(77.0, Unit.Imperial.F); // 77 °F
+var mean = TemperatureMean.Mean(t1, t2); // Mean expressed in °C (first unit)
+```
+
+Why a helper? Affine units require working in a linear base (Kelvin) to avoid offset distortion. Centralizing this avoids subtle mistakes (e.g. averaging raw °C values directly).
+
+---
+
 ---

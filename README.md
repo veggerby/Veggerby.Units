@@ -182,6 +182,66 @@ Why these constraints: to surface ambiguous intent early, avoid “semantic drif
 
 More detail & extension guidance: `docs/quantities.md` (Inference & Arithmetic sections).
 
+### Inferred Multiplicative Examples
+
+```csharp
+using Veggerby.Units.Quantities;
+
+var power = Quantity.Power(250.0);     // 250 W
+var time  = Quantity.Of(30.0, Unit.SI.s, QuantityKinds.Time); // 30 s (if factory provided else custom)
+Quantity<double>.TryMultiply(power, time, out var energy); // true
+Console.WriteLine(energy.Kind.Name);   // Energy
+
+var pressure = Quantity.Pressure(101325.0); // 101325 Pa
+var volume   = Quantity.Volume(0.01);       // 0.01 m^3
+var ok = Quantity<double>.TryMultiply(pressure, volume, out var pvWork); // true
+Console.WriteLine(pvWork.Kind.Name);        // Energy
+```
+
+### Energy vs Torque (Same Dimension, Different Meaning)
+
+```csharp
+var e = Quantity.Energy(12.0);  // 12 J [Energy]
+var τ = Quantity.Torque(12.0);  // 12 J [Torque]
+bool eq = e == τ;                // false (different kinds)
+// e + τ -> throws InvalidOperationException
+// e < τ -> throws (comparisons require same kind)
+```
+
+### Safe Temperature Mean (Affine Handling)
+
+```csharp
+var t1 = TemperatureQuantity.Absolute(25.0, Unit.SI.C);      // 25 °C
+var t2 = TemperatureQuantity.Absolute(77.0, Unit.Imperial.F); // 77 °F
+var mean = TemperatureMean.Mean(t1, t2);                     // expressed in °C (first unit)
+Console.WriteLine(mean);                                     // e.g. 36.111... °C
+```
+
+### Try* APIs & Comparisons
+
+```csharp
+var f = Quantity.Force(5.0);
+var d = Quantity.Length(2.0);
+if (Quantity<double>.TryMultiply(f, d, out var work))
+{
+    // work.Kind == Energy
+}
+
+var f2 = Quantity.Force(7.0);
+bool less = f < f2; // true (same kind)
+
+// Cross-kind comparison rejects:
+// var invalid = f < work; // throws InvalidOperationException
+```
+
+### Registry Sealing (Deterministic Semantics)
+
+```csharp
+// After all custom rule registrations
+QuantityKindInferenceRegistry.Seal();
+// Further Register(...) calls now throw, ensuring stable semantic environment.
+```
+
 ### Cross-kind Addition Failure (Example)
 
 ```csharp
@@ -218,6 +278,7 @@ Docs index (see also `TryConvertTo` and decimal support in capabilities):
 * Reduction pipeline narrative: `docs/reduction-pipeline.md`
 * Performance guide: `docs/performance.md`
 * Quantity kinds list: `docs/quantity-kinds.md`
+* Changelog: `CHANGELOG.md` (Unreleased changes)
 
 ## Contributing & Formatting
 

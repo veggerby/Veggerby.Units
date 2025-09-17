@@ -61,6 +61,210 @@ public sealed class Quantity<T> where T : IComparable
     public override string ToString() => $"{Measurement} [{Kind}]";
 
     /// <summary>
+    /// Determines semantic equality: requires identical <see cref="Kind"/> and equality of numeric value after aligning the
+    /// right operand to this quantity's unit. Cross-kind quantities are never equal even if dimensions &amp; units match.
+    /// </summary>
+    /// <param name="obj">Object to compare.</param>
+    /// <returns><c>true</c> when both quantities share the same kind and aligned values; otherwise <c>false</c>.</returns>
+    public override bool Equals(object obj)
+    {
+        if (obj is not Quantity<T> other)
+        {
+            return false;
+        }
+        if (!ReferenceEquals(Kind, other.Kind))
+        {
+            return false; // cross-kind never equal
+        }
+        var otherAligned = other.Measurement.ConvertTo(Measurement.Unit);
+        return Measurement.Value.CompareTo(otherAligned.Value) == 0;
+    }
+
+    /// <summary>
+    /// Computes a stable hash code by normalizing the underlying measurement to the kind's canonical unit and combining
+    /// it with the semantic kind reference.
+    /// </summary>
+    /// <returns>Hash code consistent with <see cref="Equals(object)"/>.</returns>
+    public override int GetHashCode()
+    {
+        var canonical = Measurement.ConvertTo(Kind.CanonicalUnit);
+        return HashCode.Combine(Kind, canonical.Value);
+    }
+
+    /// <summary>Compares two quantities of the same semantic kind (after unit alignment). Cross-kind comparisons throw.</summary>
+    public int CompareTo(Quantity<T> other)
+    {
+        if (other == null)
+        {
+            return 1;
+        }
+
+        if (!ReferenceEquals(Kind, other.Kind))
+        {
+            throw new InvalidOperationException($"Cannot compare {Kind.Name} with {other.Kind.Name}.");
+        }
+
+        var otherAligned = other.Measurement.ConvertTo(Measurement.Unit);
+        return Measurement.Value.CompareTo(otherAligned.Value);
+    }
+
+    /// <summary>
+    /// Equality operator enforcing same-kind comparison and unit-aligned numeric equality. Throws when kinds differ to
+    /// surface semantic mismatches eagerly rather than silently returning false.
+    /// </summary>
+    public static bool operator ==(Quantity<T> a, Quantity<T> b)
+    {
+        if (ReferenceEquals(a, b))
+        {
+            return true;
+        }
+        if (a is null || b is null)
+        {
+            return false;
+        }
+        if (!ReferenceEquals(a.Kind, b.Kind))
+        {
+            throw new InvalidOperationException($"Cannot compare {a.Kind.Name} with {b.Kind.Name}.");
+        }
+        var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
+        return a.Measurement.Value.CompareTo(bAligned.Value) == 0;
+    }
+
+    /// <summary>
+    /// Inequality operator inverse of <see cref="operator ==(Quantity{T}, Quantity{T})"/>.
+    /// </summary>
+    public static bool operator !=(Quantity<T> a, Quantity<T> b) => !(a == b);
+
+    /// <summary>
+    /// Less-than relational operator. Requires both operands share the same semantic kind; values are compared after
+    /// aligning <paramref name="b"/>'s unit to <paramref name="a"/>'s unit. Throws on cross-kind comparison.
+    /// </summary>
+    public static bool operator <(Quantity<T> a, Quantity<T> b)
+    {
+        if (a == null || b == null)
+        {
+            throw new InvalidOperationException("Cannot compare null quantities.");
+        }
+        return a.CompareTo(b) < 0;
+    }
+
+    /// <summary>
+    /// Greater-than relational operator. Requires same kind and aligns units prior to comparison.
+    /// </summary>
+    public static bool operator >(Quantity<T> a, Quantity<T> b)
+    {
+        if (a == null || b == null)
+        {
+            throw new InvalidOperationException("Cannot compare null quantities.");
+        }
+        return a.CompareTo(b) > 0;
+    }
+
+    /// <summary>
+    /// Less-than-or-equal relational operator. Requires same kind and aligns units prior to comparison.
+    /// </summary>
+    public static bool operator <=(Quantity<T> a, Quantity<T> b)
+    {
+        if (a == null || b == null)
+        {
+            throw new InvalidOperationException("Cannot compare null quantities.");
+        }
+        return a.CompareTo(b) <= 0;
+    }
+
+    /// <summary>
+    /// Greater-than-or-equal relational operator. Requires same kind and aligns units prior to comparison.
+    /// </summary>
+    public static bool operator >=(Quantity<T> a, Quantity<T> b)
+    {
+        if (a == null || b == null)
+        {
+            throw new InvalidOperationException("Cannot compare null quantities.");
+        }
+        return a.CompareTo(b) >= 0;
+    }
+
+    /// <summary>Attempts to multiply two quantities. Returns false (without throwing) when no semantic rule or fallback applies.</summary>
+    public static bool TryMultiply(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
+    {
+        result = null;
+        if (left == null || right == null)
+        {
+            result = left ?? right;
+            return true;
+        }
+        try
+        {
+            result = left * right; // reuse operator semantics
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Attempts to divide two quantities. Returns false when no semantic rule or fallback applies.</summary>
+    public static bool TryDivide(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
+    {
+        result = null;
+        if (left == null || right == null)
+        {
+            result = left ?? right;
+            return true;
+        }
+        try
+        {
+            result = left / right; // reuse operator semantics
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Attempts to add two quantities respecting semantic rules.</summary>
+    public static bool TryAdd(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
+    {
+        result = null;
+        if (left == null || right == null)
+        {
+            result = left ?? right;
+            return true;
+        }
+        try
+        {
+            result = left + right;
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Attempts to subtract two quantities respecting semantic rules.</summary>
+    public static bool TrySubtract(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
+    {
+        result = null;
+        if (left == null || right == null)
+        {
+            result = left ?? right;
+            return true;
+        }
+        try
+        {
+            result = left - right;
+            return true;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Adds two quantities enforcing the same semantic rules as the '+' operator. Mixed point±delta handled; cross-kind without a permitted
     /// rule throws. This method previously allowed unsafe cross-kind addition when <c>requireSameKind</c> was false; that behavior is removed.
     /// </summary>
