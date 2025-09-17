@@ -35,6 +35,30 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 - Tag-based classification for built-in kinds (`Energy.StateFunction`, `Energy.PathFunction`, `Domain.Thermodynamic`, `Domain.Mechanical`, `Form.Dimensionless`).
 - Registry behavior tests enhancing semantic inference safety (conflict detection and overwrite scenarios).
 
+#### Advanced Extensions (Second Wave)
+
+- Mechanics / Dynamics: Impulse, Action, SpecificAngularMomentum, Torsion.
+- Thermal & Transport: VolumetricHeatCapacity, SpecificWeight.
+- Optical / Radiative: Emissivity, Absorptivity, Reflectivity, Transmissivity, SpectralRadiance, SpectralIrradiance, SpectralFlux, OpticalPathLength, RefractiveIndex.
+- Fluid / Dimensionless Groups: ReynoldsNumber, PrandtlNumber, NusseltNumber, SchmidtNumber, SherwoodNumber, BiotNumber.
+- Chemistry / Material: PartialPressure, Activity, ActivityCoefficient, MassAttenuationCoefficient, HenrysConstant.
+- Electromagnetic Advanced: ElectricalConductivity, ElectricalResistivity, SurfaceChargeDensity, LineChargeDensity, SurfaceCurrentDensity, Polarization, BoundCurrentDensity.
+
+#### Additional Inference Rules (Second Wave)
+
+- Force × Time ↔ Impulse; Energy × Time ↔ Action; AngularMomentum ÷ Mass → SpecificAngularMomentum.
+- HeatCapacity ÷ Volume → VolumetricHeatCapacity; Force ÷ Volume → SpecificWeight.
+- Radiance ÷ Length → SpectralRadiance; Irradiance ÷ Length → SpectralIrradiance; RadiantFlux ÷ Length → SpectralFlux.
+- Pressure × MoleFraction ↔ PartialPressure.
+- ActivityCoefficient × MoleFraction ↔ Activity.
+- Conductivity × ElectricFieldStrength → ElectricCurrentDensity (and related resistivity forms).
+
+#### Deferred / Omitted (Rationale)
+
+- ThermalEffusivity: Requires fractional exponents (sqrt of conductivity·density·heat capacity) not currently modeled; postponed until fractional exponent support is introduced to unit algebra.
+- General RateConstant (k): Order-dependent dimensionality (e.g., molarity exponents vary). Library avoids introducing a polymorphic kind whose dimension changes with reaction order—users should model specific forms explicitly when needed.
+- HenrysConstant inference: Multiplicative mapping with MoleFraction intentionally omitted to preserve unambiguous PartialPressure ÷ MoleFraction → Pressure rule (conflict surfaced during registry sealing). HenrysConstant remains a kind for value storage without inference participation.
+
 #### Extended Semantic Surface (this iteration)
 
 - Extensive new quantity kinds grouped by domain:

@@ -89,6 +89,26 @@ public static partial class Quantity
     /// <summary>Create charge mobility quantity (m^2/(V·s)).</summary>
     public static Quantity<double> ChargeMobility(double squareMetresPerVoltSecond) => new(Create(squareMetresPerVoltSecond, QuantityKinds.ChargeMobility.CanonicalUnit), QuantityKinds.ChargeMobility);
 
+    // Advanced Electromagnetic
+    /// <summary>Create electrical conductivity quantity (S/m).</summary>
+    public static Quantity<double> ElectricalConductivity(double siemensPerMetre) => new(Create(siemensPerMetre, QuantityKinds.ElectricalConductivity.CanonicalUnit), QuantityKinds.ElectricalConductivity);
+    /// <summary>Create electrical resistivity quantity (Ω·m).</summary>
+    public static Quantity<double> ElectricalResistivity(double ohmMetres) => new(Create(ohmMetres, QuantityKinds.ElectricalResistivity.CanonicalUnit), QuantityKinds.ElectricalResistivity);
+    /// <summary>Create surface charge density quantity (C/m^2).</summary>
+    public static Quantity<double> SurfaceChargeDensity(double coulombPerSquareMetre) => new(Create(coulombPerSquareMetre, QuantityKinds.SurfaceChargeDensity.CanonicalUnit), QuantityKinds.SurfaceChargeDensity);
+    /// <summary>Create line charge density quantity (C/m).</summary>
+    public static Quantity<double> LineChargeDensity(double coulombPerMetre) => new(Create(coulombPerMetre, QuantityKinds.LineChargeDensity.CanonicalUnit), QuantityKinds.LineChargeDensity);
+    /// <summary>Create surface current density quantity (A/m).</summary>
+    public static Quantity<double> SurfaceCurrentDensity(double amperePerMetre) => new(Create(amperePerMetre, QuantityKinds.SurfaceCurrentDensity.CanonicalUnit), QuantityKinds.SurfaceCurrentDensity);
+    /// <summary>Create electric dipole moment quantity (C·m).</summary>
+    public static Quantity<double> ElectricDipoleMoment(double coulombMetre) => new(Create(coulombMetre, QuantityKinds.ElectricDipoleMoment.CanonicalUnit), QuantityKinds.ElectricDipoleMoment);
+    /// <summary>Create magnetic dipole moment quantity (A·m^2).</summary>
+    public static Quantity<double> MagneticDipoleMoment(double ampereMetreSquared) => new(Create(ampereMetreSquared, QuantityKinds.MagneticDipoleMoment.CanonicalUnit), QuantityKinds.MagneticDipoleMoment);
+    /// <summary>Create polarization quantity (C/m^2).</summary>
+    public static Quantity<double> Polarization(double coulombPerSquareMetre) => new(Create(coulombPerSquareMetre, QuantityKinds.Polarization.CanonicalUnit), QuantityKinds.Polarization);
+    /// <summary>Create bound current density quantity (A/m^2).</summary>
+    public static Quantity<double> BoundCurrentDensity(double amperePerSquareMetre) => new(Create(amperePerSquareMetre, QuantityKinds.BoundCurrentDensity.CanonicalUnit), QuantityKinds.BoundCurrentDensity);
+
     // Radiation / Photometry
     /// <summary>Create radiant flux quantity (W).</summary>
     public static Quantity<double> RadiantFlux(double watts) => new(Create(watts, QuantityKinds.RadiantFlux.CanonicalUnit), QuantityKinds.RadiantFlux);
@@ -122,4 +142,66 @@ public static partial class Quantity
     // Odds & Ends
     /// <summary>Create generic dimensionless ratio quantity.</summary>
     public static Quantity<double> DimensionlessRatio(double ratio) => new(Create(ratio, QuantityKinds.DimensionlessRatio.CanonicalUnit), QuantityKinds.DimensionlessRatio);
+
+    // Mechanics / Dynamics
+    /// <summary>Create impulse quantity (N·s).</summary>
+    public static Quantity<double> Impulse(double newtonSeconds) => new(Create(newtonSeconds, QuantityKinds.Impulse.CanonicalUnit), QuantityKinds.Impulse);
+    /// <summary>Create action quantity (J·s).</summary>
+    public static Quantity<double> Action(double jouleSeconds) => new(Create(jouleSeconds, QuantityKinds.Action.CanonicalUnit), QuantityKinds.Action);
+    /// <summary>Create specific angular momentum quantity (m^2/s).</summary>
+    public static Quantity<double> SpecificAngularMomentum(double squareMetresPerSecond) => new(Create(squareMetresPerSecond, QuantityKinds.SpecificAngularMomentum.CanonicalUnit), QuantityKinds.SpecificAngularMomentum);
+    /// <summary>Create torsion quantity (1/m).</summary>
+    public static Quantity<double> Torsion(double reciprocalMetres) => new(Create(reciprocalMetres, QuantityKinds.Torsion.CanonicalUnit), QuantityKinds.Torsion);
+
+    // Thermal additions
+    /// <summary>Create volumetric heat capacity quantity (J/(m^3·K)).</summary>
+    public static Quantity<double> VolumetricHeatCapacity(double joulePerCubicMetreKelvin) => new(Create(joulePerCubicMetreKelvin, QuantityKinds.VolumetricHeatCapacity.CanonicalUnit), QuantityKinds.VolumetricHeatCapacity);
+    /// <summary>Create emissivity quantity (dimensionless).</summary>
+    public static Quantity<double> Emissivity(double ratio) => new(Create(ratio, QuantityKinds.Emissivity.CanonicalUnit), QuantityKinds.Emissivity);
+    /// <summary>Create absorptivity quantity (dimensionless).</summary>
+    public static Quantity<double> Absorptivity(double ratio) => new(Create(ratio, QuantityKinds.Absorptivity.CanonicalUnit), QuantityKinds.Absorptivity);
+    /// <summary>Create reflectivity quantity (dimensionless).</summary>
+    public static Quantity<double> Reflectivity(double ratio) => new(Create(ratio, QuantityKinds.Reflectivity.CanonicalUnit), QuantityKinds.Reflectivity);
+    /// <summary>Create transmissivity quantity (dimensionless).</summary>
+    public static Quantity<double> Transmissivity(double ratio) => new(Create(ratio, QuantityKinds.Transmissivity.CanonicalUnit), QuantityKinds.Transmissivity);
+
+    // Fluid / Transport groups
+    /// <summary>Create Reynolds number (dimensionless).</summary>
+    public static Quantity<double> Reynolds(double value) => new(Create(value, QuantityKinds.Reynolds.CanonicalUnit), QuantityKinds.Reynolds);
+    /// <summary>Create Prandtl number (dimensionless).</summary>
+    public static Quantity<double> Prandtl(double value) => new(Create(value, QuantityKinds.Prandtl.CanonicalUnit), QuantityKinds.Prandtl);
+    /// <summary>Create Nusselt number (dimensionless).</summary>
+    public static Quantity<double> Nusselt(double value) => new(Create(value, QuantityKinds.Nusselt.CanonicalUnit), QuantityKinds.Nusselt);
+    /// <summary>Create Schmidt number (dimensionless).</summary>
+    public static Quantity<double> Schmidt(double value) => new(Create(value, QuantityKinds.Schmidt.CanonicalUnit), QuantityKinds.Schmidt);
+    /// <summary>Create Sherwood number (dimensionless).</summary>
+    public static Quantity<double> Sherwood(double value) => new(Create(value, QuantityKinds.Sherwood.CanonicalUnit), QuantityKinds.Sherwood);
+    /// <summary>Create Biot number (dimensionless).</summary>
+    public static Quantity<double> Biot(double value) => new(Create(value, QuantityKinds.Biot.CanonicalUnit), QuantityKinds.Biot);
+    /// <summary>Create specific weight quantity (N/m^3).</summary>
+    public static Quantity<double> SpecificWeight(double newtonPerCubicMetre) => new(Create(newtonPerCubicMetre, QuantityKinds.SpecificWeight.CanonicalUnit), QuantityKinds.SpecificWeight);
+
+    // Radiometry spectral
+    /// <summary>Create spectral radiance quantity (W/m^3).</summary>
+    public static Quantity<double> SpectralRadiance(double wattsPerCubicMetre) => new(Create(wattsPerCubicMetre, QuantityKinds.SpectralRadiance.CanonicalUnit), QuantityKinds.SpectralRadiance);
+    /// <summary>Create spectral irradiance quantity (W/m^3).</summary>
+    public static Quantity<double> SpectralIrradiance(double wattsPerCubicMetre) => new(Create(wattsPerCubicMetre, QuantityKinds.SpectralIrradiance.CanonicalUnit), QuantityKinds.SpectralIrradiance);
+    /// <summary>Create spectral flux quantity (W/m).</summary>
+    public static Quantity<double> SpectralFlux(double wattsPerMetre) => new(Create(wattsPerMetre, QuantityKinds.SpectralFlux.CanonicalUnit), QuantityKinds.SpectralFlux);
+    /// <summary>Create refractive index quantity (dimensionless).</summary>
+    public static Quantity<double> RefractiveIndex(double ratio) => new(Create(ratio, QuantityKinds.RefractiveIndex.CanonicalUnit), QuantityKinds.RefractiveIndex);
+    /// <summary>Create optical path length quantity (m).</summary>
+    public static Quantity<double> OpticalPathLength(double metres) => new(Create(metres, QuantityKinds.OpticalPathLength.CanonicalUnit), QuantityKinds.OpticalPathLength);
+
+    // Chemistry / Material advanced
+    /// <summary>Create partial pressure quantity (Pa).</summary>
+    public static Quantity<double> PartialPressure(double pascals) => new(Create(pascals, QuantityKinds.PartialPressure.CanonicalUnit), QuantityKinds.PartialPressure);
+    /// <summary>Create activity quantity (dimensionless).</summary>
+    public static Quantity<double> Activity(double ratio) => new(Create(ratio, QuantityKinds.Activity.CanonicalUnit), QuantityKinds.Activity);
+    /// <summary>Create activity coefficient quantity (dimensionless).</summary>
+    public static Quantity<double> ActivityCoefficient(double ratio) => new(Create(ratio, QuantityKinds.ActivityCoefficient.CanonicalUnit), QuantityKinds.ActivityCoefficient);
+    /// <summary>Create mass attenuation coefficient quantity (m^2/kg).</summary>
+    public static Quantity<double> MassAttenuationCoefficient(double squareMetresPerKilogram) => new(Create(squareMetresPerKilogram, QuantityKinds.MassAttenuationCoefficient.CanonicalUnit), QuantityKinds.MassAttenuationCoefficient);
+    /// <summary>Create Henry's constant quantity (Pa·m^3/mol).</summary>
+    public static Quantity<double> HenrysConstant(double pascalCubicMetrePerMole) => new(Create(pascalCubicMetrePerMole, QuantityKinds.HenrysConstant.CanonicalUnit), QuantityKinds.HenrysConstant);
 }

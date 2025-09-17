@@ -47,12 +47,27 @@ This page lists the built-in `QuantityKind` instances shipped with the library. 
 | MagneticDipoleMoment | m_e | A·m^2 | A·m^2 | Yes | Yes | — | Domain.Electromagnetic |
 | ElectricPotentialEnergy | U_e | J | kg·m^2/s^2 | Yes | Yes | — | Energy, Domain.Electromagnetic |
 | PowerSpectralDensity | S_p | W/Hz | kg·m^2/s^2 | Yes | Yes | — | Domain.Electromagnetic |
+| Impulse | J_imp | N·s | kg·m/s | Yes | Yes | — | Domain.Mechanics |
+| Action | S_act | J·s | kg·m^2/s | Yes | Yes | — | Domain.Mechanics |
+| SpecificAngularMomentum | h_ang | m^2/s | m^2/s | Yes | Yes | — | Domain.Mechanics |
+| VolumetricHeatCapacity | C_v | J/(m^3·K) | kg/(m·s^2·K) | Yes | Yes | — | Domain.Thermodynamic |
+| SpecificWeight | γ_spec | N/m^3 | kg/(m^2·s^2) | Yes | Yes | — | Domain.Transport, Domain.Mechanics |
+| SpectralRadiance | L_λ | W/(m^2·sr·m^-1) | kg/(s^3·m) | Yes | Yes | — | Domain.Radiation |
+| PartialPressure | p_i | Pa | kg/(m·s^2) | Yes | Yes | — | Domain.Chemistry |
+| Activity | a | (dimensionless) | 1 | Yes | Yes | — | Domain.Chemistry |
+| ActivityCoefficient | γ_act | (dimensionless) | 1 | Yes | Yes | — | Domain.Chemistry |
+| HenrysConstant | H_cp | Pa·m^3/mol | kg·m/(s^2·mol) | Yes | Yes | — | Domain.Chemistry |
+
+## Notes on Omitted Inference
+
+- HenrysConstant is not part of inference rules (Henry × MoleFraction ≠ PartialPressure) to avoid ambiguity with the canonical Pressure × MoleFraction ↔ PartialPressure mapping.
+- Additional thermal property ThermalEffusivity and generalized RateConstant remain deferred (see CHANGELOG rationale) pending fractional exponent and order-aware semantics support.
 
 Legend:
 
-* Direct + / - indicate whether the kind allows same-kind addition / subtraction producing the same kind.
-* Difference Result indicates a Point − Point → Vector mapping (absolute to delta) where applicable.
-* Tags column lists a representative subset (kinds may carry more tags over time; absence of a tag does not imply prohibition—only semantic labeling).
+- Direct + / - indicate whether the kind allows same-kind addition / subtraction producing the same kind.
+- Difference Result indicates a Point − Point → Vector mapping (absolute to delta) where applicable.
+- Tags column lists a representative subset (kinds may carry more tags over time; absence of a tag does not imply prohibition—only semantic labeling).
 
 ## Programmatic Enumeration (Optional)
 
@@ -88,10 +103,10 @@ Multiple kinds intentionally share identical dimensions (Energy vs Torque, Energ
 
 The electromagnetic kinds above reflect corrected canonical unit formulations (September 2025) resolving prior exponent inaccuracies:
 
-* Resistance (R): Energy / (A^2·s) → kg·m^2/(s^3·A^2)
-* Conductance (G): inverse of Resistance → s^3·A^2/(kg·m^2)
-* Capacitance (C): (A·s)^2 / Energy → s^4·A^2/(kg·m^2)
-* Inductance (L): Energy / A^2 → kg·m^2/(s^2·A^2)
+- Resistance (R): Energy / (A^2·s) → kg·m^2/(s^3·A^2)
+- Conductance (G): inverse of Resistance → s^3·A^2/(kg·m^2)
+- Capacitance (C): (A·s)^2 / Energy → s^4·A^2/(kg·m^2)
+- Inductance (L): Energy / A^2 → kg·m^2/(s^2·A^2)
 
 Derivations leverage: V = J/C, C = A·s, Ω = V/A, F = C/V, H = V·s/A. Prior docs used inconsistent time exponents; code and tests now align with SI base analysis. No breaking API changes were introduced.
 

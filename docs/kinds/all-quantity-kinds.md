@@ -66,6 +66,10 @@ Columns:
 | Curvature | κ | 1/m | m^-1 | Yes | Yes | — | Domain.Geometry |
 | Strain | ε | 1 | 1 | Yes | Yes | — | Domain.Material |
 | StrainRate | ε_dot | 1/s | s^-1 | Yes | Yes | — | Domain.Material, Domain.Transport |
+| Impulse | J_imp | kg·m/s | kg·m/s | Yes | Yes | — | Domain.Mechanics |
+| Action | S_act | kg·m^2/s | kg·m^2/s | Yes | Yes | — | Domain.Mechanics |
+| SpecificAngularMomentum | h_ang | m^2/s | m^2/s | Yes | Yes | — | Domain.Mechanics |
+| Torsion | τ_tor | 1/m | m^-1 | Yes | Yes | — | Domain.Geometry |
 
 ## Temperature (Affine vs Linear)
 
@@ -99,7 +103,18 @@ Columns:
 | Permeability | μ | kg·m/(A^2·s^2) | kg·m/(A^2·s^2) | Yes | Yes | — | Domain.Electromagnetic |
 | Impedance | Z | kg·m^2/(A^2·s^3) | kg·m^2/(A^2·s^3) | Yes | Yes | — | Domain.Electromagnetic |
 | Admittance | Y | A^2·s^3/(kg·m^2) | A^2·s^3/(kg·m^2) | Yes | Yes | — | Domain.Electromagnetic |
-| ChargeMobility | μ_e | m^2/(V·s) | m^2·A/(kg·m^2·s^-2·s) → simplified m^2·A·s/(kg·m^2) | Yes | Yes | — | Domain.Electromagnetic |
+| ChargeMobility | μ_e | m^2/(V·s) | A·s^2/kg | Yes | Yes | — | Domain.Electromagnetic |
+| ElectricalConductivity | σ_cond | S/m | A^2·s^3/(kg·m^3) | Yes | Yes | — | Domain.Electromagnetic |
+| ElectricalResistivity | ρ_res | Ω·m | kg·m^3/(A^2·s^3) | Yes | Yes | — | Domain.Electromagnetic |
+| SurfaceChargeDensity | σ_q | C/m^2 | A·s/m^2 | Yes | Yes | — | Domain.Electromagnetic |
+| LineChargeDensity | λ_q | C/m | A·s/m | Yes | Yes | — | Domain.Electromagnetic |
+| SurfaceCurrentDensity | K_s | A/m | A/m | Yes | Yes | — | Domain.Electromagnetic |
+| ElectricDipoleMoment | p_e | C·m | A·s·m | Yes | Yes | — | Domain.Electromagnetic |
+| MagneticDipoleMoment | m_dip | A·m^2 | A·m^2 | Yes | Yes | — | Domain.Electromagnetic |
+| Polarization | P_pol | C/m^2 | A·s/m^2 | Yes | Yes | — | Domain.Electromagnetic |
+| BoundCurrentDensity | J_b | A/m^2 | A/m^2 | Yes | Yes | — | Domain.Electromagnetic |
+| OpticalPathLength | L_opt | m | m | Yes | Yes | — | Domain.Optics |
+| RefractiveIndex | n_refr | 1 | 1 | Yes | Yes | — | Domain.Optics, Form.Dimensionless |
 
 ## Luminous / Optical (Photometric)
 
@@ -110,6 +125,10 @@ Columns:
 | Luminance | L_v | cd/m^2 | cd·m^-2 | Yes | Yes | — | Domain.Optics |
 | Illuminance | E_v (lx) | cd·sr/m^2 | cd·m^-2 | Yes | Yes | — | Domain.Optics |
 | LuminousEfficacy | K_cd | lm/W | cd·sr·s^3/(kg·m^2) | Yes | Yes | — | Domain.Optics |
+| Emissivity | ε_emis | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
+| Absorptivity | α_abs | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
+| Reflectivity | ρ_refl | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
+| Transmissivity | τ_trans | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
 
 ## Radiation / Nuclear
 
@@ -123,6 +142,9 @@ Columns:
 | Irradiance | E_e | kg/s^3 | kg·s^-3 | Yes | Yes | — | Domain.Radiation |
 | Radiance | L_e | kg/(s^3·sr) | kg·s^-3 | Yes | Yes | — | Domain.Radiation |
 | RadiationExposure | X | A·s/kg | A·s/kg | Yes | Yes | — | Domain.Radiation |
+| SpectralRadiance | L_λ | kg/(s^3·m·sr) | kg·s^-3·m^-1 | Yes | Yes | — | Domain.Radiation |
+| SpectralIrradiance | E_λ | kg/(s^3·m) | kg·s^-3·m^-1 | Yes | Yes | — | Domain.Radiation |
+| SpectralFlux | Φ_λ | kg·m/(s^3·m) | kg·s^-3 | Yes | Yes | — | Domain.Radiation |
 
 ## Chemistry / Material / Transport
 
@@ -166,6 +188,19 @@ Columns:
 | MassFraction | w | 1 | 1 | Yes | Yes | — | Domain.Chemistry |
 | OsmoticPressure | π_osm | kg/(m·s^2) | kg·m^-1·s^-2 | Yes | Yes | — | Domain.Chemistry, Domain.Thermodynamic |
 | DimensionlessRatio | R_dim | 1 | 1 | Yes | Yes | — | Domain.Geometry |
+| VolumetricHeatCapacity | C_vol | kg/(m·s^2·K) | kg·m^-1·s^-2·K^-1 | Yes | Yes | — | Domain.Thermodynamic |
+| SpecificWeight | γ_spec | kg/(m^2·s^2) | kg·m^-2·s^-2 | Yes | Yes | — | Domain.Transport, Domain.Material |
+| PartialPressure | p_i | kg/(m·s^2) | kg·m^-1·s^-2 | Yes | Yes | — | Domain.Chemistry, Domain.Thermodynamic |
+| Activity | a | 1 | 1 | Yes | Yes | — | Domain.Chemistry |
+| ActivityCoefficient | γ_act | 1 | 1 | Yes | Yes | — | Domain.Chemistry |
+| MassAttenuationCoefficient | μ_mass | m^2/kg | m^2·kg^-1 | Yes | Yes | — | Domain.Radiation, Domain.Material |
+| HenrysConstant | H_c | Pa·m^3/mol | kg·m/(s^2·mol) | Yes | Yes | — | Domain.Chemistry, Domain.Thermodynamic |
+| Reynolds | Re | 1 | 1 | Yes | Yes | — | Domain.Transport |
+| Prandtl | Pr | 1 | 1 | Yes | Yes | — | Domain.Transport |
+| Nusselt | Nu | 1 | 1 | Yes | Yes | — | Domain.Transport |
+| Schmidt | Sc | 1 | 1 | Yes | Yes | — | Domain.Transport |
+| Sherwood | Sh | 1 | 1 | Yes | Yes | — | Domain.Transport |
+| Biot | Bi | 1 | 1 | Yes | Yes | — | Domain.Transport |
 
 ---
 

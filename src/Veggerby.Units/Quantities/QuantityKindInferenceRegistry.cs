@@ -153,6 +153,66 @@ public static class QuantityKindInferenceRegistry
         Register(new QuantityKindInference(QuantityKinds.Power, QuantityKindBinaryOperator.Multiply, QuantityKinds.ThermalResistance, QuantityKinds.TemperatureDelta, Commutative: true));
         Register(new QuantityKindInference(QuantityKinds.TemperatureDelta, QuantityKindBinaryOperator.Divide, QuantityKinds.ThermalResistance, QuantityKinds.Power));
         Register(new QuantityKindInference(QuantityKinds.TemperatureDelta, QuantityKindBinaryOperator.Divide, QuantityKinds.Power, QuantityKinds.ThermalResistance));
+
+        // --- Advanced Electromagnetic Inference Rules ---
+        Register(new QuantityKindInference(QuantityKinds.ElectricalConductivity, QuantityKindBinaryOperator.Multiply, QuantityKinds.ElectricFieldStrength, QuantityKinds.ElectricCurrentDensity, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricFieldStrength, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricCurrentDensity, QuantityKinds.ElectricalResistivity)); // derived: E/J = ρ (not strictly single variable but acceptable)
+        Register(new QuantityKindInference(QuantityKinds.ElectricalResistivity, QuantityKindBinaryOperator.Multiply, QuantityKinds.ElectricCurrentDensity, QuantityKinds.ElectricFieldStrength, Commutative: true));
+
+        Register(new QuantityKindInference(QuantityKinds.SurfaceChargeDensity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Area, QuantityKinds.ElectricCharge, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Divide, QuantityKinds.Area, QuantityKinds.SurfaceChargeDensity));
+        Register(new QuantityKindInference(QuantityKinds.LineChargeDensity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.ElectricCharge, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.LineChargeDensity));
+
+        Register(new QuantityKindInference(QuantityKinds.SurfaceCurrentDensity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.ElectricCurrent, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.SurfaceCurrentDensity));
+
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.ElectricDipoleMoment, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricDipoleMoment, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.ElectricCharge));
+
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Multiply, QuantityKinds.Area, QuantityKinds.MagneticDipoleMoment, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.MagneticDipoleMoment, QuantityKindBinaryOperator.Divide, QuantityKinds.Area, QuantityKinds.ElectricCurrent));
+
+        Register(new QuantityKindInference(QuantityKinds.Polarization, QuantityKindBinaryOperator.Multiply, QuantityKinds.Volume, QuantityKinds.ElectricDipoleMoment, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricDipoleMoment, QuantityKindBinaryOperator.Divide, QuantityKinds.Volume, QuantityKinds.Polarization));
+
+        Register(new QuantityKindInference(QuantityKinds.BoundCurrentDensity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Area, QuantityKinds.ElectricCurrent, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Divide, QuantityKinds.Area, QuantityKinds.BoundCurrentDensity));
+
+        // --- Mechanics / Dynamics ---
+        Register(new QuantityKindInference(QuantityKinds.Force, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Impulse, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Impulse, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.Force));
+        Register(new QuantityKindInference(QuantityKinds.Impulse, QuantityKindBinaryOperator.Divide, QuantityKinds.Force, QuantityKinds.Time));
+
+        Register(new QuantityKindInference(QuantityKinds.Energy, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Action, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Action, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.Energy));
+        Register(new QuantityKindInference(QuantityKinds.Action, QuantityKindBinaryOperator.Divide, QuantityKinds.Energy, QuantityKinds.Time));
+
+        Register(new QuantityKindInference(QuantityKinds.AngularMomentum, QuantityKindBinaryOperator.Divide, QuantityKinds.Mass, QuantityKinds.SpecificAngularMomentum));
+        Register(new QuantityKindInference(QuantityKinds.SpecificAngularMomentum, QuantityKindBinaryOperator.Multiply, QuantityKinds.Mass, QuantityKinds.AngularMomentum, Commutative: true));
+
+        // --- Thermal ---
+        Register(new QuantityKindInference(QuantityKinds.HeatCapacity, QuantityKindBinaryOperator.Divide, QuantityKinds.Volume, QuantityKinds.VolumetricHeatCapacity));
+        Register(new QuantityKindInference(QuantityKinds.VolumetricHeatCapacity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Volume, QuantityKinds.HeatCapacity, Commutative: true));
+
+        // --- Fluid / Transport ---
+        Register(new QuantityKindInference(QuantityKinds.Force, QuantityKindBinaryOperator.Divide, QuantityKinds.Volume, QuantityKinds.SpecificWeight));
+        Register(new QuantityKindInference(QuantityKinds.SpecificWeight, QuantityKindBinaryOperator.Multiply, QuantityKinds.Volume, QuantityKinds.Force, Commutative: true));
+
+        // --- Radiometry Spectral ---
+        Register(new QuantityKindInference(QuantityKinds.Radiance, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.SpectralRadiance));
+        Register(new QuantityKindInference(QuantityKinds.SpectralRadiance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.Radiance, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Irradiance, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.SpectralIrradiance));
+        Register(new QuantityKindInference(QuantityKinds.SpectralIrradiance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.Irradiance, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.RadiantFlux, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.SpectralFlux));
+        Register(new QuantityKindInference(QuantityKinds.SpectralFlux, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.RadiantFlux, Commutative: true));
+
+        // --- Chemistry ---
+        Register(new QuantityKindInference(QuantityKinds.Pressure, QuantityKindBinaryOperator.Multiply, QuantityKinds.MoleFraction, QuantityKinds.PartialPressure, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.PartialPressure, QuantityKindBinaryOperator.Divide, QuantityKinds.MoleFraction, QuantityKinds.Pressure));
+        Register(new QuantityKindInference(QuantityKinds.ActivityCoefficient, QuantityKindBinaryOperator.Multiply, QuantityKinds.MoleFraction, QuantityKinds.Activity, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Activity, QuantityKindBinaryOperator.Divide, QuantityKinds.MoleFraction, QuantityKinds.ActivityCoefficient));
+        // Henry's constant mapping intentionally omitted to avoid conflict with PartialPressure / MoleFraction -> Pressure invariant.
     }
 
     /// <summary>Registers an inference rule. For commutative multiplication the symmetric rule is generated. Throws on conflict when <see cref="StrictConflictDetection"/> is true.</summary>
