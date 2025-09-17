@@ -29,7 +29,7 @@ jobs:
         run: dotnet build bench/Veggerby.Units.Benchmarks -c Release
       - name: Run benchmarks
         run: |
-          dotnet run --project bench/Veggerby.Units.Benchmarks -c Release -- --exporters markdown
+          dotnet run --project bench/Veggerby.Units.Benchmarks -c Release -- --exporters markdown --allCategories equality
       - name: Extract benchmark summary
         run: |
           dotnet tool install -g dotnet-script
