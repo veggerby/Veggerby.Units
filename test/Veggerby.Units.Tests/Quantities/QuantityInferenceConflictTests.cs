@@ -14,6 +14,7 @@ public class QuantityInferenceConflictTests
     public void GivenConflictingMapping_WhenRegister_ThenThrows()
     {
         // Arrange
+        QuantityKindInferenceRegistry.ResetForTests();
         // Use a rarely combined pair to avoid pre-seeded rules
         var left = QuantityKinds.Momentum;
         var right = QuantityKinds.Velocity;

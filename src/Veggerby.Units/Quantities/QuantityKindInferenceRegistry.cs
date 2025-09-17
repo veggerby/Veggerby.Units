@@ -21,6 +21,15 @@ public static class QuantityKindInferenceRegistry
 
     static QuantityKindInferenceRegistry()
     {
+        Seed();
+    }
+
+    private static void Seed()
+    {
+        _map.Clear();
+        _rules.Clear();
+        _sealed = false;
+
         // Seed rules (thermodynamics): Entropy (J/K) * Absolute Temperature (K) => Energy (J)
         Register(new QuantityKindInference(QuantityKinds.Entropy, QuantityKindBinaryOperator.Multiply, QuantityKinds.TemperatureAbsolute, QuantityKinds.Energy, Commutative: true));
         // Derived inverse rules for division
@@ -103,4 +112,10 @@ public static class QuantityKindInferenceRegistry
 
     /// <summary>Prevents further modification of the registry. Idempotent.</summary>
     public static void Seal() => _sealed = true;
+
+    /// <summary>Test-only helper to reset registry state for isolation (clears, reseeds, and unseals). Not for production use.</summary>
+    internal static void ResetForTests()
+    {
+        Seed();
+    }
 }
