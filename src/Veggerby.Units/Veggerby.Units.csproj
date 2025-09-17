@@ -1,7 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Veggerby.Units</PackageId>
+    <Version>0.1.0</Version>
+    <Description>Strongly-typed units and measurements for .NET with deterministic dimensional algebra and canonical reduction. Safe arithmetic over Measurement&lt;T&gt;, SI ↔ Imperial conversions, decimal prefixes and powers, and affine-aware temperatures.</Description>
+    <PackageTags>units;unit;units-of-measure;measurement;unit-conversion;dimensional-analysis;algebra;reduction;canonical;SI;imperial;prefix;power;temperature;affine;quantity;dotnet;csharp</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Initial release. Full notes: https://github.com/veggerby/shardis/blob/main/CHANGELOG.md#010---2025-08-25</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="" Condition="Exists('icon.png')" />
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 
 </Project>
