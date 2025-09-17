@@ -1,8 +1,11 @@
 using System;
+
 using AwesomeAssertions;
-using Xunit;
+
 using Veggerby.Units.Reduction;
 using Veggerby.Units.Tests.Infrastructure;
+
+using Xunit;
 
 namespace Veggerby.Units.Tests;
 

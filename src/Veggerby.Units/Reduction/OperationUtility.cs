@@ -165,6 +165,7 @@ internal static class OperationUtility
                     matched = true; break;
                 }
             }
+
             if (!matched)
             {
                 result = false; return true;
@@ -377,7 +378,6 @@ internal static class OperationUtility
             if (operand is IPowerOperation innerPow && innerPow.Exponent > 0)
             {
                 var root = innerPow.Base;
-
                 counts[root] = !counts.TryGetValue(root, out var c) ? innerPow.Exponent : c + innerPow.Exponent;
             }
             else
@@ -480,9 +480,12 @@ internal static class OperationUtility
                 .Select(d => d ^ powerOp.Exponent)
                 .OrderBy(d => d.Symbol)
                 .ToArray();
+
             var expanded = distributedDims.Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+
             return Equals(expanded as IOperand, otherProduct);
         }
+
         return false;
     }
 
@@ -531,7 +534,6 @@ internal static class OperationUtility
         where T : IOperand
     {
         // if A*(B/C) ensure division is outermost => A*B/C
-
         var divisions = operands.OfType<IDivisionOperation>();
         var rest = operands.Where(x => !(x is IDivisionOperation));
 

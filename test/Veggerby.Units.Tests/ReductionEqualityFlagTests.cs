@@ -44,7 +44,7 @@ public class ReductionEqualityFlagTests
             {
                 var lf = Veggerby.Units.Reduction.OperationUtility.TryGetCanonicalFactorsForDiagnostics(left);
                 var rf = Veggerby.Units.Reduction.OperationUtility.TryGetCanonicalFactorsForDiagnostics(right);
-                System.Diagnostics.Debug.WriteLine($"[TEST DIAG] Adversarial equality mismatch. L=({string.Join(' ', lf.Select(f => f.Symbol+"^"+f.Exponent))}) R=({string.Join(' ', rf.Select(f => f.Symbol+"^"+f.Exponent))})");
+                System.Diagnostics.Debug.WriteLine($"[TEST DIAG] Adversarial equality mismatch. L=({string.Join(' ', lf.Select(f => f.Symbol + "^" + f.Exponent))}) R=({string.Join(' ', rf.Select(f => f.Symbol + "^" + f.Exponent))})");
             }
             catch { }
         }
