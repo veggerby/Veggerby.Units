@@ -140,6 +140,12 @@ If no rule exists:
 * Quantity × Quantity: if one operand is dimensionless (unit or dimension) and the other is *not* a point-like kind, the non-dimensionless kind is preserved. Point-like (absolute) kinds require an explicit inference rule.
 * Otherwise an `InvalidOperationException` is thrown to surface ambiguous semantics early.
 
+### Angle as a Special Case
+
+The `Angle` quantity kind is dimensionless but semantically distinct from plain scalars. Unlike other dimensionless quantities, `Angle` **cannot** be used in dimensionless fallback behavior and **must** have explicit inference rules for any multiplication or division operations.
+
+This prevents accidental treatment of angles as unitless multipliers, which would lose the important affine and periodic semantics that angles possess. For example, while `Energy * 2.0` (dimensionless) → `Energy` is reasonable, `Energy * Angle` → `Energy` would be meaningless without a specific physical interpretation like rotational work (`Torque * Angle` → `Energy`).
+
 ### Extending
 
 Call `QuantityKindInferenceRegistry.Register(new QuantityKindInference(left, op, right, result, Commutative:true/false))` during application startup. Conflicts throw by default (`StrictConflictDetection = true`). Set `StrictConflictDetection = false` prior to registering to allow benign duplicate mappings (mapping to same result) or intentional overwrites.

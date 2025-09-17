@@ -73,6 +73,12 @@ public sealed class Quantity<T> where T : IComparable
             throw new InvalidOperationException($"Cannot add {a.Kind.Name} to {b.Kind.Name}.");
         }
 
+        // Check AllowDirectAddition for same-kind operations
+        if (ReferenceEquals(a.Kind, b.Kind) && !a.Kind.AllowDirectAddition)
+        {
+            throw new InvalidOperationException($"Addition of quantities of kind '{a.Kind.Name}' is not semantically supported.");
+        }
+
         var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
         return new Quantity<T>(a.Measurement + bAligned, a.Kind, strictDimensionCheck: false);
     }
@@ -88,6 +94,19 @@ public sealed class Quantity<T> where T : IComparable
         if (requireSameKind && !ReferenceEquals(a.Kind, b.Kind))
         {
             throw new InvalidOperationException($"Cannot subtract {b.Kind.Name} from {a.Kind.Name}.");
+        }
+
+        // Check AllowDirectSubtraction for same-kind operations
+        if (ReferenceEquals(a.Kind, b.Kind) && !a.Kind.AllowDirectSubtraction)
+        {
+            // Check if DifferenceResultKind is available for Point - Point -> Vector
+            if (a.Kind.DifferenceResultKind == null)
+            {
+                throw new InvalidOperationException($"Subtraction of quantities of kind '{a.Kind.Name}' is not semantically supported.");
+            }
+            // Note: We don't implement the Point - Point -> Vector logic here as that's complex 
+            // and should be done via the operator. This method is meant to be simple.
+            throw new InvalidOperationException($"Subtraction of quantities of kind '{a.Kind.Name}' requires using the subtraction operator.");
         }
 
         var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
@@ -275,11 +294,18 @@ public sealed class Quantity<T> where T : IComparable
         {
             var product = left.Measurement * right.Measurement;
             var kind = leftDimless ? right.Kind : left.Kind;
+            var dimlessKind = leftDimless ? left.Kind : right.Kind;
 
             // Disallow preserving a point-like absolute via scalar multiply
             if (kind.DifferenceResultKind != null && !kind.AllowDirectAddition && !kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {kind.Name} in multiplication without inference.");
+            }
+
+            // Disallow Angle as scalar fallback - Angle must have explicit inference rules
+            if (ReferenceEquals(dimlessKind, QuantityKinds.Angle))
+            {
+                throw new InvalidOperationException($"Cannot use Angle as dimensionless scalar in multiplication without explicit inference rule.");
             }
 
             return new Quantity<T>(product, kind, strictDimensionCheck: true);
@@ -313,6 +339,12 @@ public sealed class Quantity<T> where T : IComparable
             if (left.Kind.DifferenceResultKind != null && !left.Kind.AllowDirectAddition && !left.Kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {left.Kind.Name} in division without inference.");
+            }
+
+            // Disallow Angle as scalar divisor - Angle must have explicit inference rules
+            if (ReferenceEquals(right.Kind, QuantityKinds.Angle))
+            {
+                throw new InvalidOperationException($"Cannot use Angle as dimensionless divisor without explicit inference rule.");
             }
 
             var quotient = left.Measurement / right.Measurement;
