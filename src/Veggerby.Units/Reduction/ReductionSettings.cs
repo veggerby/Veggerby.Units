@@ -12,7 +12,6 @@ internal static class ReductionSettings
     /// </summary>
     public static bool UseExponentMapForReduction { get; set; } = false;
 
-
     /// <summary>
     /// When true division reduction uses a single-pass exponent accumulation (map-based) regardless of the
     /// generic ExponentMap reduction flag. Experimental; default off.

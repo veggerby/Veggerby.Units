@@ -32,7 +32,7 @@ var speed = distance / time; // value: 0.166666..., unit: km/s
 var speedMS = speed.ConvertTo(Unit.SI.m / Unit.SI.s); // ~166.666 m/s
 ```
 
-For an overview of all capabilities see `docs/CAPABILITIES.md`. Details on the canonical reduction + equality pipeline: `docs/reduction-pipeline.md`.
+For an overview of all capabilities see `docs/capabilities.md`. Details on the canonical reduction + equality pipeline: `docs/reduction-pipeline.md`.
 
 Let's explain this top-down:
 
@@ -89,7 +89,7 @@ is T*(L/T) ALWAYS the same as L?
 ## Performance
 
 Benchmarks are located under `bench/` and use BenchmarkDotNet. Running without arguments executes a quick
-smoke filter (fastest reduction scenario). For full details see `docs/PERFORMANCE.md`.
+smoke filter (fastest reduction scenario). For full details see `docs/performance.md`.
 
 Full run:
 

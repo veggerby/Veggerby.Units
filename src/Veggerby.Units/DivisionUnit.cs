@@ -25,7 +25,7 @@ public class DivisionUnit : Unit, IDivisionOperation, ICanonicalFactorsProvider
     /// <inheritdoc />
     public override string Name => $"{(_dividend.Symbol == string.Empty ? "1" : _dividend.Name)} / {_divisor.Name}";
     /// <inheritdoc />
-    public override UnitSystem System => _dividend != Unit.None ? _dividend.System : _divisor.System;
+    public override UnitSystem System => _dividend != None ? _dividend.System : _divisor.System;
     /// <inheritdoc />
     public override Dimension Dimension => _dividend.Dimension / _divisor.Dimension;
     internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);

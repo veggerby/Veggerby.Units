@@ -13,14 +13,14 @@ namespace Veggerby.Units.Reduction;
 internal sealed class ExponentMap<T>
     where T : IOperand
 {
-    private readonly Dictionary<T, int> _map = new();
-    private static readonly Stack<ExponentMap<T>> _pool = new();
+    private readonly Dictionary<T, int> _map = [];
+    private static readonly Stack<ExponentMap<T>> Pool = new();
 
     public static ExponentMap<T> Rent()
     {
-        lock (_pool)
+        lock (Pool)
         {
-            return _pool.Count > 0 ? _pool.Pop().Reset() : new ExponentMap<T>();
+            return Pool.Count > 0 ? Pool.Pop().Reset() : new ExponentMap<T>();
         }
     }
 
@@ -50,9 +50,9 @@ internal sealed class ExponentMap<T>
 
     public void Return()
     {
-        lock (_pool)
+        lock (Pool)
         {
-            _pool.Push(this);
+            Pool.Push(this);
         }
     }
 }

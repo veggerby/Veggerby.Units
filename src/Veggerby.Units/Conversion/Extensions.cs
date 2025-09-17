@@ -23,17 +23,17 @@ public static class Extensions
     {
         if (value == null)
         {
-            throw new ArgumentNullException("value");
+            throw new ArgumentNullException(nameof(value));
         }
 
         if (unit == null)
         {
-            throw new ArgumentNullException("unit");
+            throw new ArgumentNullException(nameof(unit));
         }
 
         if (value.Unit.Dimension != unit.Dimension)
         {
-            throw new MeasurementConversionException(string.Format("Cannot convert {0} to {1}, dimensions are incompatible ({2} and {2})", value, unit, value.Unit.Dimension, unit.Dimension));
+            throw new MeasurementConversionException($"Cannot convert {value} to {unit}, dimensions are incompatible ({value.Unit.Dimension} and {unit.Dimension})");
         }
 
         if (value.Unit == unit)
@@ -50,13 +50,13 @@ public static class Extensions
 
         // We only support numeric Calculator types that can handle double intermediates (int, double).
         // For int calculators we round the final result.
-        double baseValue = System.Convert.ToDouble(value.Value) * sourceFactor;
+        double baseValue = Convert.ToDouble(value.Value) * sourceFactor;
         double converted = baseValue / targetFactor;
 
         object newValue;
         if (typeof(T) == typeof(int))
         {
-            newValue = (T)(object)System.Convert.ToInt32(System.Math.Round(converted));
+            newValue = (T)(object)Convert.ToInt32(Math.Round(converted));
         }
         else if (typeof(T) == typeof(double))
         {

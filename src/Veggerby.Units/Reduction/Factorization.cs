@@ -16,6 +16,7 @@ internal static class Factorization
     internal static bool AccumulateProduct<T>(ExponentMap<T> map, IEnumerable<T> operands) where T : IOperand
     {
         var duplicate = false;
+
         foreach (var operand in operands)
         {
             foreach (var expanded in operand.ExpandMultiplication())
@@ -26,6 +27,7 @@ internal static class Factorization
                     {
                         duplicate = true;
                     }
+
                     map.Add((T)p.Base, p.Exponent);
                 }
                 else
@@ -34,6 +36,7 @@ internal static class Factorization
                     {
                         duplicate = true;
                     }
+
                     map.Add((T)expanded, 1);
                 }
             }
@@ -69,6 +72,7 @@ internal static class Factorization
                 {
                     cancellation = true;
                 }
+
                 map.Add((T)p.Base, -p.Exponent);
             }
             else
@@ -77,9 +81,11 @@ internal static class Factorization
                 {
                     cancellation = true;
                 }
+
                 map.Add((T)term, -1);
             }
         }
+
         return cancellation;
     }
 

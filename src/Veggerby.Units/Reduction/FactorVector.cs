@@ -4,14 +4,9 @@ namespace Veggerby.Units.Reduction;
 /// Immutable canonical factor representation. Factors are sorted deterministically by (Type, Symbol)
 /// and contain only non-zero exponents. Used for fast equality when enabled.
 /// </summary>
-internal readonly struct FactorVector<T> where T : IOperand
+internal readonly struct FactorVector<T>((T Base, int Exponent)[] factors) where T : IOperand
 {
-    public readonly (T Base, int Exponent)[] Factors;
-
-    public FactorVector((T Base, int Exponent)[] factors)
-    {
-        Factors = factors;
-    }
+    public readonly (T Base, int Exponent)[] Factors = factors;
 }
 
 internal interface ICanonicalFactorsProvider

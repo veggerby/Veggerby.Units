@@ -64,7 +64,7 @@ internal static class OperationUtility
                         bool all = true;
                         for (int i = 0; i < a1.Length; i++)
                         {
-                            if (!string.Equals(a1[i].Symbol, a2[i].Symbol, System.StringComparison.Ordinal) || a1[i].Exponent != a2[i].Exponent)
+                            if (!string.Equals(a1[i].Symbol, a2[i].Symbol, StringComparison.Ordinal) || a1[i].Exponent != a2[i].Exponent)
                             {
                                 all = false; break;
                             }
@@ -535,7 +535,7 @@ internal static class OperationUtility
     {
         // if A*(B/C) ensure division is outermost => A*B/C
         var divisions = operands.OfType<IDivisionOperation>();
-        var rest = operands.Where(x => !(x is IDivisionOperation));
+        var rest = operands.Where(x => x is not IDivisionOperation);
 
         if (divisions.Any())
         {

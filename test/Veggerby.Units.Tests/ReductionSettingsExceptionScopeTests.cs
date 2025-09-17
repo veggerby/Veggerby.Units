@@ -10,14 +10,9 @@ using Xunit;
 namespace Veggerby.Units.Tests;
 
 [Collection(ReductionSettingsCollection.Name)]
-public class ReductionSettingsExceptionScopeTests
+public class ReductionSettingsExceptionScopeTests(ReductionSettingsFixture fixture)
 {
-    private readonly ReductionSettingsFixture _fixture;
-
-    public ReductionSettingsExceptionScopeTests(ReductionSettingsFixture fixture)
-    {
-        _fixture = fixture;
-    }
+    private readonly ReductionSettingsFixture _fixture = fixture;
 
     [Fact]
     public void GivenScopeThrows_WhenDisposed_ThenSettingsRestored()

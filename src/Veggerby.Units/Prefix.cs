@@ -108,8 +108,8 @@ public class Prefix
     /// </summary>
     public static implicit operator Prefix(double value)
     {
-        return Prefix
-            .All
+        return
+            All
             .SingleOrDefault(x => x.Factor == value);
     }
 

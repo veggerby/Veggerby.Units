@@ -86,39 +86,39 @@ public abstract class Dimension : IOperand
     /// <summary>Multiplicative composition with reduction / cancellation of reciprocal factors.</summary>
     public static Dimension operator *(Dimension d1, Dimension d2)
     {
-        if (d1 == Dimension.None) // and if d2 == None, return d2 (=None)
+        if (d1 == None) // and if d2 == None, return d2 (=None)
         {
             return d2;
         }
 
-        if (d2 == Dimension.None)
+        if (d2 == None)
         {
             return d1;
         }
 
         // where to put OperationUtility.ReduceMultiplication
-        return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x / y, d1, d2) ??
-            OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x ^ y, d1, d2) ??
+        return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, d1, d2) ??
+            OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x ^ y, d1, d2) ??
             Multiply(d1, d2);
     }
 
     /// <summary>Reciprocal (1/divisor) with reduction applied.</summary>
     public static Dimension operator /(int dividend, Dimension divisor)
     {
-        return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, Dimension.None, divisor) ??
-            Divide(Dimension.None, divisor);
+        return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, None, divisor) ??
+            Divide(None, divisor);
     }
 
     /// <summary>Division with rearrangement and reduction (cancellation + power aggregation).</summary>
     public static Dimension operator /(Dimension dividend, Dimension divisor)
     {
-        if (divisor == Dimension.None)
+        if (divisor == None)
         {
             return dividend;
         }
 
         return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ??
-            OperationUtility.ReduceDivision(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x / y, (x, y) => x ^ y, dividend, divisor) ??
+            OperationUtility.ReduceDivision(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, dividend, divisor) ??
             Divide(dividend, divisor);
     }
 
@@ -132,7 +132,7 @@ public abstract class Dimension : IOperand
 
         if (exponent == 0)
         {
-            return Dimension.None;
+            return None;
         }
 
         if (exponent == 1)
@@ -140,7 +140,7 @@ public abstract class Dimension : IOperand
             return @base;
         }
 
-        return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, Dimension.None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
+        return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
                Power(@base, exponent);
     }
 
