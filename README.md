@@ -1,124 +1,133 @@
 # Veggerby.Units
 
-Build status:
+<!-- Badges -->
+[![CI](https://github.com/veggerby/Veggerby.Units/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/veggerby/Veggerby.Units/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/Veggerby.Units.svg)](https://www.nuget.org/packages/Veggerby.Units/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Coverage](https://img.shields.io/codecov/c/github/veggerby/Veggerby.Units?token=)](https://codecov.io/gh/veggerby/Veggerby.Units)
+[![Static Analysis](https://img.shields.io/badge/analysis-style%20rules-blueviolet)](.editorconfig)
+[![.NET](https://img.shields.io/badge/.NET-9.0-informational)](https://dotnet.microsoft.com/)
 
-[![Build Status](https://travis-ci.org/veggerby/Veggerby.Units.svg?branch=master)](https://travis-ci.org/veggerby/Veggerby.Units)
+> A focused .NET library for strongly‑typed measurements, deterministic dimensional reduction, and algebra over physical units.
 
-Veggerby Units is a C# class library for algebraic unit expressions, dimensional analysis, and runtime-safe measurement arithmetic.
+## Why this library?
 
-* Conversion between unit systems (e.g. SI ↔ Imperial) with dimensional safety.
-* Numeric operations (multiplication, division, power) reflect on units, e.g. 4 km / 2 min = 2 km/min.
-* Scaling across units, e.g. 2 km/min = 120 km/h (60 min/h).
-* Dimensions are validated; converting from SI m/s (L/T) to Imperial in/lb (L/M) raises an exception.
-* Equality across unit systems, e.g. 1 cm == 0.393700787 in (scale conversion + dimensional check).
-* Deterministic canonical equality for composite expressions (order & structure independent for products/division/power via factor multiset normalization).
-* Mixed systems auto-reduce; density = 0.5 kg / 2 gal converts internally to SI: 0.0660430131 kg/L (1 gal = 3.78541178 L).
-* (Planned) String interpretation/parsing (currently only formatting via ToString()).
-* SI units are always base representations; all other systems scale relative to SI (e.g. 1 gal = 3.78541178 L).
+Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit expressions, cancellation, exponent distribution, and canonical equality.
 
-## Quick Start
+## Highlights
+
+* Unit system interoperability (SI ↔ Imperial) with strict dimensional safety.
+* Order‑independent equality: (m*s)^2 == m^2*s^2, m*s/s == m, A*B == B*A.
+* Deterministic canonical factor multiset normalization for product / division / power.
+* Automatic cancellation & power aggregation in operator chains (low allocation fast paths).
+* Metric prefixes (yocto → yotta) as first‑class multiplicative factors.
+* Measurement arithmetic (generic numeric backends) with safe conversions.
+* Benchmark‑guarded performance (≤1% regression gate on equality micro benchmarks).
+* Planned: parsing (string → expression tree), richer physical property taxonomy.
+
+## Quick start
 
 ```csharp
-// distance: 5 kilometers
-var distance = new DoubleMeasurement(5, Prefix.k * Unit.SI.m);
+using Veggerby.Units;
 
-// time: 30 seconds
-var time = new DoubleMeasurement(30, Unit.SI.s);
-
-// speed: km/s
-var speed = distance / time; // value: 0.166666..., unit: km/s
-
-// Convert to m/s
-var speedMS = speed.ConvertTo(Unit.SI.m / Unit.SI.s); // ~166.666 m/s
+var distance = new DoubleMeasurement(5, Prefix.k * Unit.SI.m);    // 5 km
+var time     = new DoubleMeasurement(30, Unit.SI.s);              // 30 s
+var speed    = distance / time;                                   // ≈ 0.166666 km/s
+var speedMS  = speed.ConvertTo(Unit.SI.m / Unit.SI.s);            // ≈ 166.666 m/s
 ```
 
-For an overview of all capabilities see `docs/capabilities.md`. Details on the canonical reduction + equality pipeline: `docs/reduction-pipeline.md`.
+More examples: `docs/capabilities.md`.
 
-Let's explain this top-down:
+## Core concepts
 
-Values have Units, eg. 1 kg
+| Concept | Summary |
+|---------|---------|
+| Unit | Structural node: basic, derived, product, division, power, prefixed, scaled. |
+| Dimension | Physical basis (L, M, T, I, Θ, J, N, …) enforcing homogeneous addition. |
+| Measurement&lt;T&gt; | Numeric value + Unit + arithmetic strategy (`Calculator<T>`). |
+| Prefix | Metric 10^n factor (k, m, μ …). |
+| Reduction | Re-association + cancellation + exponent aggregation to canonical form. |
+| Canonical equality | Factor multiset comparison immune to authoring order & lazy power shape. |
 
-Units are related to a unit system eg. SI units or Imperial Units
-
-Units are composable, eg. we can calculate with units
-    "kg * m / s^2" = Newton (N)
-
-Numerical operations on values w. units are reflected in units, e.g.
-    4 km/2 min = 2 km/min
-
-Units are related to Dimensions (there are 8 basic dimensions), eg.
-    m / s = Length / Time.
-
-Dimensions are the "cornerstone" for property validation
-
-So 1 J is composed of:
+### Joule decomposition (example)
 
 ```text
-Unit value
-+- value = 1
-+- unit = J
-|  +- derived unit
-|  +- dimension = M*L^2/T^2
-|  +- system = SI
-|  +- composition = N * m
-|  |  +- unit = N
-|  |  |  +- derived unit
-|  |  |  +- composition = kg*m/s^2
-|  |  |  |  +- ...
-|  |  |  +- dimension = M*L/T^2
-|  |  |  +- system = SI
-|  |  +- unit = m
-|  |  |  +- base unit
-|  |  |  +- dimension = L
-|  |  |  +- system = SI
+1 J
+├─ composition = N * m
+│  └─ N = kg * m / s^2
+└─ dimension = M * L^2 / T^2
 ```
 
-Properties (e.g. does a value with unit of J represent Energy, Heat or Work)
-are left out initially, since they are fairly complex; future implementation
-should leave concepts intact. Besides added complexity, having a complete set
-of properties is also not viable for initial version(s).
+Adding metres to seconds or converting velocity to mass raises an exception.
 
-References:
-<https://en.wikipedia.org/wiki/Units_of_measurement>
+## Canonical equality strategy
 
---> Dimensional Analysis must be further investigated (reduction, etc., i.e.
-is T*(L/T) ALWAYS the same as L?
-<https://en.wikipedia.org/wiki/Dimensional_analysis>
-<https://en.wikipedia.org/wiki/Nondimensionalization>
+1. Flatten product trees.
+2. Encode division as negative exponents.
+3. Multiply nested power exponents ( (A^m)^n -> A^(m·n) ).
+4. Distribute (Product)^n forms during equality (pre-normalization) for deterministic accumulation.
+5. Compare exponent maps; fallback structural leaf match if references differ.
 
-## Performance
+Guarantees: order independence, lazy vs eager parity, no early false negatives.
 
-Benchmarks are located under `bench/` and use BenchmarkDotNet. Running without arguments executes a quick
-smoke filter (fastest reduction scenario). For full details see `docs/performance.md`.
+## Extensibility
 
-Full run:
+```csharp
+var foot = new ScaleUnit("ft", Unit.SI.m, 0.3048);      // 1 ft = 0.3048 m
+var span = new DoubleMeasurement(6, foot);               // 6 ft
+var metres = span.ConvertTo(Unit.SI.m);                  // 1.8288 m
+
+var newton = Unit.SI.kg * Unit.SI.m / (Unit.SI.s ^ 2);   // kg·m/s^2
+```
+
+All reduction / equality logic reuses core algorithms—no extra wiring.
+
+## Performance & benchmarks
+
+Benchmarks: `bench/Veggerby.Units.Benchmarks` (see `docs/performance.md`).
 
 ```bash
 dotnet run -c Release --project bench/Veggerby.Units.Benchmarks
 ```
 
-Enable experimental ExponentMap path (A/B only):
+Equality micro benchmarks baseline enforces ≤1% mean regression & zero new allocation.
 
-```csharp
-Veggerby.Units.Reduction.ReductionSettings.UseExponentMapForReduction = true;
-```
-
-Then run only equality benchmarks (includes lazy vs eager power cases and various factor counts):
+Filter examples:
 
 ```bash
 dotnet run -c Release --project bench/Veggerby.Units.Benchmarks -- --filter *EqualityBenchmarks*
 ```
 
-### Feature Flags (Advanced)
+## Feature flags (advanced)
 
-Runtime flags (all on `Veggerby.Units.Reduction.ReductionSettings`) allow A/B validation:
+`Veggerby.Units.Reduction.ReductionSettings`:
 
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `LazyPowerExpansion` | false | Defers distribution of `(Product)^n` until required. |
-| `EqualityNormalizationEnabled` | true | Canonical factor multiset comparison for algebraic nodes (preferred path). |
-| `UseFactorVector` | false | Enables cached per-instance factor vectors for some composites (allocation reduction). |
-| `UseExponentMapForReduction` | false | Switch reduce paths to pooled exponent map implementation. |
-| `EqualityUsesMap` | false | Legacy product multiset hash-bucket comparison (superseded by normalization). |
+| `EqualityNormalizationEnabled` | true | Canonical factor multiset equality path. |
+| `LazyPowerExpansion` | false | Leaves (Product)^n unexpanded until needed (still equal). |
+| `UseFactorVector` | false | Cached canonical factor vectors for some composites. |
+| `UseExponentMapForReduction` | false | Exponent map based reduce path (A/B). |
 
-All public semantics are stable with defaults; only adjust flags inside test/benchmark contexts.
+Toggle only in benchmark / test contexts.
+
+## Roadmap
+
+* Parsing (string → expression tree)
+* Additional systems (CGS, US customary variants)
+* More numeric types (decimal, BigInteger)
+* Property classification (Energy vs Work vs Heat) atop dimensions
+
+## References
+
+* Dimensional analysis – <https://en.wikipedia.org/wiki/Dimensional_analysis>
+* SI units – <https://en.wikipedia.org/wiki/International_System_of_Units>
+* Nondimensionalization – <https://en.wikipedia.org/wiki/Nondimensionalization>
+
+---
+Docs index:
+
+* Capabilities: `docs/capabilities.md`
+* Reduction architecture: `docs/reduction_architecture.md`
+* Reduction pipeline narrative: `docs/reduction-pipeline.md`
+* Performance guide: `docs/performance.md`
