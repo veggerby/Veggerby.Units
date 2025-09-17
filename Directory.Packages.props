@@ -19,7 +19,7 @@
     <PackageVersion Include="AwesomeAssertions" Version="9.1.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <!-- Benchmarks -->
-    <PackageVersion Include="BenchmarkDotNet" Version="0.15.2" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.3" />
     <!-- Public API approval -->
     <PackageVersion Include="PublicApiGenerator" Version="11.4.6" />
   </ItemGroup>
