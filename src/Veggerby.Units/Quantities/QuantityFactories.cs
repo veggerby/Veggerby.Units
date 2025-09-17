@@ -58,4 +58,48 @@ public static class Quantity
     /// <summary>Angle (dimensionless semantic) quantity.</summary>
     public static Quantity<double> Angle(double value)
         => Of(value, Unit.None, QuantityKinds.Angle);
+
+    /// <summary>Power (W) quantity.</summary>
+    public static Quantity<double> Power(double value)
+        => Of(value, QuantityKinds.Power.CanonicalUnit, QuantityKinds.Power);
+
+    /// <summary>Force (N) quantity.</summary>
+    public static Quantity<double> Force(double value)
+        => Of(value, QuantityKinds.Force.CanonicalUnit, QuantityKinds.Force);
+
+    /// <summary>Pressure (Pa) quantity.</summary>
+    public static Quantity<double> Pressure(double value)
+        => Of(value, QuantityKinds.Pressure.CanonicalUnit, QuantityKinds.Pressure);
+
+    /// <summary>Volume (m^3) quantity.</summary>
+    public static Quantity<double> Volume(double value)
+        => Of(value, QuantityKinds.Volume.CanonicalUnit, QuantityKinds.Volume);
+
+    /// <summary>Area (m^2) quantity.</summary>
+    public static Quantity<double> Area(double value)
+        => Of(value, QuantityKinds.Area.CanonicalUnit, QuantityKinds.Area);
+
+    /// <summary>Velocity (m/s) quantity.</summary>
+    public static Quantity<double> Velocity(double value)
+        => Of(value, QuantityKinds.Velocity.CanonicalUnit, QuantityKinds.Velocity);
+
+    /// <summary>Acceleration (m/s^2) quantity.</summary>
+    public static Quantity<double> Acceleration(double value)
+        => Of(value, QuantityKinds.Acceleration.CanonicalUnit, QuantityKinds.Acceleration);
+
+    /// <summary>Momentum (kg·m/s) quantity.</summary>
+    public static Quantity<double> Momentum(double value)
+        => Of(value, QuantityKinds.Momentum.CanonicalUnit, QuantityKinds.Momentum);
+
+    /// <summary>Energy density (J/m^3) quantity.</summary>
+    public static Quantity<double> EnergyDensity(double value)
+        => Of(value, QuantityKinds.EnergyDensity.CanonicalUnit, QuantityKinds.EnergyDensity);
+
+    /// <summary>Specific heat capacity (J/(kg·K)) quantity.</summary>
+    public static Quantity<double> SpecificHeatCapacity(double value)
+        => Of(value, QuantityKinds.SpecificHeatCapacity.CanonicalUnit, QuantityKinds.SpecificHeatCapacity);
+
+    /// <summary>Specific entropy (J/(kg·K)) quantity.</summary>
+    public static Quantity<double> SpecificEntropy(double value)
+        => Of(value, QuantityKinds.SpecificEntropy.CanonicalUnit, QuantityKinds.SpecificEntropy);
 }
