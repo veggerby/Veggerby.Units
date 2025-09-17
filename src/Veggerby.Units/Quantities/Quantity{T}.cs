@@ -60,7 +60,10 @@ public sealed class Quantity<T> where T : IComparable
     /// <inheritdoc />
     public override string ToString() => $"{Measurement} [{Kind}]";
 
-    /// <summary>Adds two quantities. When <paramref name="requireSameKind"/> is true different kinds raise an exception.</summary>
+    /// <summary>
+    /// Adds two quantities enforcing the same semantic rules as the '+' operator. Mixed point±delta handled; cross-kind without a permitted
+    /// rule throws. This method previously allowed unsafe cross-kind addition when <c>requireSameKind</c> was false; that behavior is removed.
+    /// </summary>
     public static Quantity<T> Add(Quantity<T> a, Quantity<T> b, bool requireSameKind = false)
     {
         if (a == null || b == null)
@@ -68,16 +71,44 @@ public sealed class Quantity<T> where T : IComparable
             return a ?? b;
         }
 
-        if (requireSameKind && !ReferenceEquals(a.Kind, b.Kind))
+        // Same kind
+        if (ReferenceEquals(a.Kind, b.Kind))
         {
-            throw new InvalidOperationException($"Cannot add {a.Kind.Name} to {b.Kind.Name}.");
+            if (!a.Kind.AllowDirectAddition)
+            {
+                throw new InvalidOperationException($"Addition of quantities of kind '{a.Kind.Name}' is not semantically supported.");
+            }
+
+            var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
+            return new Quantity<T>(a.Measurement + bAligned, a.Kind, strictDimensionCheck: false);
         }
 
-        var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
-        return new Quantity<T>(a.Measurement + bAligned, a.Kind, strictDimensionCheck: false);
+        // Point ± Delta pattern (a is point)
+        if (ReferenceEquals(a.Kind.DifferenceResultKind, b.Kind))
+        {
+            var basePoint = a.Measurement.ConvertTo(a.Kind.CanonicalUnit);
+            var delta = b.Measurement.ConvertTo(a.Kind.DifferenceResultKind.CanonicalUnit);
+            var sum = basePoint + delta;
+            var back = sum.ConvertTo(a.Measurement.Unit);
+            return new Quantity<T>(back, a.Kind, strictDimensionCheck: true);
+        }
+
+        // Delta ± Point pattern (b is point)
+        if (ReferenceEquals(b.Kind.DifferenceResultKind, a.Kind))
+        {
+            var basePoint = b.Measurement.ConvertTo(b.Kind.CanonicalUnit);
+            var delta = a.Measurement.ConvertTo(b.Kind.DifferenceResultKind.CanonicalUnit);
+            var sum = basePoint + delta;
+            var back = sum.ConvertTo(b.Measurement.Unit);
+            return new Quantity<T>(back, b.Kind, strictDimensionCheck: true);
+        }
+
+        throw new InvalidOperationException($"Cannot add {a.Kind.Name} and {b.Kind.Name}.");
     }
 
-    /// <summary>Subtracts two quantities with optional semantic enforcement.</summary>
+    /// <summary>
+    /// Subtracts two quantities enforcing the same semantic rules as the '-' operator. Produces delta kinds for point-point subtraction.
+    /// </summary>
     public static Quantity<T> Sub(Quantity<T> a, Quantity<T> b, bool requireSameKind = false)
     {
         if (a == null || b == null)
@@ -85,13 +116,36 @@ public sealed class Quantity<T> where T : IComparable
             return a ?? b;
         }
 
-        if (requireSameKind && !ReferenceEquals(a.Kind, b.Kind))
+        if (ReferenceEquals(a.Kind, b.Kind))
         {
-            throw new InvalidOperationException($"Cannot subtract {b.Kind.Name} from {a.Kind.Name}.");
+            if (a.Kind.AllowDirectSubtraction)
+            {
+                var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
+                return new Quantity<T>(a.Measurement - bAligned, a.Kind, strictDimensionCheck: false);
+            }
+
+            if (a.Kind.DifferenceResultKind != null)
+            {
+                var aBase = a.Measurement.ConvertTo(a.Kind.DifferenceResultKind.CanonicalUnit);
+                var bBase = b.Measurement.ConvertTo(a.Kind.DifferenceResultKind.CanonicalUnit);
+                var diff = aBase - bBase;
+                return new Quantity<T>(diff, a.Kind.DifferenceResultKind, strictDimensionCheck: true);
+            }
+
+            throw new InvalidOperationException($"Direct subtraction producing '{a.Kind.Name}' is not semantically supported.");
         }
 
-        var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
-        return new Quantity<T>(a.Measurement - bAligned, a.Kind, strictDimensionCheck: false);
+        // Point - Delta -> Point
+        if (ReferenceEquals(a.Kind.DifferenceResultKind, b.Kind))
+        {
+            var basePoint = a.Measurement.ConvertTo(a.Kind.CanonicalUnit);
+            var delta = b.Measurement.ConvertTo(a.Kind.DifferenceResultKind.CanonicalUnit);
+            var res = basePoint - delta;
+            var back = res.ConvertTo(a.Measurement.Unit);
+            return new Quantity<T>(back, a.Kind, strictDimensionCheck: true);
+        }
+
+        throw new InvalidOperationException($"Cannot subtract {b.Kind.Name} from {a.Kind.Name}.");
     }
 
     /// <summary>
@@ -282,6 +336,12 @@ public sealed class Quantity<T> where T : IComparable
                 throw new InvalidOperationException($"Cannot scale point-like kind {kind.Name} in multiplication without inference.");
             }
 
+            // Angle guard: Angle is not a passive scalar; require explicit inference (Torque*Angle -> Energy, etc.)
+            if (ReferenceEquals(left.Kind, QuantityKinds.Angle) || ReferenceEquals(right.Kind, QuantityKinds.Angle))
+            {
+                throw new InvalidOperationException("Angle requires explicit inference; it does not act as a generic scalar.");
+            }
+
             return new Quantity<T>(product, kind, strictDimensionCheck: true);
         }
 
@@ -313,6 +373,11 @@ public sealed class Quantity<T> where T : IComparable
             if (left.Kind.DifferenceResultKind != null && !left.Kind.AllowDirectAddition && !left.Kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {left.Kind.Name} in division without inference.");
+            }
+
+            if (ReferenceEquals(right.Kind, QuantityKinds.Angle))
+            {
+                throw new InvalidOperationException("Angle requires explicit inference; it does not act as a generic scalar.");
             }
 
             var quotient = left.Measurement / right.Measurement;

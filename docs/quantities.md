@@ -172,6 +172,10 @@ Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for
 
 ### Why Not Power / Generic Function Lifting?
 
+#### Angle Is Not A Generic Scalar
+
+Although angle is dimensionless in SI, it is **not** treated as an interchangeable scalar here. Angles carry affine/periodic semantics (wrapping at 2π, directional context) and appear in explicit physical work relationships (Torque × Angle → Energy). Allowing Angle to silently behave like an unlabelled scalar in arbitrary multiplications would erase this meaning and permit accidental semantic leakage (e.g. scaling unrelated kinds by a radian value). Therefore Angle only participates via explicit inference rules (e.g. torque work) and is rejected as a passive fallback scalar.
+
 Raising a semantic quantity to a power frequently changes its meaning (Area vs Length^2, Energy^0.5 → sqrt(E) with no standard semantic alias). Absent universally accepted semantics, the library defers to explicit wrapping by user code.
 
 ### Why Block Automatic Mixed Addition?

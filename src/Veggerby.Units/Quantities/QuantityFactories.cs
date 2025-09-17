@@ -54,4 +54,8 @@ public static class Quantity
     /// <summary>Torque (N·m) quantity.</summary>
     public static Quantity<double> Torque(double value)
         => Of(value, QuantityKinds.Energy.CanonicalUnit, QuantityKinds.Torque);
+
+    /// <summary>Angle (dimensionless semantic) quantity.</summary>
+    public static Quantity<double> Angle(double value)
+        => Of(value, Unit.None, QuantityKinds.Angle);
 }
