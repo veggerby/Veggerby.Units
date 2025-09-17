@@ -18,6 +18,17 @@ This page lists the built-in `QuantityKind` instances shipped with the library. 
 | Angle | θ | (dimensionless) | 1 | Yes | Yes | — |
 | TemperatureDelta | ΔT | K | K | Yes | Yes | — |
 | TemperatureAbsolute | T_abs | K | K | No | No | TemperatureDelta |
+| Power | P | W (J/s) | kg·m^2/s^3 | Yes | Yes | — |
+| Force | F | N (kg·m/s^2) | kg·m/s^2 | Yes | Yes | — |
+| Pressure | p | Pa (N/m^2) | kg/(m·s^2) | Yes | Yes | — |
+| Volume | V | m^3 | m^3 | Yes | Yes | — |
+| Area | A_r | m^2 | m^2 | Yes | Yes | — |
+| Velocity | v | m/s | m/s | Yes | Yes | — |
+| Acceleration | a | m/s^2 | m/s^2 | Yes | Yes | — |
+| Momentum | p_m | kg·m/s | kg·m/s | Yes | Yes | — |
+| EnergyDensity | u | J/m^3 | kg/(m·s^2) | Yes | Yes | — |
+| SpecificHeatCapacity | c_p | J/(kg·K) | m^2/(s^2·K) | Yes | Yes | — |
+| SpecificEntropy | s | J/(kg·K) | m^2/(s^2·K) | Yes | Yes | — |
 
 Legend:
 
@@ -49,3 +60,7 @@ var kinds = typeof(Veggerby.Units.Quantities.QuantityKinds)
 5. Provide factory helpers for ergonomics.
 
 Keep rules minimal and explicit—avoid overloading the registry with speculative mappings.
+
+## Dimensional Match ≠ Same Kind
+
+Multiple kinds intentionally share identical dimensions (Energy vs Torque, Energy vs Work-like terms, Entropy vs HeatCapacity vs SpecificHeatCapacity). This prevents silent cross-domain aggregation and preserves domain intent. Always choose the kind that matches the semantic role; adding different kinds (even with identical units) throws to surface potential modeling mistakes.

@@ -129,6 +129,18 @@ Currently seeded rules:
 | Torque * Angle => Energy | Rotational work τ·θ |
 | Energy / Angle => Torque | Inverse |
 | Energy / Torque => Angle | Rearranged |
+| Power * Time => Energy | P·t work (commutative) |
+| Energy / Time => Power | Inverse definition |
+| Energy / Power => Time | Rearranged |
+| Force * Length => Energy | Work W = F·d (commutative) |
+| Energy / Length => Force | Inverse |
+| Energy / Force => Length | Rearranged |
+| Pressure * Volume => Energy | p·V work (commutative) |
+| Energy / Volume => Pressure | Inverse |
+| Energy / Pressure => Volume | Rearranged |
+| Pressure * Area => Force | F = p·A (commutative) |
+| Force / Area => Pressure | Inverse |
+| Force / Pressure => Area | Rearranged |
 
 All multiplicative rules marked commutative automatically install the symmetric mapping. Division is non‑commutative.
 
@@ -152,6 +164,8 @@ Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for
 * Maintains core purity: unit reduction and equality are untouched.
 * Scales incrementally; unknown composites fail fast instead of guessing.
 
+> Single-step only: the registry resolves only *direct* mappings. It never chains results transitively (e.g. Pressure × Length × Area will not infer via intermediate Force). If a composite is meaningful, register an explicit rule or decompose intentionally.
+
 ## Quantity Arithmetic: Supported vs Rejected
 
 | Operation | Supported? | Result / Behavior | Notes |
@@ -171,6 +185,10 @@ Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for
 | Angle acting as pure scalar | Limited | Only via explicit rule or dimensionless fallback of other | Angle preserved as distinct kind |
 
 ### Why Not Power / Generic Function Lifting?
+
+#### Angle Is Not A Generic Scalar
+
+Although angle is dimensionless in SI, it is **not** treated as an interchangeable scalar here. Angles carry affine/periodic semantics (wrapping at 2π, directional context) and appear in explicit physical work relationships (Torque × Angle → Energy). Allowing Angle to silently behave like an unlabelled scalar in arbitrary multiplications would erase this meaning and permit accidental semantic leakage (e.g. scaling unrelated kinds by a radian value). Therefore Angle only participates via explicit inference rules (e.g. torque work) and is rejected as a passive fallback scalar.
 
 Raising a semantic quantity to a power frequently changes its meaning (Area vs Length^2, Energy^0.5 → sqrt(E) with no standard semantic alias). Absent universally accepted semantics, the library defers to explicit wrapping by user code.
 
@@ -207,6 +225,90 @@ If an unexpected exception occurs for multiplication/division:
 2. Check for point-like kinds: absolutes require explicit inference.
 3. Verify rule registration ordering (ensure your custom rule executes before first arithmetic call).
 4. Inspect conflicts: if overriding a seed rule set `StrictConflictDetection = false` before registration.
+
+---
+
+## Comparison Semantics (Relational Operators)
+
+Relational operators on `Quantity<T>` (`<`, `<=`, `>`, `>=`, `CompareTo`) require **same semantic kind** (not just dimension). This prevents silently ordering incomparable concepts that share units (Energy vs Torque).
+
+Behavior:
+
+* Same kind: values are *unit‑aligned* to the left operand's unit (via underlying measurement conversion) then compared.
+* Different kind: throws `InvalidOperationException` immediately (even if dimensions match).
+* Equality (`==`, `!=`) remains structural (same kind + same underlying measurement unit/value) – no cross‑kind equality allowed.
+
+Example:
+
+```csharp
+var e1 = Quantity.Energy(10.0);
+var e2 = Quantity.Energy(15.0);
+bool less = e1 < e2;              // true
+
+var torque = Quantity.Torque(15.0); // same unit (J) but different kind
+// e1 < torque -> throws InvalidOperationException
+```
+
+Rationale: ordering heterogeneous semantics often reflects a modeling bug (e.g. ranking torque magnitudes against energies).
+
+## Try* APIs (Non-Throwing Arithmetic Attempts)
+
+For scenarios (e.g. UI pipelines, bulk computations) where exception control flow is too expensive or noisy, non‑throwing wrappers are provided:
+
+| API | Purpose |
+|-----|---------|
+| `TryAdd(a, b, out result, requireSameKind)` | Mirrors `+` with optional same-kind enforcement. |
+| `TrySubtract(a, b, out result, requireSameKind)` | Mirrors `-` semantics. |
+| `TryMultiply(a, b, out result)` | Attempts semantic multiply (inference or fallback). |
+| `TryDivide(a, b, out result)` | Attempts semantic divide. |
+
+They return `false` instead of throwing for semantic violations (cross-kind add, missing inference rule, absolute scaling, etc.) and set `result` to `null`.
+
+Example:
+
+```csharp
+if (!Quantity<double>.TryMultiply(Quantity.Force(5.0), Quantity.Length(2.0), out var work))
+{
+    // handle unsupported semantic combination
+}
+else
+{
+    Console.WriteLine(work.Kind.Name); // Energy
+}
+```
+
+Use these when exploring or filtering potential operations; prefer throwing operators in core domain logic to surface errors early.
+
+## Inference Registry Sealing
+
+`QuantityKindInferenceRegistry.Seal()` locks the registry against further mutation (additional rule registrations). After sealing, any call to `Register` throws. This enables libraries to finalize a deterministic semantic environment (e.g. after application startup) and prevent late dynamic plugins from altering behavior unexpectedly.
+
+Recommended lifecycle:
+
+```csharp
+// During startup
+QuantityKindInferenceRegistry.Register(/* custom rule(s) */);
+// ... other registrations
+QuantityKindInferenceRegistry.Seal();
+
+// Later (runtime) – attempts to register now fail
+```
+
+Use `IsSealed` to introspect if sealing already occurred (idempotent startup components).
+
+Rationale: keeps semantic algebra stable, reproducible, and auditable in long‑running processes or multi‑module applications.
+
+## Temperature Mean Helper
+
+`TemperatureMean.Mean(params Quantity<double>[] absolutes)` safely averages absolute temperatures by converting each to Kelvin, averaging linearly, then returning an absolute in the first sample's unit. Rejects non‑absolute kinds. Returns `null` for empty input.
+
+```csharp
+var t1 = TemperatureQuantity.Absolute(25.0, Unit.SI.C);  // 25 °C
+var t2 = TemperatureQuantity.Absolute(77.0, Unit.Imperial.F); // 77 °F
+var mean = TemperatureMean.Mean(t1, t2); // Mean expressed in °C (first unit)
+```
+
+Why a helper? Affine units require working in a linear base (Kelvin) to avoid offset distortion. Centralizing this avoids subtle mistakes (e.g. averaging raw °C values directly).
 
 ---
 
