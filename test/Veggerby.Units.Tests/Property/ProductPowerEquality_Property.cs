@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+
 using AwesomeAssertions;
-using Veggerby.Units.Reduction;
+
+using Veggerby.Units.Tests.Infrastructure;
+
 using Xunit;
 
 namespace Veggerby.Units.Tests.Property;
 
+[Collection(ReductionSettingsCollection.Name)]
 public class ProductPowerEquality_Property
 {
     private static readonly Unit[] Bases = new[] { Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A };
@@ -14,12 +18,9 @@ public class ProductPowerEquality_Property
     public void ProductPowerEquality_FuzzCases()
     {
         // Arrange
-        var origLazy = ReductionSettings.LazyPowerExpansion;
-        var origNorm = ReductionSettings.EqualityNormalizationEnabled;
+        ReductionSettingsBaseline.AssertDefaults();
         var rnd = new Random(12345);
-        ReductionSettings.EqualityNormalizationEnabled = true;
-        ReductionSettings.LazyPowerExpansion = true;
-        try
+        using (var scope = new ReductionSettingsScope(new ReductionSettingsFixture(), equalityNormalizationEnabled: true, lazyPowerExpansion: true))
         {
             for (int seedIter = 0; seedIter < 2; seedIter++)
             {
@@ -58,11 +59,6 @@ public class ProductPowerEquality_Property
                     (lazy == eager).Should().BeTrue();
                 }
             }
-        }
-        finally
-        {
-            ReductionSettings.LazyPowerExpansion = origLazy;
-            ReductionSettings.EqualityNormalizationEnabled = origNorm;
         }
     }
 }

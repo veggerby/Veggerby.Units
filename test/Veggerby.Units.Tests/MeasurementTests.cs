@@ -2,7 +2,6 @@ using System;
 
 using AwesomeAssertions;
 
-using Veggerby.Units;
 using Veggerby.Units.Conversion;
 
 using Xunit;

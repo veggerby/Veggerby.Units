@@ -1,25 +1,23 @@
 using AwesomeAssertions;
 
 using Veggerby.Units.Reduction;
+using Veggerby.Units.Tests.Infrastructure;
 
 using Xunit;
 
 namespace Veggerby.Units.Tests;
 
+[Collection(ReductionSettingsCollection.Name)]
 public class LazyPowerExpansionTests
 {
     [Fact]
     public void GivenCompositeProductAndLazyExpansionEnabled_WhenRaisingPower_ThenStructureIsPowerUnitAndEqualsEager()
     {
         // Arrange
-        var original = ReductionSettings.LazyPowerExpansion;
-        var originalFV = ReductionSettings.UseFactorVector;
+        ReductionSettingsBaseline.AssertDefaults();
         var composite = Unit.SI.m * Unit.SI.s; // product
-
-        try
+        using (var scope = new ReductionSettingsScope(new ReductionSettingsFixture(), useFactorVector: false, lazyPowerExpansion: false))
         {
-            ReductionSettings.UseFactorVector = false; // isolate
-            ReductionSettings.LazyPowerExpansion = false; // eager first
             var eager = composite ^ 3; // distributed
             ReductionSettings.LazyPowerExpansion = true; // enable lazy for comparison path
             var lazy = composite ^ 3; // PowerUnit(Product,3)
@@ -28,23 +26,15 @@ public class LazyPowerExpansionTests
             lazy.GetType().Name.Should().Be("PowerUnit");
             (lazy == eager).Should().BeTrue();
         }
-        finally
-        {
-            ReductionSettings.LazyPowerExpansion = original;
-            ReductionSettings.UseFactorVector = originalFV;
-        }
     }
     [Fact]
     public void GivenNegativeExponent_WhenLazyExpansionEnabled_ThenReciprocalAppliesCorrectly()
     {
         // Arrange
-        var original = ReductionSettings.LazyPowerExpansion;
-        var originalFV = ReductionSettings.UseFactorVector;
+        ReductionSettingsBaseline.AssertDefaults();
         var composite = Unit.SI.m * Unit.SI.s; // product
-        try
+        using (var scope = new ReductionSettingsScope(new ReductionSettingsFixture(), useFactorVector: false, lazyPowerExpansion: true))
         {
-            ReductionSettings.UseFactorVector = false;
-            ReductionSettings.LazyPowerExpansion = true;
             var reciprocal = composite ^ -2; // => 1 / ( (m*s)^2 )
 
             // Act
@@ -53,35 +43,22 @@ public class LazyPowerExpansionTests
             // Assert
             (again == (composite ^ 2)).Should().BeTrue();
         }
-        finally
-        {
-            ReductionSettings.LazyPowerExpansion = original;
-            ReductionSettings.UseFactorVector = originalFV;
-        }
     }
 
     [Fact]
     public void GivenLazyAndEagerExpansion_WhenComparingSemanticResult_ThenTheyAreEqual()
     {
         // Arrange
-        var originalLazy = ReductionSettings.LazyPowerExpansion;
-        var originalFV = ReductionSettings.UseFactorVector;
+        ReductionSettingsBaseline.AssertDefaults();
         var composite = Unit.SI.m * Unit.SI.s;
-        ReductionSettings.LazyPowerExpansion = false;
+        var eagerScope = new ReductionSettingsScope(new ReductionSettingsFixture(), lazyPowerExpansion: false, useFactorVector: false);
         var eager = composite ^ 4; // distributed
-
-        try
+        eagerScope.Dispose();
+        using (var scope = new ReductionSettingsScope(new ReductionSettingsFixture(), lazyPowerExpansion: true, useFactorVector: false))
         {
-            ReductionSettings.UseFactorVector = false;
-            ReductionSettings.LazyPowerExpansion = true;
             var lazy = composite ^ 4; // PowerUnit wrapper (lazy)
             lazy.GetType().Name.Should().Be("PowerUnit");
             (lazy == eager).Should().BeTrue();
-        }
-        finally
-        {
-            ReductionSettings.LazyPowerExpansion = originalLazy;
-            ReductionSettings.UseFactorVector = originalFV;
         }
     }
 
@@ -89,22 +66,16 @@ public class LazyPowerExpansionTests
     public void GivenLargeComposite_WhenLazyExpansionEnabled_ThenLazyEqualsEagerForHigherExponent()
     {
         // Arrange
-        var original = ReductionSettings.LazyPowerExpansion;
-        var originalFV = ReductionSettings.UseFactorVector;
+        ReductionSettingsBaseline.AssertDefaults();
         var composite = Unit.SI.m * Unit.SI.s * Unit.SI.kg * Unit.SI.m; // m s kg m => m^2 s kg
-        try
+        var eagerScope = new ReductionSettingsScope(new ReductionSettingsFixture(), useFactorVector: false, lazyPowerExpansion: false);
+        var eager = composite ^ 5; // distributed (m^2)^5 * s^5 * kg^5 => m^10 s^5 kg^5
+        eagerScope.Dispose();
+        using (var scope = new ReductionSettingsScope(new ReductionSettingsFixture(), useFactorVector: false, lazyPowerExpansion: true))
         {
-            ReductionSettings.UseFactorVector = false;
-            ReductionSettings.LazyPowerExpansion = false;
-            var eager = composite ^ 5; // distributed (m^2)^5 * s^5 * kg^5 => m^10 s^5 kg^5
             ReductionSettings.LazyPowerExpansion = true;
             var lazy = composite ^ 5; // PowerUnit
             (lazy == eager).Should().BeTrue();
-        }
-        finally
-        {
-            ReductionSettings.LazyPowerExpansion = original;
-            ReductionSettings.UseFactorVector = originalFV;
         }
     }
 }

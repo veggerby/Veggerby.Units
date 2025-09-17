@@ -12,11 +12,6 @@ internal static class ReductionSettings
     /// </summary>
     public static bool UseExponentMapForReduction { get; set; } = false;
 
-    /// <summary>
-    /// When true product equality uses a hash-bucket multiset comparison instead of the existing
-    /// sort+zip path. Experimental; default off until benchmarks prove benefit.
-    /// </summary>
-    public static bool EqualityUsesMap { get; set; } = false;
 
     /// <summary>
     /// When true division reduction uses a single-pass exponent accumulation (map-based) regardless of the

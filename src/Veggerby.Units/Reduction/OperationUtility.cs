@@ -33,6 +33,18 @@ internal static class OperationUtility
         {
             if (TryCanonicalFactorCompare(o1, o2, out var result))
             {
+#if DEBUG
+                if (!result)
+                {
+                    try
+                    {
+                        var f1 = TryGetCanonicalFactorsForDiagnostics(o1);
+                        var f2 = TryGetCanonicalFactorsForDiagnostics(o2);
+                        System.Diagnostics.Debug.WriteLine($"[Units.EQ] canonical-mismatch | L=({string.Join(' ', f1.Select(f => f.Symbol + "^" + f.Exponent))}) R=({string.Join(' ', f2.Select(f => f.Symbol + "^" + f.Exponent))})");
+                    }
+                    catch { /* diagnostics must never throw */ }
+                }
+#endif
                 return result;
             }
         }
@@ -324,88 +336,7 @@ internal static class OperationUtility
         return false;
     }
 
-    private static bool Equals(IProductOperation o1, IProductOperation o2)
-    {
-        if (o1 == null || o2 == null)
-        {
-            return false;
-        }
-        if (ReductionSettings.EqualityUsesMap)
-        {
-            return EqualsProductByMap(o1, o2);
-        }
-
-        return o1.Operands
-            .OrderBy(x => x.GetHashCode())
-            .ThenBy(x => x.ToString()) // deterministic tie-breaker to avoid hash collision induced mismatches
-            .Zip(o2.Operands.OrderBy(x => x.GetHashCode()).ThenBy(x => x.ToString()), Equals)
-            .All(x => x);
-    }
-
-    /// <summary>
-    /// Experimental O(n) (expected) multiset equality for products using hash buckets to avoid full ordering.
-    /// Falls back to structural operand comparison within each hash bucket to mitigate collisions.
-    /// </summary>
-    private static bool EqualsProductByMap(IProductOperation o1, IProductOperation o2)
-    {
-        var left = o1.Operands;
-        var right = o2.Operands;
-
-        // Quick length check
-        int leftCount = left.Count();
-        int rightCount = right.Count();
-        if (leftCount != rightCount)
-        {
-            return false;
-        }
-
-        // Build hash buckets for right operands
-        var buckets = new Dictionary<int, List<IOperand>>();
-        foreach (var r in right)
-        {
-            var h = r.GetHashCode();
-            if (!buckets.TryGetValue(h, out var list))
-            {
-                list = new List<IOperand>(1);
-                buckets.Add(h, list);
-            }
-            list.Add(r);
-        }
-
-        // For each left operand attempt to find structurally equal counterpart inside bucket
-        foreach (var l in left)
-        {
-            var h = l.GetHashCode();
-            if (!buckets.TryGetValue(h, out var list))
-            {
-                return false; // no candidates with same hash
-            }
-
-            var matchedIndex = -1;
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (Equals(l, list[i]))
-                {
-                    matchedIndex = i;
-                    break;
-                }
-            }
-
-            if (matchedIndex == -1)
-            {
-                return false; // hash collision but no structural match
-            }
-
-            // remove matched element (multiset decrement)
-            list.RemoveAt(matchedIndex);
-            if (list.Count == 0)
-            {
-                buckets.Remove(h);
-            }
-        }
-
-        return buckets.Count == 0; // all matched
-    }
+    private static bool Equals(IProductOperation o1, IProductOperation o2) => o1 != null && o2 != null && o1.Operands.Count() == o2.Operands.Count() && o1.Operands.Zip(o2.Operands, (a, b) => Equals(a, b)).All(x => x);
 
     private static bool Equals(IDivisionOperation o1, IDivisionOperation o2)
     {
