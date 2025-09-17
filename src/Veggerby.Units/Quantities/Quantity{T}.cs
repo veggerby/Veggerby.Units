@@ -1,4 +1,5 @@
 using System;
+
 using Veggerby.Units.Conversion;
 
 namespace Veggerby.Units.Quantities;
@@ -65,12 +66,28 @@ public sealed class Quantity<T> where T : IComparable
     /// with <c>requireSameKind</c> = true.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
-    public static Quantity<T> operator +(Quantity<T> left, Quantity<T> right) => Add(left, right, requireSameKind: true);
+    public static Quantity<T> operator +(Quantity<T> left, Quantity<T> right)
+    {
+        var result = Add(left, right, requireSameKind: true);
+        if (!result.Kind.AllowDirectAddition)
+        {
+            throw new InvalidOperationException($"Addition of quantities of kind '{result.Kind.Name}' is not semantically supported.");
+        }
+        return result;
+    }
 
     /// <summary>
     /// Subtracts two quantities enforcing identical semantic kinds. This is equivalent to <see cref="Sub(Quantity{T}, Quantity{T}, bool)"/>
     /// with <c>requireSameKind</c> = true.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
-    public static Quantity<T> operator -(Quantity<T> left, Quantity<T> right) => Sub(left, right, requireSameKind: true);
+    public static Quantity<T> operator -(Quantity<T> left, Quantity<T> right)
+    {
+        var result = Sub(left, right, requireSameKind: true);
+        if (!result.Kind.AllowDirectSubtraction)
+        {
+            throw new InvalidOperationException($"Direct subtraction producing '{result.Kind.Name}' is not semantically supported; use a domain specific delta operation if applicable.");
+        }
+        return result;
+    }
 }

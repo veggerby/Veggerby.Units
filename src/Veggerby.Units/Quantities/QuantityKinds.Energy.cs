@@ -4,7 +4,7 @@ namespace Veggerby.Units.Quantities;
 /// Registry of built-in quantity kinds. All are additive to the core dimensional model; they impose no changes
 /// to reduction or unit equality.
 /// </summary>
-public static class QuantityKinds
+public static partial class QuantityKinds
 {
     /// <summary>Energy (J) = kg·m²/s².</summary>
     public static readonly QuantityKind Energy = new("Energy", Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2), "E");

@@ -1,6 +1,9 @@
 using System;
+
 using AwesomeAssertions;
+
 using Veggerby.Units.Quantities;
+
 using Xunit;
 
 namespace Veggerby.Units.Tests.Quantities;
@@ -43,7 +46,7 @@ public class QuantityOperationSmokeTests
         var H = Quantity.Enthalpy(1250);              // 1250 J
         var S = Quantity.Entropy(12.5);               // 12.5 J/K
         var T = new DoubleMeasurement(298.15, Unit.SI.K);
-    var TS = new DoubleMeasurement(T.Value * S.Measurement.Value, QuantityKinds.Energy.CanonicalUnit);
+        var TS = new DoubleMeasurement(T.Value * S.Measurement.Value, QuantityKinds.Energy.CanonicalUnit);
 
         // Act
         var G = Quantity.Gibbs(H.Measurement.Value - TS.Value);

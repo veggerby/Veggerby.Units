@@ -62,3 +62,53 @@ Quantity.Entropy(2.5);
 
 ---
 Generated: 2025-09-17
+
+## Temperature Semantics
+
+Absolute temperatures are affine (offset + scale) while temperature differences are purely linear. To avoid accidental misuse (e.g. averaging or directly summing absolute temperatures) the semantic layer models two distinct kinds:
+
+* `QuantityKinds.TemperatureAbsolute` (symbol `T_abs`) – Absolute temperatures (K, °C, °F). Direct + / - is disallowed.
+* `QuantityKinds.TemperatureDelta` (symbol `ΔT`) – Temperature differences (canonical K). Linear and freely addable/subtractable within the delta kind.
+
+### Creating Temperature Quantities
+
+```csharp
+var tC = TemperatureQuantity.Absolute(25.0, Unit.SI.C);   // 25 °C (absolute)
+var tF = TemperatureQuantity.Absolute(77.0, Unit.Imperial.F); // 77 °F (absolute)
+var d5 = TemperatureQuantity.Delta(5.0);                  // 5 K delta (ΔT)
+```
+
+### Computing a Delta
+
+Use `TemperatureOps.Delta(a, b)` which returns `a - b` as a `ΔT` in Kelvin scale (convert if needed):
+
+```csharp
+var t70F = TemperatureQuantity.Absolute(70.0, Unit.Imperial.F);
+var t60F = TemperatureQuantity.Absolute(60.0, Unit.Imperial.F);
+var dF = TemperatureOps.Delta(t70F, t60F); // 10 °F difference
+// Convert to K (10 °F -> 5.555... K)
+var dK = dF.Measurement.ConvertTo(Unit.SI.K);
+```
+
+### Applying a Delta to an Absolute
+
+Use `TemperatureOps.AddDelta(absolute, delta)` – the result is expressed in the original absolute unit:
+
+```csharp
+var t20C = TemperatureQuantity.Absolute(20.0, Unit.SI.C);
+var d5K = TemperatureQuantity.Delta(5.0); // 5 K
+var t25C = TemperatureOps.AddDelta(t20C, d5K); // 25 °C
+```
+
+### Operator Guardrails
+
+`Quantity<T>.operator +` and `operator -` enforce identical kinds and then consult the kind's `AllowDirectAddition` / `AllowDirectSubtraction` flags. For `TemperatureAbsolute` both are false, so `t1 + t2` (two absolutes) throws, guiding users to compute a delta (`ΔT = t1 - t2` conceptually) via `TemperatureOps.Delta` and then intentionally apply it with `AddDelta`.
+
+This separation prevents subtle mistakes (e.g. summing °C values) while keeping the core dimensional reducer free of domain-specific rules.
+
+### Rationale
+
+* Affine units cannot be naively added/subtracted for semantic meaning (offset distortion).
+* Deltas are dimensionally identical but semantically distinct; modeling them separately preserves intent.
+* The approach is extensible (additional affine semantics like dates, times, energies with reference baselines, etc.).
+
