@@ -5,6 +5,23 @@ namespace Veggerby.Units.Quantities;
 /// </summary>
 public static partial class QuantityKinds
 {
+    /// <summary>Base length kind (meters).</summary>
+    public static readonly QuantityKind Length = new(
+        "Length",
+        Unit.SI.m,
+        "L");
+
+    /// <summary>Base time kind (seconds).</summary>
+    public static readonly QuantityKind Time = new(
+        "Time",
+        Unit.SI.s,
+        "t");
+
+    /// <summary>Base mass kind (kilograms) included for completeness if future rules require.</summary>
+    public static readonly QuantityKind Mass = new(
+        "Mass",
+        Unit.SI.kg,
+        "m");
     /// <summary>Power (W) = J/s.</summary>
     public static readonly QuantityKind Power = new(
         "Power",

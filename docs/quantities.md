@@ -129,6 +129,18 @@ Currently seeded rules:
 | Torque * Angle => Energy | Rotational work τ·θ |
 | Energy / Angle => Torque | Inverse |
 | Energy / Torque => Angle | Rearranged |
+| Power * Time => Energy | P·t work (commutative) |
+| Energy / Time => Power | Inverse definition |
+| Energy / Power => Time | Rearranged |
+| Force * Length => Energy | Work W = F·d (commutative) |
+| Energy / Length => Force | Inverse |
+| Energy / Force => Length | Rearranged |
+| Pressure * Volume => Energy | p·V work (commutative) |
+| Energy / Volume => Pressure | Inverse |
+| Energy / Pressure => Volume | Rearranged |
+| Pressure * Area => Force | F = p·A (commutative) |
+| Force / Area => Pressure | Inverse |
+| Force / Pressure => Area | Rearranged |
 
 All multiplicative rules marked commutative automatically install the symmetric mapping. Division is non‑commutative.
 
@@ -151,6 +163,8 @@ Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for
 * Keeps semantic algebra explicit and reviewable (no hidden heuristics).
 * Maintains core purity: unit reduction and equality are untouched.
 * Scales incrementally; unknown composites fail fast instead of guessing.
+
+> Single-step only: the registry resolves only *direct* mappings. It never chains results transitively (e.g. Pressure × Length × Area will not infer via intermediate Force). If a composite is meaningful, register an explicit rule or decompose intentionally.
 
 ## Quantity Arithmetic: Supported vs Rejected
 
