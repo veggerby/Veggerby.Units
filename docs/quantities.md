@@ -152,4 +152,62 @@ Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for
 * Maintains core purity: unit reduction and equality are untouched.
 * Scales incrementally; unknown composites fail fast instead of guessing.
 
+## Quantity Arithmetic: Supported vs Rejected
+
+| Operation | Supported? | Result / Behavior | Notes |
+|-----------|------------|-------------------|-------|
+| SameKind + (direct) | Yes (if `AllowDirectAddition`) | Same kind | Energy + Energy; TemperatureDelta + TemperatureDelta |
+| SameKind - (direct) | Yes (if `AllowDirectSubtraction`) | Same kind | Entropy - Entropy |
+| Point - Point (same) | Yes | DifferenceResultKind | AbsoluteTemperature - AbsoluteTemperature → TemperatureDelta |
+| Point ± Vector (its delta) | Yes | Point kind | AbsoluteTemperature ± TemperatureDelta → AbsoluteTemperature |
+| Vector ± Vector (same) | Yes | Vector kind | ΔT + ΔT |
+| Cross-kind + / - | No | Throws | Even if dimensions match (Energy + Torque) |
+| Quantity * Quantity | Conditional | Inferred kind or preserved other via dimensionless fallback | Absolute kinds require rule |
+| Quantity / Quantity | Conditional | Inferred kind or preserved left via dimensionless divisor | |
+| Scalar (dimensionless Measurement) * VectorKind | Yes | Same vector kind | Prevents scaling absolutes |
+| Scalar (dimensionless Measurement) * AbsoluteKind | No | Throws | Must convert to delta first |
+| Power (Quantity ^ n) | No (by design) | N/A | Apply power to underlying measurement then wrap manually |
+| Implicit chain inference | No | Throws if missing direct rule | No multi-step deduction |
+| Angle acting as pure scalar | Limited | Only via explicit rule or dimensionless fallback of other | Angle preserved as distinct kind |
+
+### Why Not Power / Generic Function Lifting?
+
+Raising a semantic quantity to a power frequently changes its meaning (Area vs Length^2, Energy^0.5 → sqrt(E) with no standard semantic alias). Absent universally accepted semantics, the library defers to explicit wrapping by user code.
+
+### Why Block Automatic Mixed Addition?
+
+Energy + Torque is dimensionally fine (both J) but typically meaningless; forcing an explicit decision prevents subtle domain errors (e.g. accidentally summing rotational and translational contributions labelled differently).
+
+### Extending Safely
+
+1. Introduce a new `QuantityKind` with canonical unit.
+2. (Optional) Provide factories for ergonomic creation.
+3. If it participates in point↔vector semantics, supply `differenceResultKind` and set direct add/sub flags accordingly.
+4. Register inference rules explicitly; keep them minimal and domain-reviewed.
+5. Add tests: happy path, absence (throws), and conflict detection if adding overlapping rules.
+
+### Conflict Detection Strategy
+
+`QuantityKindInferenceRegistry.StrictConflictDetection` defaults to true: registering a different result for an existing (Left, Op, Right) triple throws. Duplicate idempotent registrations (same result) pass silently. Set to false only in controlled initialization scenarios where later modules intentionally override a default mapping.
+
+### Debugging Inference
+
+Enumerate active canonical rules:
+
+```csharp
+foreach (var rule in QuantityKindInferenceRegistry.EnumerateRules())
+{
+    Console.WriteLine($"{rule.Left.Name} {rule.Operator} {rule.Right.Name} => {rule.Result.Name}");
+}
+```
+
+If an unexpected exception occurs for multiplication/division:
+
+1. Confirm both units reduce as expected (dimensionless fallback requires truly unitless operand).
+2. Check for point-like kinds: absolutes require explicit inference.
+3. Verify rule registration ordering (ensure your custom rule executes before first arithmetic call).
+4. Inspect conflicts: if overriding a seed rule set `StrictConflictDetection = false` before registration.
+
+---
+
 ---

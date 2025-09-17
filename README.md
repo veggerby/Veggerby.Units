@@ -147,6 +147,63 @@ var d10F = TemperatureQuantity.DeltaF(10.0);   // 10 °F -> 5.555... K
 
 See `docs/quantities.md` (Temperature Semantics) for rationale and usage.
 
+## Quantity Semantics & Arithmetic (Energy vs Torque, Temperature Absolutes, etc.)
+
+The *semantic layer* (`QuantityKind` + `Quantity<T>`) disambiguates identical dimensions by meaning (Energy vs Torque both J). It layers on top of pure dimensional algebra – the core reducer stays ignorant of semantics.
+
+Supported quantity arithmetic (summary):
+
+* Same‑kind addition / subtraction only if the kind allows it (`AllowDirectAddition/AllowDirectSubtraction`).
+* Point – Point (same absolute kind with a `DifferenceResultKind`) => Delta kind (e.g. AbsoluteTemperature – AbsoluteTemperature → TemperatureDelta).
+* Point ± Delta → Point (adding or subtracting a difference from an absolute).
+* Delta ± Delta → Delta (fully linear).
+* Multiplication / Division: only when an explicit inference rule exists (registry) OR one operand is dimensionless (unitless) – the non‑dimensionless vector‑like kind is preserved. Absolute (point) kinds never survive scalar fallback (must be inferred).
+* Scalar scaling by a dimensionless `Measurement<T>` for vector‑like kinds (not for point‑like kinds, e.g. you cannot scale an absolute temperature directly).
+
+Explicit inference rules (seeded):
+
+* Entropy × TemperatureAbsolute ↔ Energy
+* Energy ÷ TemperatureAbsolute → Entropy
+* Energy ÷ Entropy → TemperatureAbsolute
+* Torque × Angle ↔ Energy
+* Energy ÷ Angle → Torque; Energy ÷ Torque → Angle
+
+Unsupported / intentionally rejected behaviors:
+
+* Cross‑kind addition / subtraction (Energy + Torque, HeatCapacity + Entropy) – throws immediately even though dimensions may match.
+* Automatic transitive inference (no chaining: if A*B=C and C/D=E we do not infer A*B/D=E without explicit rule).
+* Implicit preservation of point‑like kinds under scalar multiply/divide (prevents silently scaling absolute temperatures).
+* Power / exponentiation at the quantity layer (apply power to underlying Measurement/Unit first, then wrap if semantically meaningful).
+* Prefix application at quantity layer (prefixes belong to units; semantics unaffected).
+* Dimensionless fallbacks that would blur meaning (Angle currently dimensionless but remains a distinct kind; fallback only preserves the other operand – Angle does not infect unrelated kinds without a rule).
+* Silent coercion between energetically equivalent but semantically different forms (InternalEnergy vs Enthalpy) – you must choose proper kind.
+
+Why these constraints: to surface ambiguous intent early, avoid “semantic drift” hiding behind dimensionally valid math, and keep the registry explicit, reviewable, and minimal. If you need a new semantic product/division outcome, register it explicitly (see `QuantityKindInferenceRegistry`).
+
+More detail & extension guidance: `docs/quantities.md` (Inference & Arithmetic sections).
+
+### Cross-kind Addition Failure (Example)
+
+```csharp
+using Veggerby.Units;
+using Veggerby.Units.Quantities;
+
+var energy = Quantity.Energy(10.0);    // 10 J [Energy]
+var torque = Quantity.Torque(3.0);     // 3 J [Torque]
+
+try
+{
+	var invalid = energy + torque; // different kinds, same dimension (J)
+}
+catch (InvalidOperationException ex)
+{
+	Console.WriteLine(ex.Message);
+	// -> Cannot add Energy and Torque.
+}
+```
+
+This early failure prevents accidentally mixing distinct semantic concepts that share the same physical dimension.
+
 ## References
 
 * Dimensional analysis – <https://en.wikipedia.org/wiki/Dimensional_analysis>
@@ -160,3 +217,4 @@ Docs index (see also `TryConvertTo` and decimal support in capabilities):
 * Reduction architecture: `docs/reduction_architecture.md`
 * Reduction pipeline narrative: `docs/reduction-pipeline.md`
 * Performance guide: `docs/performance.md`
+* Quantity kinds list: `docs/quantity-kinds.md`

@@ -8,6 +8,20 @@ namespace Veggerby.Units.Quantities;
 /// Wraps a <see cref="Measurement{T}"/> with an associated <see cref="QuantityKind"/> providing semantic disambiguation
 /// for identical dimensions (e.g. Joule as Energy vs Torque). Arithmetic rules are opt-in via static helpers.
 /// </summary>
+/// <remarks>
+/// Arithmetic semantics (see docs/quantities.md for full matrix):
+/// <list type="bullet">
+/// <item><description>Same-kind + / - allowed only when kind flags permit.</description></item>
+/// <item><description>Point - Point (same kind) -> DifferenceResultKind (e.g. AbsoluteTemperature - AbsoluteTemperature -> TemperatureDelta).</description></item>
+/// <item><description>Point ± Delta -> Point; Delta ± Delta -> Delta.</description></item>
+/// <item><description>Cross-kind + / - always throws (even if dimensions align).</description></item>
+/// <item><description>Multiply / Divide consult <see cref="QuantityKindInferenceRegistry"/>; if no rule and one operand dimensionless, preserves the other non point-like kind.</description></item>
+/// <item><description>Absolute (point-like) kinds never survive scalar fallback; explicit inference required.</description></item>
+/// <item><description>Scaling by dimensionless measurement allowed only for vector-like kinds.</description></item>
+/// <item><description>No direct power operator at quantity level (apply to underlying measurement/unit explicitly).</description></item>
+/// </list>
+/// Rationale: keep dimensional reducer pure, surface ambiguous semantics early, and require explicit opt-in for domain meaning.
+/// </remarks>
 public sealed class Quantity<T> where T : IComparable
 {
     /// <summary>The underlying measurement.</summary>
