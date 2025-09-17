@@ -59,4 +59,18 @@ public sealed class Quantity<T> where T : IComparable
         var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
         return new Quantity<T>(a.Measurement - bAligned, a.Kind, strictDimensionCheck: false);
     }
+
+    /// <summary>
+    /// Adds two quantities enforcing identical semantic kinds. This is equivalent to <see cref="Add(Quantity{T}, Quantity{T}, bool)"/>
+    /// with <c>requireSameKind</c> = true.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
+    public static Quantity<T> operator +(Quantity<T> left, Quantity<T> right) => Add(left, right, requireSameKind: true);
+
+    /// <summary>
+    /// Subtracts two quantities enforcing identical semantic kinds. This is equivalent to <see cref="Sub(Quantity{T}, Quantity{T}, bool)"/>
+    /// with <c>requireSameKind</c> = true.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
+    public static Quantity<T> operator -(Quantity<T> left, Quantity<T> right) => Sub(left, right, requireSameKind: true);
 }
