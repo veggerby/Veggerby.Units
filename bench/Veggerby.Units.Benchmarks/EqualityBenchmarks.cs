@@ -49,10 +49,10 @@ public class EqualityBenchmarks
         _lazyPowerUnit25 = BuildLazyVsEager(25, out _eagerPowerUnit25);
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = Ops)]
     public bool UnitEqualityLargeProduct() => OperationUtility.Equals(_largeLeftUnit!, _largeRightUnit!);
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = Ops)]
     public bool DimensionEqualityLargeProduct()
     {
         // Keep single evaluation (dimension equality is heavier); not loop-amplified intentionally to avoid skew.

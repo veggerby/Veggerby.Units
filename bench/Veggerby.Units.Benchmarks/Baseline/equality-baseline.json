@@ -1,7 +1,0 @@
-{
-  "Equality_LazyVsEager_5": { "MeanNs": 0.2759, "AllocB": 0 },
-  "Equality_LazyVsEager_10": { "MeanNs": 0.3014, "AllocB": 0 },
-  "Equality_LazyVsEager_25": { "MeanNs": 0.2679, "AllocB": 0 },
-  "UnitEqualityLargeProduct": { "MeanNs": 0.2944, "AllocB": 0 },
-  "DivisionCancellation_Full": { "MeanNs": 0.2937, "AllocB": 0 }
-}
