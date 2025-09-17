@@ -10,7 +10,8 @@ Veggerby Units is a C# class library for algebraic unit expressions, dimensional
 * Numeric operations (multiplication, division, power) reflect on units, e.g. 4 km / 2 min = 2 km/min.
 * Scaling across units, e.g. 2 km/min = 120 km/h (60 min/h).
 * Dimensions are validated; converting from SI m/s (L/T) to Imperial in/lb (L/M) raises an exception.
-* Equality across unit systems, e.g. 1 cm == 0.393700787 in.
+* Equality across unit systems, e.g. 1 cm == 0.393700787 in (scale conversion + dimensional check).
+* Deterministic canonical equality for composite expressions (order & structure independent for products/division/power via factor multiset normalization).
 * Mixed systems auto-reduce; density = 0.5 kg / 2 gal converts internally to SI: 0.0660430131 kg/L (1 gal = 3.78541178 L).
 * (Planned) String interpretation/parsing (currently only formatting via ToString()).
 * SI units are always base representations; all other systems scale relative to SI (e.g. 1 gal = 3.78541178 L).
@@ -31,7 +32,7 @@ var speed = distance / time; // value: 0.166666..., unit: km/s
 var speedMS = speed.ConvertTo(Unit.SI.m / Unit.SI.s); // ~166.666 m/s
 ```
 
-For an overview of all capabilities see `docs/CAPABILITIES.md`.
+For an overview of all capabilities see `docs/CAPABILITIES.md`. Details on the canonical reduction + equality pipeline: `docs/reduction-pipeline.md`.
 
 Let's explain this top-down:
 
@@ -102,8 +103,22 @@ Enable experimental ExponentMap path (A/B only):
 Veggerby.Units.Reduction.ReductionSettings.UseExponentMapForReduction = true;
 ```
 
-Then run only equality benchmarks comparing structural normalization cost:
+Then run only equality benchmarks (includes lazy vs eager power cases and various factor counts):
 
 ```bash
 dotnet run -c Release --project bench/Veggerby.Units.Benchmarks -- --filter *EqualityBenchmarks*
 ```
+
+### Feature Flags (Advanced)
+
+Runtime flags (all on `Veggerby.Units.Reduction.ReductionSettings`) allow A/B validation:
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `LazyPowerExpansion` | false | Defers distribution of `(Product)^n` until required. |
+| `EqualityNormalizationEnabled` | true | Canonical factor multiset comparison for algebraic nodes (preferred path). |
+| `UseFactorVector` | false | Enables cached per-instance factor vectors for some composites (allocation reduction). |
+| `UseExponentMapForReduction` | false | Switch reduce paths to pooled exponent map implementation. |
+| `EqualityUsesMap` | false | Legacy product multiset hash-bucket comparison (superseded by normalization). |
+
+All public semantics are stable with defaults; only adjust flags inside test/benchmark contexts.

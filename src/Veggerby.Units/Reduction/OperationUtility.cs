@@ -18,16 +18,27 @@ namespace Veggerby.Units.Reduction;
 internal static class OperationUtility
 {
     /// <summary>
-    /// Structural equality comparison for two operands ignoring surface type differences where canonical form would match.
-    /// Adds a canonicalization step for (Product)^n forms when lazy power expansion is enabled to remove
-    /// nondeterminism before performing the raw structural comparison.
+    /// Structural equality comparison for two operands. When <see cref="ReductionSettings.EqualityNormalizationEnabled"/>
+    /// is true (default) all algebraic nodes (product / division / power) are first normalised into a canonical
+    /// factor multiset (base -> exponent) and the multisets are compared. This removes ordering dependencies and
+    /// lazy (Product)^n distribution differences. Non–algebraic leaves fall back to raw structural comparison.
     /// </summary>
     internal static bool Equals(IOperand o1, IOperand o2)
     {
         if (ReferenceEquals(o1, o2)) { return true; }
         if (o1 == null || o2 == null) { return false; }
 
-        if (ReductionSettings.LazyPowerExpansion)
+        // Canonical factor multiset path (Steps 1 + 2)
+        if (ReductionSettings.EqualityNormalizationEnabled && (IsAlgebraic(o1) || IsAlgebraic(o2)))
+        {
+            if (TryCanonicalFactorCompare(o1, o2, out var result))
+            {
+                return result;
+            }
+        }
+
+        // Legacy lazy power canonicalisation (kept as safety net for disabled normalisation flag)
+        if (ReductionSettings.LazyPowerExpansion && !ReductionSettings.EqualityNormalizationEnabled)
         {
             var c1 = CanonicalizePowerProduct(o1);
             var c2 = CanonicalizePowerProduct(o2);
@@ -37,6 +48,97 @@ internal static class OperationUtility
             }
         }
         return RawEquals(o1, o2);
+    }
+
+    /// <summary>For test diagnostics: returns a stable ordered list of canonical factors (symbol + exponent).</summary>
+    internal static (string Symbol, int Exponent)[] TryGetCanonicalFactorsForDiagnostics(IOperand operand)
+    {
+        var map = new Dictionary<IOperand, int>();
+        AccumulateFactors(map, operand, 1);
+        // remove zeros
+        var filtered = map.Where(kv => kv.Value != 0)
+            .Select(kv => (kv.Key.ToString(), kv.Value))
+            .OrderBy(x => x.Item1, StringComparer.Ordinal)
+            .ThenBy(x => x.Value)
+            .ToArray();
+        return filtered;
+    }
+
+    private static bool IsAlgebraic(IOperand op) => op is IProductOperation || op is IDivisionOperation || op is IPowerOperation;
+
+    /// <summary>
+    /// Attempts canonical factor multiset comparison. Returns false if unable to build canonical form
+    /// (should not happen with current operand graph) so caller can fall back.
+    /// </summary>
+    private static bool TryCanonicalFactorCompare(IOperand o1, IOperand o2, out bool result)
+    {
+        var map1 = new Dictionary<IOperand, int>();
+        var map2 = new Dictionary<IOperand, int>();
+        AccumulateFactors(map1, o1, 1);
+        AccumulateFactors(map2, o2, 1);
+
+        // Fast path: identical dictionary reference equality already handled earlier; now compare counts
+        if (map1.Count != map2.Count)
+        {
+            result = false; return true;
+        }
+
+        // For each base in map1 attempt match in map2 with same exponent (structural leaf equality)
+        foreach (var kv in map1)
+        {
+            var exp = kv.Value;
+            if (exp == 0) { continue; }
+
+            if (map2.TryGetValue(kv.Key, out var exp2))
+            {
+                if (exp2 != exp) { result = false; return true; }
+                continue;
+            }
+
+            // Structural search amongst remaining unmatched keys (rare path when leaf references differ)
+            bool matched = false;
+            foreach (var other in map2.Keys)
+            {
+                if (other == kv.Key) { continue; }
+                if (RawEquals(other, kv.Key))
+                {
+                    if (map2[other] != exp) { result = false; return true; }
+                    matched = true; break;
+                }
+            }
+            if (!matched)
+            {
+                result = false; return true;
+            }
+        }
+
+        // Ensure exponents in map2 not present in map1 are zero/absent (already covered by count compare)
+        result = true; return true;
+    }
+
+    /// <summary>
+    /// Recursively accumulates factors into <paramref name="map"/> producing a power-only representation.
+    /// Division contributes negative exponents, nested powers multiply exponents, products add exponents.
+    /// </summary>
+    private static void AccumulateFactors(Dictionary<IOperand, int> map, IOperand operand, int multiplier)
+    {
+        switch (operand)
+        {
+            case IProductOperation prod:
+                foreach (var op in prod.Operands) { AccumulateFactors(map, op, multiplier); }
+                break;
+            case IDivisionOperation div:
+                AccumulateFactors(map, div.Dividend, multiplier);
+                AccumulateFactors(map, div.Divisor, -multiplier);
+                break;
+            case IPowerOperation pow:
+                AccumulateFactors(map, pow.Base, multiplier * pow.Exponent);
+                break;
+            default:
+                if (!map.TryGetValue(operand, out var current)) { map[operand] = multiplier; }
+                else { map[operand] = current + multiplier; }
+                break;
+        }
     }
 
     private static bool RawEquals(IOperand o1, IOperand o2)

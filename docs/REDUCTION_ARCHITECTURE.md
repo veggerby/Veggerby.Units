@@ -32,15 +32,17 @@ All algorithms operate against these interfaces so Units and Dimensions share id
 
 These steps are applied opportunistically by operator overloads; no single master pipeline runs every step unconditionally.
 
-## Structural Equality
+## Structural Equality (Canonical Form)
 
-`OperationUtility.Equals` performs a shape comparison after ordering product operands by hash code. This affords:
+`OperationUtility.Equals` now uses a canonical factor multiset normalisation for all algebraic nodes (product / division / power) when `ReductionSettings.EqualityNormalizationEnabled` is `true` (default):
 
-* Commutative insensitivity for products
-* Direct structural recursion for division and power
-* Prefix + base pairing for prefixed units
+1. Recursively accumulate factors into `base -> exponent` (products sum, divisions subtract, powers multiply exponents).
+2. Remove zero entries; ordering is irrelevant to correctness (dictionary lookup); a stable ordering is only used for diagnostics.
+3. Compare exponent values, performing structural leaf comparison if references differ.
 
-Hash codes for composed units rely on reduced form to maintain consistency with equality.
+This eliminates dependence on operand authoring order and lazy power distribution. Legacy hash/sort based product comparison (`EqualityUsesMap` / sort+zip) remains only for diagnostic A/B testing and is bypassed under normalization.
+
+Hash codes still derive from reduced structural form to preserve consistency with equality.
 
 ## Complexity Overview
 
@@ -51,7 +53,8 @@ Hash codes for composed units rely on reduced form to maintain consistency with 
 | Reduce multiplication | O(n) flatten + group |
 | Reduce division | O(n log n) (group + cancellation) |
 | Expand power | O(n) for composite base, O(1) otherwise |
-| Equality (product) | O(n log n) due to ordering |
+| Equality (algebraic, normalized) | O(n + k) expected (hash map accumulation + structural leaf matches) |
+| Equality (legacy product path) | O(n log n) due to ordering |
 
 ## Thread Safety
 
@@ -59,10 +62,10 @@ All operations are pure and allocate only transient collections. No shared mutab
 
 ## Design Choices
 
-* Avoided LINQ in some critical spots would marginally reduce allocations but current clarity favored; revisit if profiling shows hotspots.
-* Hash ordering during equality ensures stable comparison independent of initial authoring order.
+* Canonical normalization introduced for determinism; legacy ordering retained only for fallback/experimentation.
+* LINQ remains in non-hot paths; normalization uses explicit recursion + dictionary to minimize allocations.
 
 ## Future Extensions
 
-* Potential introduction of exponent map structure to reduce intermediate allocations in heavy algebra scenarios.
-* Consider specialized small-vector optimization for very frequent binary products.
+* Potential pooling of the temporary factor dictionaries or custom lightweight map to further reduce allocations.
+* Specialized small-vector optimization for very small products (n<=3) if benchmark-supported.

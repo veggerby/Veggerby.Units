@@ -30,7 +30,7 @@ This document summarizes the current features of the Veggerby.Units library.
 
 ## Equality & Comparison
 
-* Structural equality for all unit expression trees (order independent for multiplication, identical structure for division/power).
+* Deterministic canonical equality for composite expressions via factor multiset normalization (order & lazy power distribution independent).
 * Comparison operators (&lt;, &lt;=, &gt;, &gt;=, ==, !=) on Measurement&lt;T&gt; automatically align units via conversion.
 
 ## Error Handling
@@ -63,4 +63,17 @@ var speedInMS = (speed).ConvertTo(Unit.SI.m / Unit.SI.s);      // numeric value 
 ```
 
 ---
-Generated: 2025-09-11
+
+### Runtime Feature Flags (Advanced)
+
+For experimentation / benchmarking (all on `ReductionSettings`):
+
+| Flag | Default | Effect |
+|------|---------|--------|
+| `EqualityNormalizationEnabled` | true | Enables canonical normalized factor multiset equality (recommended). |
+| `LazyPowerExpansion` | false | Leaves `(Product)^n` unexpanded until required (still equal to distributed form). |
+| `UseFactorVector` | false | Enables cached factor vectors on some composite nodes (allocation reduction). |
+| `UseExponentMapForReduction` | false | Switches multiplication/division reduction to pooled exponent map accumulator. |
+| `EqualityUsesMap` | false | Legacy hash-bucket product equality (kept for comparison). |
+
+Generated: 2025-09-17

@@ -35,4 +35,11 @@ internal static class ReductionSettings
     /// or further reduction requires distribution. Experimental; default off.
     /// </summary>
     public static bool LazyPowerExpansion { get; set; } = false;
+
+    /// <summary>
+    /// When enabled (default) algebraic operand equality (product/division/power) performs canonical factor
+    /// normalisation first (base -> exponent multiset) and compares multisets ignoring ordering and structural
+    /// representation differences (e.g. (A*B)^n vs A^n*B^n). Disabling reverts to legacy structural paths.
+    /// </summary>
+    public static bool EqualityNormalizationEnabled { get; set; } = true;
 }
