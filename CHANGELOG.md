@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 
 - Quantity semantic guard: Angle no longer silently behaves as generic scalar; participates only via explicit rules (e.g. Torque × Angle → Energy).
 - New quantity kinds: Power, Force, Pressure, Volume, Area, Velocity, Acceleration, Momentum, EnergyDensity, SpecificHeatCapacity, SpecificEntropy, plus base Length, Time, Mass.
+- Electromagnetic quantity kinds: Charge, Current, Voltage, Resistance, Conductance, Capacitance, Inductance, MagneticFlux, MagneticFluxDensity, ElectricFieldStrength, MagneticFieldStrength, Permittivity, Permeability, ElectricDipoleMoment, MagneticDipoleMoment, ElectricPotentialEnergy, PowerSpectralDensity, ChargeDensity.
+- Imperial & SI unit extensions: fathom, cable, nautical mile, psi, pound-force, foot-pound, horsepower, radian, steradian, agricultural volumes (peck, bushel, barrel, tun), specialized weight units, square inch/foot/yard/mile area units.
 - Inference rules (single-step only):
   - Power × Time ↔ Energy
   - Force × Length ↔ Energy
@@ -22,11 +24,13 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
   - Energy ÷ TemperatureAbsolute → Entropy; Energy ÷ Entropy → TemperatureAbsolute
   - Energy ÷ Angle → Torque; Energy ÷ Torque → Angle
 - Comparison operators for `Quantity<T>` (same-kind only). Cross-kind comparisons throw early.
+- Electromagnetic inference rules: Current × Time ↔ Charge; Voltage × Charge ↔ Energy; Current × Voltage ↔ Power.
 - Non-throwing arithmetic: `TryAdd`, `TrySubtract`, `TryMultiply`, `TryDivide` return false instead of throwing on semantic violations.
 - Inference registry lifecycle: `QuantityKindInferenceRegistry.Seal()` and `IsSealed` to lock semantic rule set.
 - Temperature mean helper: `TemperatureMean.Mean(...)` for safe averaging of absolute temperatures via Kelvin base conversion.
 - Documentation: Expanded `docs/quantities.md` with comparison semantics, Try* APIs, sealing rationale, temperature mean usage; updated `quantity-kinds.md` list; README examples for inferred work (P·t, p·V) and semantic gotchas (Energy vs Torque).
 - Open semantic tag system (`QuantityKindTag`) replacing closed enum categories; canonical tag instances via `QuantityKindTag.Get(name)`.
+- Electromagnetic canonical unit documentation and corrections (Resistance, Conductance, Capacitance, Inductance) aligned with SI derivations.
 - Work and Heat quantity kinds (path energy transfers) + energy transfer aggregation helper `EnergyBalance` (distinct from state functions).
 - Tag-based classification for built-in kinds (`Energy.StateFunction`, `Energy.PathFunction`, `Domain.Thermodynamic`, `Domain.Mechanical`, `Form.Dimensionless`).
 - Registry behavior tests enhancing semantic inference safety (conflict detection and overwrite scenarios).
@@ -36,13 +40,15 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 - Helper parity: `Quantity<T>.Add` / `Subtract` now mirror operator semantics exactly (breaking if prior unsafe cross-kind reliance existed).
 
 - Internal Add/Sub branching centralized; reduced potential for future drift between operators and helpers.
-- README, `docs/quantities.md`, and `docs/quantity-kinds.md` updated to reflect tag system (enum removed) and new Work/Heat semantics.
+- README, `docs/quantities.md`, and `docs/quantity-kinds.md` updated to reflect tag system (enum removed), Work/Heat semantics, electromagnetic kinds, canonical corrections, and inference registry sealing guidance.
 - Built-in kinds now explicitly constructed with tag sets (deterministic metadata snapshot).
 
 ### Fixed
 
 - Prevented inadvertent absolute temperature scaling by treating absolute kinds as point-like in scalar fallback logic.
 - Ensured Angle does not erode semantic meaning through dimensionless fallback.
+- Corrected electromagnetic canonical unit exponents (R, G, C, L) ensuring dimensional consistency.
+- Pressure canonical unit explicitly defined to avoid rare reduction anomaly in composite expressions.
 
 ### Performance
 
@@ -51,7 +57,8 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 ### Notes
 
 - All inference remains single-hop: no transitive chaining introduced (design invariant preserved).
-- Registry sealing recommended after application startup to guarantee deterministic semantics.
+- Registry sealing recommended after application startup to guarantee deterministic semantics; internal test-only reset helper used for isolation.
+- Electromagnetic canonical corrections are definition/document accuracy updates; verify any cached dimension manifests.
 - Quantity kind categorization is now fully open-ended; downstream libraries can introduce arbitrary domain tags without core modification.
 
 ### Removed

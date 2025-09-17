@@ -151,6 +151,21 @@ This separation prevents subtle mistakes (e.g. summing °C values) while keeping
 * Deltas are dimensionally identical but semantically distinct; modeling them separately preserves intent.
 * The approach is extensible (additional affine semantics like dates, times, energies with reference baselines, etc.).
 
+## Electromagnetic Kinds Overview
+
+An extended set of electromagnetic quantity kinds (Charge, Current, Voltage, Resistance, Conductance, Capacitance, Inductance, Flux, FluxDensity, FieldStrengths, Permittivity, Permeability, DipoleMoments, etc.) is provided. Their full canonical units and add/sub semantics are listed in `quantity-kinds.md`.
+
+Canonical unit corrections (September 2025) fixed exponent issues for Resistance, Conductance, Capacitance, and Inductance to align with SI base derivations:
+
+* R = Energy / (A^2·s)
+* G = 1 / R
+* C = (A·s)^2 / Energy
+* L = Energy / A^2
+
+All electromagnetic kinds allow direct addition and subtraction (they are not modeled as point-like). Semantic multiplication/division rules (e.g. Current \* Time => Charge, Voltage \* Charge => Energy, Current \* Voltage => Power) are registered explicitly in the inference registry.
+
+See `quantity-kinds.md` for the authoritative tabular listing.
+
 ## Semantic Inference (Multiply / Divide)
 
 Certain quantity relationships are so standard that preserving pure dimensional reduction alone leaves ambiguity (e.g. Energy vs Torque both J). The inference registry supplies *explicit*, opt-in semantic mappings of the form:
