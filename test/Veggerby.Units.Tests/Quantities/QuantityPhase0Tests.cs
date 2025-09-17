@@ -63,17 +63,18 @@ public class QuantityPhase0Tests
     }
 
     [Fact]
-    public void GivenStaticSubMethod_WhenKindDisallowsDirectSubtraction_ThenThrows()
+    public void GivenStaticSubMethod_WhenSubtractAbsoluteTemperatures_ThenProducesDelta()
     {
         // Arrange
         var absoluteTemp1 = TemperatureQuantity.Absolute(300.0, Unit.SI.K);
         var absoluteTemp2 = TemperatureQuantity.Absolute(290.0, Unit.SI.K);
 
-        // Act - Sub method should enforce AllowDirectSubtraction like - operator
-        var act = () => Quantity<double>.Sub(absoluteTemp1, absoluteTemp2);
+        // Act - Sub should yield delta kind (DifferenceResultKind path)
+        var delta = Quantity<double>.Sub(absoluteTemp1, absoluteTemp2);
 
-        // Assert - Should throw when direct subtraction not allowed, unless DifferenceResultKind is set
-        act.Should().Throw<InvalidOperationException>();
+        // Assert
+        delta.Kind.Should().BeSameAs(QuantityKinds.TemperatureDelta);
+        delta.Measurement.Value.Should().BeApproximately(10.0, 1e-12);
     }
 
     [Fact]
