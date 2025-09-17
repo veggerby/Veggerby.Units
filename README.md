@@ -4,7 +4,7 @@
 [![CI](https://github.com/veggerby/Veggerby.Units/actions/workflows/ci-release.yml/badge.svg?branch=master)](https://github.com/veggerby/Veggerby.Units/actions/workflows/ci-release.yml)
 [![NuGet](https://img.shields.io/nuget/v/Veggerby.Units.svg)](https://www.nuget.org/packages/Veggerby.Units/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Coverage](https://img.shields.io/codecov/c/github/veggerby/Veggerby.Units?token=)](https://codecov.io/gh/veggerby/Veggerby.Units)
+[![Coverage](https://img.shields.io/codecov/c/github/veggerby/Veggerby.Units)](https://codecov.io/gh/veggerby/Veggerby.Units)
 [![Static Analysis](https://img.shields.io/badge/analysis-style%20rules-blueviolet)](.editorconfig)
 [![.NET](https://img.shields.io/badge/.NET-9.0-informational)](https://dotnet.microsoft.com/)
 
