@@ -193,12 +193,12 @@ var torque = Quantity.Torque(3.0);     // 3 J [Torque]
 
 try
 {
-	var invalid = energy + torque; // different kinds, same dimension (J)
+    var invalid = energy + torque; // different kinds, same dimension (J)
 }
 catch (InvalidOperationException ex)
 {
-	Console.WriteLine(ex.Message);
-	// -> Cannot add Energy and Torque.
+    Console.WriteLine(ex.Message);
+    // -> Cannot add Energy and Torque.
 }
 ```
 
