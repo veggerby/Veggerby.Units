@@ -30,7 +30,7 @@ internal static class OperationUtility
             return true;
         }
 
-        if (o1 == null || o2 == null)
+        if (o1 is null || o2 is null)
         {
             return false;
         }
@@ -212,7 +212,7 @@ internal static class OperationUtility
                 Unit acc = null;
                 foreach (var f in factors)
                 {
-                    acc = acc == null ? f : acc * f;
+                    acc = acc is null ? f : acc * f;
                 }
 
                 return acc ?? operand;
@@ -335,7 +335,7 @@ internal static class OperationUtility
         if (operand is IPowerOperation p && p.Exponent > 1 && p.Base is IProductOperation prod)
         {
             var first = prod.Operands.FirstOrDefault();
-            if (first == null)
+            if (first is null)
             {
                 return operand;
             }
@@ -346,7 +346,7 @@ internal static class OperationUtility
                     .Select(o => (Unit)o)
                     .Select(u => u ^ p.Exponent)
                     .OrderBy(u => u.Symbol)
-                    .Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+                    .Aggregate((Unit)null, (acc, next) => acc is null ? next : acc * next);
 
                 return distributed ?? operand;
             }
@@ -357,7 +357,7 @@ internal static class OperationUtility
                     .Select(o => (Dimensions.Dimension)o)
                     .Select(d => d ^ p.Exponent)
                     .OrderBy(d => d.Symbol)
-                    .Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+                    .Aggregate((Dimensions.Dimension)null, (acc, next) => acc is null ? next : acc * next);
 
                 return distributed ?? operand;
             }
@@ -427,7 +427,7 @@ internal static class OperationUtility
                 }
             }
 
-            if (match == null)
+            if (match is null)
             {
                 return false; // no structural base match
             }
@@ -468,7 +468,7 @@ internal static class OperationUtility
                 .OrderBy(u => u.Symbol)
                 .ToArray();
 
-            var expanded = distributedUnits.Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+            var expanded = distributedUnits.Aggregate((Unit)null, (acc, next) => acc is null ? next : acc * next);
 
             return Equals(expanded as IOperand, otherProduct);
         }
@@ -481,7 +481,7 @@ internal static class OperationUtility
                 .OrderBy(d => d.Symbol)
                 .ToArray();
 
-            var expanded = distributedDims.Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+            var expanded = distributedDims.Aggregate((Dimensions.Dimension)null, (acc, next) => acc is null ? next : acc * next);
 
             return Equals(expanded as IOperand, otherProduct);
         }
@@ -489,11 +489,11 @@ internal static class OperationUtility
         return false;
     }
 
-    private static bool Equals(IProductOperation o1, IProductOperation o2) => o1 != null && o2 != null && o1.Operands.Count() == o2.Operands.Count() && o1.Operands.Zip(o2.Operands, (a, b) => Equals(a, b)).All(x => x);
+    private static bool Equals(IProductOperation o1, IProductOperation o2) => o1 is not null && o2 is not null && o1.Operands.Count() == o2.Operands.Count() && o1.Operands.Zip(o2.Operands, (a, b) => Equals(a, b)).All(x => x);
 
     private static bool Equals(IDivisionOperation o1, IDivisionOperation o2)
     {
-        if (o1 == null || o2 == null)
+        if (o1 is null || o2 is null)
         {
             return false;
         }
@@ -503,7 +503,7 @@ internal static class OperationUtility
 
     private static bool Equals(IPowerOperation o1, IPowerOperation o2)
     {
-        if (o1 == null || o2 == null)
+        if (o1 is null || o2 is null)
         {
             return false;
         }
@@ -513,7 +513,7 @@ internal static class OperationUtility
 
     private static bool Equals(PrefixedUnit o1, PrefixedUnit o2)
     {
-        if (o1 == null || o2 == null)
+        if (o1 is null || o2 is null)
         {
             return false;
         }
@@ -563,17 +563,17 @@ internal static class OperationUtility
         var d1 = dividend as IDivisionOperation;
         var d2 = divisor as IDivisionOperation;
 
-        if (d1 != null && d2 != null) // (A/B) / (C/D) => AD/BC
+        if (d1 is not null && d2 is not null) // (A/B) / (C/D) => AD/BC
         {
             return divide(multiply((T)d1.Dividend, (T)d2.Divisor), multiply((T)d1.Divisor, (T)d2.Dividend));
         }
 
-        if (d1 != null) // (A/B) / C => A/BC
+        if (d1 is not null) // (A/B) / C => A/BC
         {
             return divide((T)d1.Dividend, multiply((T)d1.Divisor, divisor));
         }
 
-        if (d2 != null)  // A / (B/C) => AC/B
+        if (d2 is not null)  // A / (B/C) => AC/B
         {
             return divide(multiply(dividend, (T)d2.Divisor), (T)d2.Dividend);
         }

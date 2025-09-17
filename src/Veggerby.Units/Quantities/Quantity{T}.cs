@@ -35,12 +35,12 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public Quantity(Measurement<T> measurement, QuantityKind kind, bool strictDimensionCheck = true)
     {
-        if (measurement == null)
+        if (measurement is null)
         {
             throw new ArgumentNullException(nameof(measurement));
         }
 
-        if (kind == null)
+        if (kind is null)
         {
             throw new ArgumentNullException(nameof(kind));
         }
@@ -72,10 +72,12 @@ public sealed class Quantity<T> where T : IComparable
         {
             return false;
         }
+
         if (!ReferenceEquals(Kind, other.Kind))
         {
             return false; // cross-kind never equal
         }
+
         var otherAligned = other.Measurement.ConvertTo(Measurement.Unit);
         return Measurement.Value.CompareTo(otherAligned.Value) == 0;
     }
@@ -94,7 +96,7 @@ public sealed class Quantity<T> where T : IComparable
     /// <summary>Compares two quantities of the same semantic kind (after unit alignment). Cross-kind comparisons throw.</summary>
     public int CompareTo(Quantity<T> other)
     {
-        if (other == null)
+        if (other is null)
         {
             return 1;
         }
@@ -118,14 +120,17 @@ public sealed class Quantity<T> where T : IComparable
         {
             return true;
         }
+
         if (a is null || b is null)
         {
             return false;
         }
+
         if (!ReferenceEquals(a.Kind, b.Kind))
         {
             throw new InvalidOperationException($"Cannot compare {a.Kind.Name} with {b.Kind.Name}.");
         }
+
         var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
         return a.Measurement.Value.CompareTo(bAligned.Value) == 0;
     }
@@ -141,10 +146,11 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static bool operator <(Quantity<T> a, Quantity<T> b)
     {
-        if (a == null || b == null)
+        if (a is null || b is null)
         {
             throw new InvalidOperationException("Cannot compare null quantities.");
         }
+
         return a.CompareTo(b) < 0;
     }
 
@@ -153,10 +159,11 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static bool operator >(Quantity<T> a, Quantity<T> b)
     {
-        if (a == null || b == null)
+        if (a is null || b is null)
         {
             throw new InvalidOperationException("Cannot compare null quantities.");
         }
+
         return a.CompareTo(b) > 0;
     }
 
@@ -165,10 +172,11 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static bool operator <=(Quantity<T> a, Quantity<T> b)
     {
-        if (a == null || b == null)
+        if (a is null || b is null)
         {
             throw new InvalidOperationException("Cannot compare null quantities.");
         }
+
         return a.CompareTo(b) <= 0;
     }
 
@@ -177,10 +185,11 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static bool operator >=(Quantity<T> a, Quantity<T> b)
     {
-        if (a == null || b == null)
+        if (a is null || b is null)
         {
             throw new InvalidOperationException("Cannot compare null quantities.");
         }
+
         return a.CompareTo(b) >= 0;
     }
 
@@ -188,11 +197,12 @@ public sealed class Quantity<T> where T : IComparable
     public static bool TryMultiply(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
     {
         result = null;
-        if (left == null || right == null)
+        if (left is null || right is null)
         {
             result = left ?? right;
             return true;
         }
+
         try
         {
             result = left * right; // reuse operator semantics
@@ -208,11 +218,13 @@ public sealed class Quantity<T> where T : IComparable
     public static bool TryDivide(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
     {
         result = null;
-        if (left == null || right == null)
+
+        if (left is null || right is null)
         {
             result = left ?? right;
             return true;
         }
+
         try
         {
             result = left / right; // reuse operator semantics
@@ -228,11 +240,12 @@ public sealed class Quantity<T> where T : IComparable
     public static bool TryAdd(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
     {
         result = null;
-        if (left == null || right == null)
+        if (left is null || right is null)
         {
             result = left ?? right;
             return true;
         }
+
         try
         {
             result = left + right;
@@ -248,11 +261,12 @@ public sealed class Quantity<T> where T : IComparable
     public static bool TrySubtract(Quantity<T> left, Quantity<T> right, out Quantity<T> result)
     {
         result = null;
-        if (left == null || right == null)
+        if (left is null || right is null)
         {
             result = left ?? right;
             return true;
         }
+
         try
         {
             result = left - right;
@@ -270,7 +284,7 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static Quantity<T> Add(Quantity<T> a, Quantity<T> b, bool requireSameKind = false)
     {
-        if (a == null || b == null)
+        if (a is null || b is null)
         {
             return a ?? b;
         }
@@ -315,7 +329,7 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static Quantity<T> Sub(Quantity<T> a, Quantity<T> b, bool requireSameKind = false)
     {
-        if (a == null || b == null)
+        if (a is null || b is null)
         {
             return a ?? b;
         }
@@ -328,7 +342,7 @@ public sealed class Quantity<T> where T : IComparable
                 return new Quantity<T>(a.Measurement - bAligned, a.Kind, strictDimensionCheck: false);
             }
 
-            if (a.Kind.DifferenceResultKind != null)
+            if (a.Kind.DifferenceResultKind is not null)
             {
                 var aBase = a.Measurement.ConvertTo(a.Kind.DifferenceResultKind.CanonicalUnit);
                 var bBase = b.Measurement.ConvertTo(a.Kind.DifferenceResultKind.CanonicalUnit);
@@ -359,12 +373,12 @@ public sealed class Quantity<T> where T : IComparable
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
     public static Quantity<T> operator +(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null)
+        if (left is null)
         {
             return right;
         }
 
-        if (right == null)
+        if (right is null)
         {
             return left;
         }
@@ -412,12 +426,12 @@ public sealed class Quantity<T> where T : IComparable
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
     public static Quantity<T> operator -(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null)
+        if (left is null)
         {
-            return right == null ? null : new Quantity<T>(right.Measurement, right.Kind);
+            return right is null ? null : new Quantity<T>(right.Measurement, right.Kind);
         }
 
-        if (right == null)
+        if (right is null)
         {
             return left;
         }
@@ -430,7 +444,7 @@ public sealed class Quantity<T> where T : IComparable
                 return new Quantity<T>(left.Measurement - rAligned, left.Kind, strictDimensionCheck: false);
             }
 
-            if (left.Kind.DifferenceResultKind != null)
+            if (left.Kind.DifferenceResultKind is not null)
             {
                 // Point - Point -> Vector
                 var aBase = left.Measurement.ConvertTo(left.Kind.DifferenceResultKind.CanonicalUnit);
@@ -470,7 +484,7 @@ public sealed class Quantity<T> where T : IComparable
             throw new InvalidOperationException("Scaling requires a dimensionless scalar.");
         }
 
-        if (quantity.Kind.DifferenceResultKind != null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
+        if (quantity.Kind.DifferenceResultKind is not null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
         {
             throw new InvalidOperationException($"Cannot scale point-like kind {quantity.Kind.Name}.");
         }
@@ -496,7 +510,7 @@ public sealed class Quantity<T> where T : IComparable
             throw new InvalidOperationException("Scaling requires a dimensionless scalar.");
         }
 
-        if (quantity.Kind.DifferenceResultKind != null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
+        if (quantity.Kind.DifferenceResultKind is not null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
         {
             throw new InvalidOperationException($"Cannot scale point-like kind {quantity.Kind.Name}.");
         }
@@ -511,14 +525,14 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static Quantity<T> operator *(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null || right == null)
+        if (left is null || right is null)
         {
             return left ?? right;
         }
 
         var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Multiply, right.Kind);
 
-        if (inferred != null)
+        if (inferred is not null)
         {
             // Numeric multiplication (unit algebra already handled by Measurement operators)
             var product = left.Measurement * right.Measurement;
@@ -535,7 +549,7 @@ public sealed class Quantity<T> where T : IComparable
             var kind = leftDimless ? right.Kind : left.Kind;
 
             // Disallow preserving a point-like absolute via scalar multiply
-            if (kind.DifferenceResultKind != null && !kind.AllowDirectAddition && !kind.AllowDirectSubtraction)
+            if (kind.DifferenceResultKind is not null && !kind.AllowDirectAddition && !kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {kind.Name} in multiplication without inference.");
             }
@@ -558,13 +572,13 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static Quantity<T> operator /(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null || right == null)
+        if (left is null || right is null)
         {
             return left ?? right;
         }
 
         var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Divide, right.Kind);
-        if (inferred != null)
+        if (inferred is not null)
         {
             var quotient = left.Measurement / right.Measurement;
             return new Quantity<T>(quotient, inferred, strictDimensionCheck: true);
@@ -574,7 +588,7 @@ public sealed class Quantity<T> where T : IComparable
 
         if (rightDimless)
         {
-            if (left.Kind.DifferenceResultKind != null && !left.Kind.AllowDirectAddition && !left.Kind.AllowDirectSubtraction)
+            if (left.Kind.DifferenceResultKind is not null && !left.Kind.AllowDirectAddition && !left.Kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {left.Kind.Name} in division without inference.");
             }

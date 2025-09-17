@@ -66,7 +66,7 @@ public static class QuantityKindInferenceRegistry
     /// <summary>Registers an inference rule. For commutative multiplication the symmetric rule is generated. Throws on conflict when <see cref="StrictConflictDetection"/> is true.</summary>
     public static void Register(QuantityKindInference inf)
     {
-        if (inf == null)
+        if (inf is null)
         {
             throw new ArgumentNullException(nameof(inf));
         }

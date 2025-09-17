@@ -15,7 +15,7 @@ public static class TemperatureMean
     /// </summary>
     public static Quantity<double> Mean(params Quantity<double>[] absolutes)
     {
-        if (absolutes == null || absolutes.Length == 0)
+        if (absolutes is null || absolutes.Length == 0)
         {
             return null;
         }
@@ -24,7 +24,7 @@ public static class TemperatureMean
         double sumK = 0.0;
         foreach (var q in absolutes)
         {
-            if (q == null)
+            if (q is null)
             {
                 continue;
             }

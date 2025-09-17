@@ -146,7 +146,7 @@ public abstract class Unit : IOperand
 
         Prefix pre = factor;
 
-        if (pre == null)
+        if (pre is null)
         {
             throw new PrefixException(factor);
         }
@@ -233,7 +233,7 @@ public abstract class Unit : IOperand
         }
 
         // If one is null, but not both, return false.
-        if (((object)u1 == null) || ((object)u2 == null))
+        if (((object)u1 is null) || ((object)u2 is null))
         {
             return false;
         }
@@ -251,7 +251,7 @@ public abstract class Unit : IOperand
         }
 
         // If one is null (but not both) => not equal => inequality true
-        if ((object)u1 == null || (object)u2 == null)
+        if ((object)u1 is null || (object)u2 is null)
         {
             return true;
         }
