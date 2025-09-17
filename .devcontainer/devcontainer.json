@@ -1,0 +1,76 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+	"name": "Veggerby.Units",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Use docker-compose for Postgres plus a dev container service
+	"dockerComposeFile": [ "docker-compose.yml" ],
+	"service": "app",
+	"runServices": [ "app" ],
+
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"installOhMyZsh": true,
+			"upgradePackages": true,
+			"username": "automatic",
+			"userUid": "automatic",
+			"userGid": "automatic"
+		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"ppa": true,
+			"version": "os-provided"
+		},
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "version": "9.0",
+            "additionalVersions": "8.0"
+        },
+		"ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        },
+        "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+            "packages": "bash-completion xdg-utils pass sshpass"
+        },
+        "ghcr.io/eitsupi/devcontainer-features/jq-likes:2": {
+            "jq": "latest",
+            "yq": "latest"
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/python:1": {},
+		"ghcr.io/devcontainers-extra/features/mkdocs:2": {
+			"plugins": "mkdocs-include-markdown-plugin mkdocs-macros-plugin mkdocs-material"
+		}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-dotnettools.csdevkit",
+				"heaths.vscode-guid",
+				"DavidAnson.vscode-markdownlint",
+				"EditorConfig.EditorConfig",
+				"streetsidesoftware.code-spell-checker",
+				"nuke.support",
+				"dbaeumer.vscode-eslint",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"redhat.vscode-yaml",
+				"github.vscode-github-actions",
+				"bierner.markdown-mermaid",
+				"humao.rest-client",
+				"GitHub.vscode-pull-request-github"
+			]
+		}
+	},
+
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached,readOnly=true"
+    ],
+
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+		"PATH": "${containerEnv:PATH}:/home/vscode/.dotnet/tools/:/usr/local/py-utils/bin/",
+	},
+
+	"postCreateCommand": ".devcontainer/scripts/post_create"
+}

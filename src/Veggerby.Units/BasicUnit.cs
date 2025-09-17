@@ -1,22 +1,22 @@
 using Veggerby.Units.Dimensions;
 
-namespace Veggerby.Units
+namespace Veggerby.Units;
+
+/// <summary>
+/// Represents a fundamental (non-derived) unit with a fixed symbol, name, system and dimension.
+/// </summary>
+/// <param name="symbol">Short symbolic representation (e.g. m, s).</param>
+/// <param name="name">Long form name (e.g. meter, second).</param>
+/// <param name="system">Owning unit system (e.g. SI).</param>
+/// <param name="dimension">Associated physical dimension.</param>
+public class BasicUnit(string symbol, string name, UnitSystem system, Dimension dimension) : Unit
 {
-    public class BasicUnit : Unit
-    {
-        public BasicUnit(string symbol, string name, UnitSystem system, Dimension dimension)
-        {
-            Symbol = symbol;
-            Name = name;
-            System = system;
-            Dimension = dimension;
-        }
-
-        public override string Symbol { get; }
-        public override string Name { get; }
-        public override UnitSystem System { get; }
-        public override Dimension Dimension { get; }
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
-    }
+    /// <inheritdoc />
+    public override string Symbol { get; } = symbol;
+    /// <inheritdoc />
+    public override string Name { get; } = name;
+    /// <inheritdoc />
+    public override UnitSystem System { get; } = system;
+    /// <inheritdoc />
+    public override Dimension Dimension { get; } = dimension;
 }

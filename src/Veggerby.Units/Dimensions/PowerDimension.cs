@@ -1,21 +1,57 @@
 using Veggerby.Units.Reduction;
-namespace Veggerby.Units.Dimensions
+namespace Veggerby.Units.Dimensions;
+
+/// <summary>Composite dimension representing a base raised to an integer exponent.</summary>
+public class PowerDimension : Dimension, IPowerOperation, ICanonicalFactorsProvider
 {
-    public class PowerDimension : Dimension, IPowerOperation
+    private readonly Dimension _base;
+    private readonly int _exponent;
+
+    internal PowerDimension(Dimension @base, int exponent)
     {
-        private readonly Dimension _base;
-        private readonly int _exponent;
+        _base = @base;
+        _exponent = exponent;
+    }
 
-        internal PowerDimension(Dimension @base, int exponent)
+    /// <inheritdoc />
+    public override string Symbol => $"{_base.Symbol}^{_exponent}";
+    /// <inheritdoc />
+    public override string Name => $"{_base.Name} ^ {_exponent}";
+
+    IOperand IPowerOperation.Base => _base;
+    int IPowerOperation.Exponent => _exponent;
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        if (obj is IPowerOperation po)
         {
-            _base = @base;
-            _exponent = exponent;
+            return OperationUtility.Equals(this, po);
         }
+        if (obj is IOperand op)
+        {
+            return OperationUtility.Equals(this, op);
+        }
+        return false;
+    }
 
-        public override string Symbol => $"{_base.Symbol}^{_exponent}";
-        public override string Name => $"{_base.Name} ^ {_exponent}";
-
-        IOperand IPowerOperation.Base => _base;
-        int IPowerOperation.Exponent => _exponent;
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 29;
+            hash = hash * 37 + _base.GetHashCode();
+            hash = hash * 37 + _exponent.GetHashCode();
+            return hash ^ 0x7777AAAA;
+        }
+    }
+    FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
+    {
+        if (!ReductionSettings.UseFactorVector)
+        {
+            return null;
+        }
+        return new FactorVector<IOperand>(new[] { ((IOperand)_base, _exponent) });
     }
 }

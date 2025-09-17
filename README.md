@@ -1,69 +1,234 @@
 # Veggerby.Units
 
-Build status: 
+<!-- Badges -->
+[![CI](https://github.com/veggerby/Veggerby.Units/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/veggerby/Veggerby.Units/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/Veggerby.Units.svg)](https://www.nuget.org/packages/Veggerby.Units/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Coverage](https://img.shields.io/codecov/c/github/veggerby/Veggerby.Units?token=)](https://codecov.io/gh/veggerby/Veggerby.Units)
+[![Static Analysis](https://img.shields.io/badge/analysis-style%20rules-blueviolet)](.editorconfig)
+[![.NET](https://img.shields.io/badge/.NET-9.0-informational)](https://dotnet.microsoft.com/)
 
-[![Build Status](https://travis-ci.org/veggerby/Veggerby.Units.svg?branch=master)](https://travis-ci.org/veggerby/Veggerby.Units)
+> A focused .NET library for strongly‑typed measurements, deterministic dimensional reduction, and algebra over physical units.
 
-Veggerby Units is a class library to assist in handling units of measurement.
+## Why this library?
 
-It is written in C#.
+Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit expressions, cancellation, exponent distribution, and canonical equality.
 
-*  Conversion between unit systems (eg. SI units and Imperial Units).
-*  Numeric operations (multiplication, division, etc.) will be reflected on units, eg. 4 km/2 min = 2 km/min.
-*  Scaling in unit systems, eg. 2 km/min = 120 km/h (60 min/h).
-*  Dimensionsare validated, i.e. it makes no sense to convert from SI "m/s" (length/time) to Imperial "in/lbs" (length/mass).
-*  Equality across unit systems, e.g. 1 cm == 0.393700787 in.
-*  It is valid to mix systems, e.g. density = mass / volume = 0.5 kg / 2 gal will be automatically converted to the "left-most" system, i.e kg, so we get  0.0660430131 kg / L (1 gal = 3.78541178 L).
-*  String interpretation, eg. "20.00 kg/L" will be interpreted as the numerical value "20" and unit "kg/L" (M/L^3).
-*  SI units are ALWAYS used as base representations, ie. all other unit systems are related to SI units. "1 gal" is represented as "3.78541178 L".
+## Highlights
 
-Let's explain this top-down:
- 
-Values have Units, eg. 1 kg
+* Unit system interoperability (SI ↔ Imperial) with strict dimensional safety.
+* Order‑independent equality: (m*s)^2 == m^2*s^2, m*s/s == m, A*B == B*A.
+* Deterministic canonical factor multiset normalization for product / division / power.
+* Automatic cancellation & power aggregation in operator chains (low allocation fast paths).
+* Metric prefixes (yocto → yotta) as first‑class multiplicative factors.
+* Measurement arithmetic (generic numeric backends: int, double, decimal) with safe conversions.
+* Affine temperature conversion support (°C ↔ K).
+* Benchmark‑guarded performance (≤1% regression gate on equality micro benchmarks).
+* Planned: parsing (string → expression tree), richer physical property taxonomy.
 
-Units are related to a unit system eg. SI units or Imperial Units
+## Quick start
 
-Units are composable, eg. we can calculate with units
-    "kg * m / s^2" = Newton (N)
+```csharp
+using Veggerby.Units;
 
-Numerical operations on values w. units are reflected in units, e.g. 
-    4 km/2 min = 2 km/min
+var distance = new DoubleMeasurement(5, Prefix.k * Unit.SI.m);    // 5 km
+var time     = new DoubleMeasurement(30, Unit.SI.s);              // 30 s
+var speed    = distance / time;                                   // ≈ 0.166666 km/s
+var speedMS  = speed.ConvertTo(Unit.SI.m / Unit.SI.s);            // ≈ 166.666 m/s
+```
 
-Units are related to Dimensions (there are 8 basic dimensions), eg. 
-    m / s = Length / Time.
+More examples: `docs/capabilities.md`.
 
-Dimensions are the "cornerstone" for property validation
+## Core concepts
 
-So 1 J is composed of:
+| Concept | Summary |
+|---------|---------|
+| Unit | Structural node: basic, derived, product, division, power, prefixed, scaled. |
+| Dimension | Physical basis (L, M, T, I, Θ, J, N, …) enforcing homogeneous addition. |
+| Measurement&lt;T&gt; | Numeric value + Unit + arithmetic strategy (`Calculator<T>`). |
+| Prefix | Metric 10^n factor (k, m, μ …). |
+| Reduction | Re-association + cancellation + exponent aggregation to canonical form. |
+| Canonical equality | Factor multiset comparison immune to authoring order & lazy power shape. |
 
-    Unit value
-    +- value = 1
-    +- unit = J
-    |  +- derived unit
-    |  +- dimension = M*L^2/T^2
-    |  +- system = SI
-    |  +- composition = N * m
-    |  |  +- unit = N
-    |  |  |  +- derived unit
-    |  |  |  +- composition = kg*m/s^2
-    |  |  |  |  +- ...
-    |  |  |  +- dimension = M*L/T^2
-    |  |  |  +- system = SI
-    |  |  +- unit = m
-    |  |  |  +- base unit
-    |  |  |  +- dimension = L
-    |  |  |  +- system = SI
+### Joule decomposition (example)
 
-Properties (e.g. does a value with unit of J represent Energy, Heat or Work) 
-are left out initially, since they are fairly complex, however future 
-implementation of properties should leave concepts intact. Besides added 
-complexity, having a complete set of properties is also not viable for 
-initial version(s).
+```text
+1 J
+├─ composition = N * m
+│  └─ N = kg * m / s^2
+└─ dimension = M * L^2 / T^2
+```
 
-References:
-http://en.wikipedia.org/wiki/Units_of_measurement
+Adding metres to seconds or converting velocity to mass raises an exception.
 
---> Dimensional Analysis must be further investigated (reduction, etc., i.e. 
-is T*(L/T) ALWAYS the same as L?
-http://en.wikipedia.org/wiki/Dimensional_analysis
-http://en.wikipedia.org/wiki/Nondimensionalization
+## Canonical equality strategy
+
+1. Flatten product trees.
+2. Encode division as negative exponents.
+3. Multiply nested power exponents ( (A^m)^n -> A^(m·n) ).
+4. Distribute (Product)^n forms during equality (pre-normalization) for deterministic accumulation.
+5. Compare exponent maps; fallback structural leaf match if references differ.
+
+Guarantees: order independence, lazy vs eager parity, no early false negatives.
+
+## Extensibility
+
+```csharp
+var foot = new ScaleUnit("ft", Unit.SI.m, 0.3048);      // 1 ft = 0.3048 m
+var span = new DoubleMeasurement(6, foot);               // 6 ft
+var metres = span.ConvertTo(Unit.SI.m);                  // 1.8288 m
+
+var newton = Unit.SI.kg * Unit.SI.m / (Unit.SI.s ^ 2);   // kg·m/s^2
+```
+
+All reduction / equality logic reuses core algorithms—no extra wiring.
+
+## Performance & benchmarks
+
+Benchmarks: `bench/Veggerby.Units.Benchmarks` (see `docs/performance.md`).
+
+```bash
+dotnet run -c Release --project bench/Veggerby.Units.Benchmarks
+```
+
+Equality micro benchmarks baseline enforces ≤1% mean regression & zero new allocation.
+
+Filter examples:
+
+```bash
+dotnet run -c Release --project bench/Veggerby.Units.Benchmarks -- --filter *EqualityBenchmarks*
+```
+
+## Feature flags (advanced)
+
+`Veggerby.Units.Reduction.ReductionSettings`:
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `EqualityNormalizationEnabled` | true | Canonical factor multiset equality path. |
+| `LazyPowerExpansion` | false | Leaves (Product)^n unexpanded until needed (still equal). |
+| `UseFactorVector` | false | Cached canonical factor vectors for some composites. |
+| `UseExponentMapForReduction` | false | Exponent map based reduce path (A/B). |
+
+Toggle only in benchmark / test contexts.
+
+## Roadmap
+
+* Parsing (string → expression tree)
+* Additional systems (CGS, US customary variants)
+* More numeric types (BigInteger, arbitrary precision) beyond current int/double/decimal
+* Property classification (Energy vs Work vs Heat) atop dimensions
+
+## Temperature (Affine Units)
+
+Temperature units with offsets (°C, °F) are modelled as affine units over absolute Kelvin. Rules:
+
+* Direct conversions supported: C ↔ K, F ↔ K, C ↔ F.
+* Affine units cannot be multiplied, divided, prefixed, or raised to powers > 1 (these operations are not linear with offsets) – attempting this throws `UnitException`.
+* Equality and comparison work as for other units (values compared after alignment via Kelvin base).
+
+Helper factories: `Temperature.Celsius(25)`, `Temperature.Fahrenheit(77)`, `Temperature.Kelvin(300)`.
+
+### Temperature Semantics (Absolute vs Delta)
+
+The semantic quantity layer further distinguishes absolute temperatures from temperature differences to prevent misuse:
+
+* `TemperatureAbsolute` (T_abs): affine (K, °C, °F). Direct `+` / `-` between absolutes is blocked.
+* `TemperatureDelta` (ΔT): linear differences (canonical Kelvin scale). Free additive arithmetic.
+
+APIs:
+
+```csharp
+var t20C = TemperatureQuantity.Absolute(20.0, Unit.SI.C);
+var d5K  = TemperatureQuantity.Delta(5.0);     // 5 K difference
+var t25C = TemperatureOps.AddDelta(t20C, d5K); // 25 °C
+var d10F = TemperatureQuantity.DeltaF(10.0);   // 10 °F -> 5.555... K
+```
+
+See `docs/quantities.md` (Temperature Semantics) for rationale and usage.
+
+## Quantity Semantics & Arithmetic (Energy vs Torque, Temperature Absolutes, etc.)
+
+The *semantic layer* (`QuantityKind` + `Quantity<T>`) disambiguates identical dimensions by meaning (Energy vs Torque both J). It layers on top of pure dimensional algebra – the core reducer stays ignorant of semantics.
+
+Supported quantity arithmetic (summary):
+
+* Same‑kind addition / subtraction only if the kind allows it (`AllowDirectAddition/AllowDirectSubtraction`).
+* Point – Point (same absolute kind with a `DifferenceResultKind`) => Delta kind (e.g. AbsoluteTemperature – AbsoluteTemperature → TemperatureDelta).
+* Point ± Delta → Point (adding or subtracting a difference from an absolute).
+* Delta ± Delta → Delta (fully linear).
+* Multiplication / Division: only when an explicit inference rule exists (registry) OR one operand is dimensionless (unitless) – the non‑dimensionless vector‑like kind is preserved. Absolute (point) kinds never survive scalar fallback (must be inferred).
+* Scalar scaling by a dimensionless `Measurement<T>` for vector‑like kinds (not for point‑like kinds, e.g. you cannot scale an absolute temperature directly).
+
+Explicit inference rules (seeded):
+
+* Entropy × TemperatureAbsolute ↔ Energy
+* Energy ÷ TemperatureAbsolute → Entropy
+* Energy ÷ Entropy → TemperatureAbsolute
+* Torque × Angle ↔ Energy
+* Energy ÷ Angle → Torque; Energy ÷ Torque → Angle
+
+Unsupported / intentionally rejected behaviors:
+
+* Cross‑kind addition / subtraction (Energy + Torque, HeatCapacity + Entropy) – throws immediately even though dimensions may match.
+* Automatic transitive inference (no chaining: if A*B=C and C/D=E we do not infer A*B/D=E without explicit rule).
+* Implicit preservation of point‑like kinds under scalar multiply/divide (prevents silently scaling absolute temperatures).
+* Power / exponentiation at the quantity layer (apply power to underlying Measurement/Unit first, then wrap if semantically meaningful).
+* Prefix application at quantity layer (prefixes belong to units; semantics unaffected).
+* Dimensionless fallbacks that would blur meaning (Angle currently dimensionless but remains a distinct kind; fallback only preserves the other operand – Angle does not infect unrelated kinds without a rule).
+* Silent coercion between energetically equivalent but semantically different forms (InternalEnergy vs Enthalpy) – you must choose proper kind.
+
+Why these constraints: to surface ambiguous intent early, avoid “semantic drift” hiding behind dimensionally valid math, and keep the registry explicit, reviewable, and minimal. If you need a new semantic product/division outcome, register it explicitly (see `QuantityKindInferenceRegistry`).
+
+More detail & extension guidance: `docs/quantities.md` (Inference & Arithmetic sections).
+
+### Cross-kind Addition Failure (Example)
+
+```csharp
+using Veggerby.Units;
+using Veggerby.Units.Quantities;
+
+var energy = Quantity.Energy(10.0);    // 10 J [Energy]
+var torque = Quantity.Torque(3.0);     // 3 J [Torque]
+
+try
+{
+    var invalid = energy + torque; // different kinds, same dimension (J)
+}
+catch (InvalidOperationException ex)
+{
+    Console.WriteLine(ex.Message);
+    // -> Cannot add Energy and Torque.
+}
+```
+
+This early failure prevents accidentally mixing distinct semantic concepts that share the same physical dimension.
+
+## References
+
+* Dimensional analysis – <https://en.wikipedia.org/wiki/Dimensional_analysis>
+* SI units – <https://en.wikipedia.org/wiki/International_System_of_Units>
+* Nondimensionalization – <https://en.wikipedia.org/wiki/Nondimensionalization>
+
+---
+Docs index (see also `TryConvertTo` and decimal support in capabilities):
+
+* Capabilities: `docs/capabilities.md`
+* Reduction architecture: `docs/reduction_architecture.md`
+* Reduction pipeline narrative: `docs/reduction-pipeline.md`
+* Performance guide: `docs/performance.md`
+* Quantity kinds list: `docs/quantity-kinds.md`
+
+## Contributing & Formatting
+
+See `CONTRIBUTING.md` for process guidance. Code formatting is enforced by `.editorconfig` and `dotnet format`.
+
+Key rules (authoritative list in `docs/style-formatting.md`):
+
+* ALWAYS use spaces (never tabs) – 4 spaces per indent level.
+* Mandatory braces for all control flow blocks (no single-line exceptions).
+* Clear parentheses for arithmetic / relational clarity even when precedence would suffice.
+* Single blank line between members; Arrange / Act / Assert separation in tests.
+* No trailing whitespace; no aligning with extra spaces.
+
+Review `docs/style-formatting.md` before opening a PR.

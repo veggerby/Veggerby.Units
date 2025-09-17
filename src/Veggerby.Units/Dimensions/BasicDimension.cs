@@ -1,14 +1,10 @@
-namespace Veggerby.Units.Dimensions
-{
-    public class BasicDimension : Dimension
-    {
-        public BasicDimension(string symbol, string name)
-        {
-            Symbol = symbol;
-            Name = name;
-        }
+namespace Veggerby.Units.Dimensions;
 
-        public override string Symbol { get; }
-        public override string Name { get; }
-    }
+/// <summary>Atomic (non-composite) dimension.</summary>
+public class BasicDimension(string symbol, string name) : Dimension
+{
+    /// <inheritdoc />
+    public override string Symbol { get; } = symbol;
+    /// <inheritdoc />
+    public override string Name { get; } = name;
 }

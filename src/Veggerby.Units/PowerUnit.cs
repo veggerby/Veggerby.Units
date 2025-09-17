@@ -1,26 +1,70 @@
+using System;
+
 using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
 
-namespace Veggerby.Units
+namespace Veggerby.Units;
+
+/// <summary>
+/// Composite unit representing an integer exponent applied to a base unit.
+/// Negative exponents are represented as division outside this type (handled by operator ^).
+/// </summary>
+public class PowerUnit : Unit, IPowerOperation, ICanonicalFactorsProvider
 {
-    public class PowerUnit : Unit, IPowerOperation
+    private readonly Unit _base;
+    private readonly int _exponent;
+
+    internal PowerUnit(Unit @base, int exponent)
     {
-        private readonly Unit _base;
-        private readonly int _exponent;
+        _base = @base;
+        _exponent = exponent;
+    }
 
-        internal PowerUnit(Unit @base, int exponent)
+    /// <inheritdoc />
+    public override string Symbol => $"{_base.Symbol}^{_exponent}";
+    /// <inheritdoc />
+    public override string Name => $"{_base.Name} ^ {_exponent}";
+    /// <inheritdoc />
+    public override UnitSystem System => _base.System;
+    /// <inheritdoc />
+    public override Dimension Dimension => _base.Dimension ^ _exponent;
+    IOperand IPowerOperation.Base => _base;
+    int IPowerOperation.Exponent => _exponent;
+
+    internal override double GetScaleFactor() => Math.Pow(_base.GetScaleFactor(), _exponent);
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        if (obj is IPowerOperation po)
         {
-            _base = @base;
-            _exponent = exponent;
+            return OperationUtility.Equals(this, po);
         }
+        if (obj is IOperand op)
+        {
+            return OperationUtility.Equals(this, op);
+        }
+        return false;
+    }
 
-        public override string Symbol => $"{_base.Symbol}^{_exponent}";
-        public override string Name => $"{_base.Name} ^ {_exponent}";
-        public override UnitSystem System => _base.System;
-        public override Dimension Dimension => _base.Dimension ^ _exponent;
-        IOperand IPowerOperation.Base => _base;
-        int IPowerOperation.Exponent => _exponent;
-
-        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 29;
+            hash = hash * 37 + _base.GetHashCode();
+            hash = hash * 37 + _exponent.GetHashCode();
+            return hash ^ 0x77777777;
+        }
+    }
+    FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
+    {
+        if (!ReductionSettings.UseFactorVector)
+        {
+            return null;
+        }
+        // Single factor representation
+        return new FactorVector<IOperand>(new[] { ((IOperand)_base, _exponent) });
     }
 }
