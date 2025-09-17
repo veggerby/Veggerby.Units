@@ -1,6 +1,9 @@
 using System;
+
 using AwesomeAssertions;
+
 using Veggerby.Units.Quantities;
+
 using Xunit;
 
 namespace Veggerby.Units.Tests.Quantities;

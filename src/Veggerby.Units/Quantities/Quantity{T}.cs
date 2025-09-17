@@ -189,4 +189,68 @@ public sealed class Quantity<T> where T : IComparable
         }
         return new Quantity<T>(quantity.Measurement / scalar, quantity.Kind, strictDimensionCheck: false);
     }
+
+    /// <summary>
+    /// Multiplies two quantities attempting semantic inference. If an inference rule exists the result kind is applied; otherwise
+    /// if one side is dimensionless (unitless) the other side's kind is preserved. When neither condition holds an <see cref="InvalidOperationException"/> is thrown.
+    /// Absolute (point-like) kinds may participate only via inference (e.g. T_abs * Entropy -> Energy) and never preserve point semantics by dimensionless fallback.
+    /// </summary>
+    public static Quantity<T> operator *(Quantity<T> left, Quantity<T> right)
+    {
+        if (left == null || right == null) { return left ?? right; }
+
+        var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Multiply, right.Kind);
+        if (inferred != null)
+        {
+            // Numeric multiplication (unit algebra already handled by Measurement operators)
+            var product = left.Measurement * right.Measurement;
+            return new Quantity<T>(product, inferred, strictDimensionCheck: true);
+        }
+
+        // Dimensionless fallback: preserve other kind
+        bool leftDimless = ReferenceEquals(left.Measurement.Unit, Unit.None) || ReferenceEquals(left.Measurement.Unit.Dimension, Veggerby.Units.Dimensions.Dimension.None);
+        bool rightDimless = ReferenceEquals(right.Measurement.Unit, Unit.None) || ReferenceEquals(right.Measurement.Unit.Dimension, Veggerby.Units.Dimensions.Dimension.None);
+        if (leftDimless ^ rightDimless)
+        {
+            var product = left.Measurement * right.Measurement;
+            var kind = leftDimless ? right.Kind : left.Kind;
+            // Disallow preserving a point-like absolute via scalar multiply
+            if (kind.DifferenceResultKind != null && !kind.AllowDirectAddition && !kind.AllowDirectSubtraction)
+            {
+                throw new InvalidOperationException($"Cannot scale point-like kind {kind.Name} in multiplication without inference.");
+            }
+            return new Quantity<T>(product, kind, strictDimensionCheck: true);
+        }
+
+        throw new InvalidOperationException($"No semantic inference rule for {left.Kind.Name} * {right.Kind.Name}.");
+    }
+
+    /// <summary>
+    /// Divides two quantities with semantic inference (e.g. Energy / TemperatureAbsolute -> Entropy). If no rule exists and the divisor is dimensionless
+    /// the left kind is preserved (unless point-like). Otherwise throws.
+    /// </summary>
+    public static Quantity<T> operator /(Quantity<T> left, Quantity<T> right)
+    {
+        if (left == null || right == null) { return left ?? right; }
+
+        var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Divide, right.Kind);
+        if (inferred != null)
+        {
+            var quotient = left.Measurement / right.Measurement;
+            return new Quantity<T>(quotient, inferred, strictDimensionCheck: true);
+        }
+
+        bool rightDimless = ReferenceEquals(right.Measurement.Unit, Unit.None) || ReferenceEquals(right.Measurement.Unit.Dimension, Veggerby.Units.Dimensions.Dimension.None);
+        if (rightDimless)
+        {
+            if (left.Kind.DifferenceResultKind != null && !left.Kind.AllowDirectAddition && !left.Kind.AllowDirectSubtraction)
+            {
+                throw new InvalidOperationException($"Cannot scale point-like kind {left.Kind.Name} in division without inference.");
+            }
+            var quotient = left.Measurement / right.Measurement;
+            return new Quantity<T>(quotient, left.Kind, strictDimensionCheck: true);
+        }
+
+        throw new InvalidOperationException($"No semantic inference rule for {left.Kind.Name} / {right.Kind.Name}.");
+    }
 }
