@@ -36,6 +36,4 @@ public sealed class AffineUnit(string symbol, string name, Unit baseUnit, double
     internal double Scale => scale;
     internal double Offset => offset;
     internal Unit BaseUnit => baseUnit;
-
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 }

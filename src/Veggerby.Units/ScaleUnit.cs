@@ -23,8 +23,6 @@ public class ScaleUnit(string symbol, string name, double scale, Unit @base, Uni
 
     /// <inheritdoc />
     public override UnitSystem System => system ?? @base.System;
-    /// <inheritdoc />
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 
     internal override double GetScaleFactor() => Scale * @base.GetScaleFactor();
 }

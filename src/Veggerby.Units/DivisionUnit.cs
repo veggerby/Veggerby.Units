@@ -28,7 +28,6 @@ public class DivisionUnit : Unit, IDivisionOperation, ICanonicalFactorsProvider
     public override UnitSystem System => _dividend != None ? _dividend.System : _divisor.System;
     /// <inheritdoc />
     public override Dimension Dimension => _dividend.Dimension / _divisor.Dimension;
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
     IOperand IDivisionOperation.Dividend => _dividend;
     IOperand IDivisionOperation.Divisor => _divisor;
     private FactorVector<IOperand>? _cachedFactors;

@@ -19,6 +19,4 @@ public class BasicUnit(string symbol, string name, UnitSystem system, Dimension 
     public override UnitSystem System { get; } = system;
     /// <inheritdoc />
     public override Dimension Dimension { get; } = dimension;
-
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 }

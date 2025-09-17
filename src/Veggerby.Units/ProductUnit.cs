@@ -45,9 +45,6 @@ public class ProductUnit(Unit[] operands) : Unit, IProductOperation, ICanonicalF
         }
     }
 
-    /// <inheritdoc />
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
-
     IEnumerable<IOperand> IProductOperation.Operands => _operands;
     FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
     {

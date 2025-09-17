@@ -1,6 +1,5 @@
 ﻿using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
-using Veggerby.Units.Visitors;
 
 namespace Veggerby.Units;
 
@@ -24,12 +23,12 @@ public abstract class Unit : IOperand
     /// Dimensionless identity unit (multiplicative identity). Acts as neutral element for * and / and as the
     /// result of raising any unit to the power 0. Represented internally by <see cref="NullUnit"/>.
     /// </summary>
-    public static Unit None = new NullUnit();
+    public static readonly Unit None = NullUnit.Instance;
 
     /// <summary>Singleton instance of the International (SI) unit system.</summary>
-    public static InternationalUnitSystem SI = new();
+    public static readonly InternationalUnitSystem SI = new();
     /// <summary>Singleton instance of the (subset) Imperial unit system.</summary>
-    public static ImperialUnitSystem Imperial = new();
+    public static readonly ImperialUnitSystem Imperial = new();
 
     /// <summary>Short symbolic representation (e.g. m, kg, N·m). Must be stable and pure.</summary>
     public abstract string Symbol { get; }
@@ -144,6 +143,7 @@ public abstract class Unit : IOperand
         {
             throw new UnitException(unit, unit); // reuse UnitException; dimensions identical but operation invalid
         }
+
         Prefix pre = factor;
 
         if (pre == null)
@@ -163,6 +163,7 @@ public abstract class Unit : IOperand
         {
             throw new UnitException(unit, unit);
         }
+
         return new PrefixedUnit(pre, unit);
     }
 
@@ -293,9 +294,5 @@ public abstract class Unit : IOperand
         return false;
     }
 
-    internal abstract T Accept<T>(Visitor<T> visitor);
-
     private static bool IsAffine(Unit unit) => unit is AffineUnit;
-
-    // (legacy duplicate GetScaleFactor removed – single definition above)
 }

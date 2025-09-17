@@ -28,8 +28,5 @@ public class PrefixedUnit : Unit
     /// <inheritdoc />
     public override UnitSystem System => BaseUnit.System;
 
-    /// <inheritdoc />
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
-
     internal override double GetScaleFactor() => Prefix.Factor * BaseUnit.GetScaleFactor();
 }

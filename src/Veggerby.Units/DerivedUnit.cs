@@ -17,7 +17,6 @@ public class DerivedUnit(string symbol, string name, Unit expression) : Unit
     public override UnitSystem System => expression.System;
     /// <inheritdoc />
     public override Dimension Dimension => expression.Dimension;
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 
     internal override double GetScaleFactor() => expression.GetScaleFactor();
 }

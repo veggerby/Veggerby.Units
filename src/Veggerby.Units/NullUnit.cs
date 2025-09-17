@@ -5,8 +5,12 @@ namespace Veggerby.Units;
 /// <summary>
 /// Identity (dimensionless) unit used as neutral element for multiplication/division and result of zero exponentiation.
 /// </summary>
-public class NullUnit : Unit
+internal class NullUnit : Unit
 {
+    public static readonly NullUnit Instance = new();
+
+    private NullUnit() { }
+
     /// <inheritdoc />
     public override string Symbol => string.Empty;
     /// <inheritdoc />
@@ -15,7 +19,4 @@ public class NullUnit : Unit
     public override UnitSystem System => UnitSystem.None;
     /// <inheritdoc />
     public override Dimension Dimension => Dimension.None;
-
-    /// <inheritdoc />
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 }

@@ -6,7 +6,7 @@ namespace Veggerby.Units;
 /// International System of Units (SI). Provides programmatic access to the base SI units. All derived units in this
 /// library ultimately reference these definitions for scale factor computation and dimensional analysis.
 /// </summary>
-public class InternationalUnitSystem : UnitSystem
+public sealed class InternationalUnitSystem : UnitSystem
 {
     /// <summary>Metre – base unit of length.</summary>
     public Unit m { get; }
@@ -30,7 +30,7 @@ public class InternationalUnitSystem : UnitSystem
     /// <summary>
     /// Creates a new SI system instance with all base units initialised. Instances are immutable after construction.
     /// </summary>
-    public InternationalUnitSystem()
+    internal InternationalUnitSystem()
     {
         m = new BasicUnit("m", "meter", this, Dimension.Length);
         g = new BasicUnit("g", "gram", this, Dimension.Mass);

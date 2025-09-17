@@ -4,7 +4,7 @@ namespace Veggerby.Units;
 /// Imperial unit system subset used for inter‑system conversions (length, area, volume, weight). Where possible the
 /// underlying scale factors are expressed relative to SI base units to allow seamless composition with SI units.
 /// </summary>
-public class ImperialUnitSystem : UnitSystem
+public sealed class ImperialUnitSystem : UnitSystem
 {
     /// <summary>Scale factor: 1 ft = 0.3048 m.</summary>
     public const double FeetToMetres = 0.3048;
@@ -91,7 +91,7 @@ public class ImperialUnitSystem : UnitSystem
     /// <summary>
     /// Initializes the imperial units and their scale relationships. All units remain immutable after construction.
     /// </summary>
-    public ImperialUnitSystem()
+    internal ImperialUnitSystem()
     {
         //length
         ft = new ScaleUnit("ft", "feet", FeetToMetres, Unit.SI.m, this);

@@ -31,9 +31,6 @@ public class PowerUnit : Unit, IPowerOperation, ICanonicalFactorsProvider
     IOperand IPowerOperation.Base => _base;
     int IPowerOperation.Exponent => _exponent;
 
-    /// <inheritdoc />
-    internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
-
     internal override double GetScaleFactor() => Math.Pow(_base.GetScaleFactor(), _exponent);
 
     /// <inheritdoc />
