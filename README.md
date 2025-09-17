@@ -218,3 +218,17 @@ Docs index (see also `TryConvertTo` and decimal support in capabilities):
 * Reduction pipeline narrative: `docs/reduction-pipeline.md`
 * Performance guide: `docs/performance.md`
 * Quantity kinds list: `docs/quantity-kinds.md`
+
+## Contributing & Formatting
+
+See `CONTRIBUTING.md` for process guidance. Code formatting is enforced by `.editorconfig` and `dotnet format`.
+
+Key rules (authoritative list in `docs/style-formatting.md`):
+
+* ALWAYS use spaces (never tabs) – 4 spaces per indent level.
+* Mandatory braces for all control flow blocks (no single-line exceptions).
+* Clear parentheses for arithmetic / relational clarity even when precedence would suffice.
+* Single blank line between members; Arrange / Act / Assert separation in tests.
+* No trailing whitespace; no aligning with extra spaces.
+
+Review `docs/style-formatting.md` before opening a PR.
