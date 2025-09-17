@@ -46,8 +46,20 @@ public static class Extensions
         // value_in_target = value_in_base / factor(target)
         // Works because both factors are relative to same base representation.
         // Convert via affine-aware base methods.
-        double baseValue = value.Unit.ToBase(Convert.ToDouble(value.Value));
-        double converted = unit.FromBase(baseValue);
+        double numeric = Convert.ToDouble(value.Value);
+
+        double converted;
+        if (value.Unit is AffineUnit auFrom && unit is AffineUnit auTo && ReferenceEquals(auFrom.BaseUnit, auTo.BaseUnit))
+        {
+            // Direct affine -> affine conversion without intermediate rounding: ((x*sf + of) - ot)/st
+            var baseVal = (numeric * auFrom.Scale) + auFrom.Offset; // to base
+            converted = (baseVal - auTo.Offset) / auTo.Scale;
+        }
+        else
+        {
+            double baseValue = value.Unit.ToBase(numeric);
+            converted = unit.FromBase(baseValue);
+        }
 
         object newValue;
         if (typeof(T) == typeof(int))
@@ -105,8 +117,18 @@ public static class Extensions
             return true;
         }
 
-        double baseValue = value.Unit.ToBase(Convert.ToDouble(value.Value));
-        double converted = unit.FromBase(baseValue);
+        double numeric = Convert.ToDouble(value.Value);
+        double converted;
+        if (value.Unit is AffineUnit auFrom && unit is AffineUnit auTo && ReferenceEquals(auFrom.BaseUnit, auTo.BaseUnit))
+        {
+            var baseVal = (numeric * auFrom.Scale) + auFrom.Offset;
+            converted = (baseVal - auTo.Offset) / auTo.Scale;
+        }
+        else
+        {
+            double baseValue = value.Unit.ToBase(numeric);
+            converted = unit.FromBase(baseValue);
+        }
 
         object newValue;
         if (typeof(T) == typeof(int))

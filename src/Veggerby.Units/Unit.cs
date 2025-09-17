@@ -113,6 +113,12 @@ public abstract class Unit : IOperand
             return u1;
         }
 
+        // Affine guard: disallow composite multiplicative algebra with affine units (ill-defined with offsets)
+        if (IsAffine(u1) || IsAffine(u2))
+        {
+            throw new UnitException(u1, u2);
+        }
+
         // where to put OperationUtility.ReduceMultiplication
         return OperationUtility.RearrangeMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, u1, u2) ??
             OperationUtility.ReduceMultiplication(x => x.Multiply((a, b) => a * b, None), (x, y) => x ^ y, u1, u2) ??
@@ -134,6 +140,10 @@ public abstract class Unit : IOperand
     /// </summary>
     public static Unit operator *(double factor, Unit unit)
     {
+        if (IsAffine(unit))
+        {
+            throw new UnitException(unit, unit); // reuse UnitException; dimensions identical but operation invalid
+        }
         Prefix pre = factor;
 
         if (pre == null)
@@ -149,6 +159,10 @@ public abstract class Unit : IOperand
     /// <summary>Applies an explicit prefix instance to a unit (no validation of prefix uniqueness performed).</summary>
     public static Unit operator *(Prefix pre, Unit unit)
     {
+        if (IsAffine(unit))
+        {
+            throw new UnitException(unit, unit);
+        }
         return new PrefixedUnit(pre, unit);
     }
 
@@ -165,6 +179,11 @@ public abstract class Unit : IOperand
         if (divisor == None)
         {
             return dividend;
+        }
+
+        if (IsAffine(dividend) || IsAffine(divisor))
+        {
+            throw new UnitException(dividend, divisor);
         }
 
         return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, dividend, divisor) ??
@@ -192,6 +211,11 @@ public abstract class Unit : IOperand
         if (exponent == 1)
         {
             return @base;
+        }
+
+        if (IsAffine(@base))
+        {
+            throw new UnitException(@base, @base);
         }
 
         return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??
@@ -270,6 +294,8 @@ public abstract class Unit : IOperand
     }
 
     internal abstract T Accept<T>(Visitor<T> visitor);
+
+    private static bool IsAffine(Unit unit) => unit is AffineUnit;
 
     // (legacy duplicate GetScaleFactor removed – single definition above)
 }

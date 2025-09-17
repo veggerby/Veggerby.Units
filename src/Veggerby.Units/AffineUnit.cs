@@ -32,5 +32,10 @@ public sealed class AffineUnit(string symbol, string name, Unit baseUnit, double
     internal override double ToBase(double value) => (value * scale) + offset; // affine forward
     internal override double FromBase(double baseValue) => (baseValue - offset) / scale; // inverse
 
+    // Internal exposure for optimization in conversion helpers.
+    internal double Scale => scale;
+    internal double Offset => offset;
+    internal Unit BaseUnit => baseUnit;
+
     internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
 }

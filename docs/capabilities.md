@@ -28,6 +28,8 @@ This document summarizes the current features of the Veggerby.Units library.
 * Conversion implemented by computing relative scale factors to SI base representations (e.g. 1 ft = 0.3048 m; 1 km = 1000 m).
 * Supported numeric types: int (rounded), double, and decimal (added for higher precision scenarios).
 * Affine (offset) conversions: temperature support via °C (Celsius) defined as an affine unit relative to Kelvin.
+  * Additional Fahrenheit affine unit (°F) defined relative to Kelvin in Imperial system.
+  * Guard rails: affine units cannot be multiplied, divided, prefixed or raised to exponents > 1; only direct conversions and equality/ordering comparisons are supported.
 
 ## Equality & Comparison
 
@@ -52,7 +54,7 @@ This document summarizes the current features of the Veggerby.Units library.
 * Rich physical property taxonomy (e.g. tagging J as energy/work/heat) is intentionally omitted.
 * Additional unit systems (CGS, US customary variations) could be added.
 * Additional numeric types (BigInteger / arbitrary precision) via additional Calculator&lt;T&gt;.
-* Policy / explicit prohibition for affine units inside multiplicative composites (currently allowed but semantic meaning e.g. °C*m is undefined and discouraged).
+* Potential future: richer temperature domain helpers (dew point, heat index) building on affine units.
 * Parsing of unit strings into expression trees (currently only simple ToString formatting is implemented; parsing referenced in README but not yet coded).
 * Serialization helpers and culture-aware formatting.
 

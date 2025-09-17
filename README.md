@@ -119,6 +119,16 @@ Toggle only in benchmark / test contexts.
 * More numeric types (BigInteger, arbitrary precision) beyond current int/double/decimal
 * Property classification (Energy vs Work vs Heat) atop dimensions
 
+## Temperature (Affine Units)
+
+Temperature units with offsets (°C, °F) are modelled as affine units over absolute Kelvin. Rules:
+
+* Direct conversions supported: C ↔ K, F ↔ K, C ↔ F.
+* Affine units cannot be multiplied, divided, prefixed, or raised to powers > 1 (these operations are not linear with offsets) – attempting this throws `UnitException`.
+* Equality and comparison work as for other units (values compared after alignment via Kelvin base).
+
+Helper factories: `Temperature.Celsius(25)`, `Temperature.Fahrenheit(77)`, `Temperature.Kelvin(300)`.
+
 ## References
 
 * Dimensional analysis – <https://en.wikipedia.org/wiki/Dimensional_analysis>
