@@ -129,6 +129,24 @@ Temperature units with offsets (°C, °F) are modelled as affine units over abso
 
 Helper factories: `Temperature.Celsius(25)`, `Temperature.Fahrenheit(77)`, `Temperature.Kelvin(300)`.
 
+### Temperature Semantics (Absolute vs Delta)
+
+The semantic quantity layer further distinguishes absolute temperatures from temperature differences to prevent misuse:
+
+* `TemperatureAbsolute` (T_abs): affine (K, °C, °F). Direct `+` / `-` between absolutes is blocked.
+* `TemperatureDelta` (ΔT): linear differences (canonical Kelvin scale). Free additive arithmetic.
+
+APIs:
+
+```csharp
+var t20C = TemperatureQuantity.Absolute(20.0, Unit.SI.C);
+var d5K  = TemperatureQuantity.Delta(5.0);     // 5 K difference
+var t25C = TemperatureOps.AddDelta(t20C, d5K); // 25 °C
+var d10F = TemperatureQuantity.DeltaF(10.0);   // 10 °F -> 5.555... K
+```
+
+See `docs/quantities.md` (Temperature Semantics) for rationale and usage.
+
 ## References
 
 * Dimensional analysis – <https://en.wikipedia.org/wiki/Dimensional_analysis>
