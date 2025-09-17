@@ -18,7 +18,7 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
     /// </summary>
     public static Measurement<T> operator +(Measurement<T> v1, Measurement<T> v2)
     {
-        if (v1 == null || v2 == null)
+        if (v1 is null || v2 is null)
         {
             return v1 ?? v2;
         }
@@ -37,7 +37,7 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
     /// </summary>
     public static Measurement<T> operator -(Measurement<T> v1, Measurement<T> v2)
     {
-        if (v1 == null || v2 == null)
+        if (v1 is null || v2 is null)
         {
             return v1 ?? v2;
         }
@@ -108,7 +108,7 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
         }
 
         // If one is null, but not both, return false.
-        if (((object)v1 == null) || ((object)v2 == null))
+        if (((object)v1 is null) || ((object)v2 is null))
         {
             return false;
         }
@@ -126,7 +126,7 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
         }
 
         // If one is null (but not both) => not equal => inequality true
-        if ((object)v1 == null || (object)v2 == null)
+        if ((object)v1 is null || (object)v2 is null)
         {
             return true;
         }

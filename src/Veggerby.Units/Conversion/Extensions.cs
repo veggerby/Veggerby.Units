@@ -21,12 +21,12 @@ public static class Extensions
     /// <exception cref="NotSupportedException">Underlying numeric type unsupported.</exception>
     public static Measurement<T> ConvertTo<T>(this Measurement<T> value, Unit unit) where T : IComparable
     {
-        if (value == null)
+        if (value is null)
         {
             throw new ArgumentNullException(nameof(value));
         }
 
-        if (unit == null)
+        if (unit is null)
         {
             throw new ArgumentNullException(nameof(unit));
         }
@@ -95,12 +95,12 @@ public static class Extensions
     /// <returns><c>true</c> when conversion succeeded; otherwise <c>false</c>.</returns>
     public static bool TryConvertTo<T>(this Measurement<T> value, Unit unit, out Measurement<T> result) where T : IComparable
     {
-        if (value == null)
+        if (value is null)
         {
             throw new ArgumentNullException(nameof(value));
         }
 
-        if (unit == null)
+        if (unit is null)
         {
             throw new ArgumentNullException(nameof(unit));
         }

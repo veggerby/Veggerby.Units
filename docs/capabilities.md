@@ -37,6 +37,51 @@ This document summarizes the current features of the Veggerby.Units library.
 * Comparison operators (&lt;, &lt;=, &gt;, &gt;=, ==, !=) on Measurement&lt;T&gt; automatically align units via conversion.
 * Non-throwing `TryConvertTo` for safe conversion attempts without exceptions.
 
+## Quantity Semantics (Kinds)
+
+The semantic layer (`QuantityKind` + `Quantity<T>`) disambiguates identical dimensions:
+
+* Examples of distinct kinds sharing dimensions: Energy vs Torque (J), Entropy vs HeatCapacity vs SpecificHeatCapacity (J/K).
+* Addition / subtraction: same-kind only and only if the kind allows direct addition/subtraction.
+* Point vs Delta (TemperatureAbsolute vs TemperatureDelta) prevents accidental affine misuse.
+* Explicit inference registry maps certain multiplicative/divisive relationships (e.g. Power × Time → Energy, Pressure × Volume → Energy). No transitive chaining.
+* Angle is treated as a distinct kind despite being dimensionless to prevent generic scalar leakage (Torque × Angle ↔ Energy rule only).
+
+### Quantity Comparisons
+
+`<`, `<=`, `>`, `>=` on `Quantity<T>` require identical kinds. Cross-kind comparisons throw even if units & dimensions match. Equality also requires same kind.
+
+### Try* Semantic Arithmetic
+
+`TryAdd`, `TrySubtract`, `TryMultiply`, `TryDivide` return `false` (instead of throwing) when a semantic rule is missing or disallowed (e.g. Energy + Torque, Force × Velocity without registered mapping). This enables exploratory or batch processing scenarios without exception control flow.
+
+### Registry Sealing
+
+Call `QuantityKindInferenceRegistry.Seal()` after all custom rule registrations to lock the semantic environment. Further `Register` calls throw, ensuring determinism and preventing late dynamic alteration.
+
+### Temperature Mean Helper
+
+`TemperatureMean.Mean(params Quantity<double>[] absolutes)` converts each absolute temperature to Kelvin, averages, and returns an absolute in the first sample’s unit. Rejects non-absolute kinds and empty input (returns null for empty array).
+
+### Example (Semantic Work Inference)
+
+```csharp
+using Veggerby.Units.Quantities;
+
+var pressure = Quantity.Pressure(101325.0);  // Pa
+var volume   = Quantity.Volume(0.01);        // m^3
+Quantity<double>.TryMultiply(pressure, volume, out var energy).Should().BeTrue();
+Console.WriteLine(energy.Kind.Name); // Energy
+```
+
+### Example (Safe Temperature Mean)
+
+```csharp
+var t1 = TemperatureQuantity.Absolute(25.0, Unit.SI.C);
+var t2 = TemperatureQuantity.Absolute(77.0, Unit.Imperial.F);
+var mean = TemperatureMean.Mean(t1, t2); // expressed in °C
+```
+
 ## Error Handling
 
 * UnitException for invalid operations between incompatible units.
@@ -51,7 +96,7 @@ This document summarizes the current features of the Veggerby.Units library.
 
 ## Not Implemented / Future Ideas
 
-* Rich physical property taxonomy (e.g. tagging J as energy/work/heat) is intentionally omitted.
+* Rich compile-time kind generics (current layer is runtime semantic). Existing semantic disambiguation is opt-in.
 * Additional unit systems (CGS, US customary variations) could be added.
 * Additional numeric types (BigInteger / arbitrary precision) via additional Calculator&lt;T&gt;.
 * Potential future: richer temperature domain helpers (dew point, heat index) building on affine units.

@@ -154,7 +154,7 @@ public abstract class Dimension : IOperand
         }
 
         // If one is null, but not both, return false.
-        if (((object)d1 == null) || ((object)d2 == null))
+        if (((object)d1 is null) || ((object)d2 is null))
         {
             return false;
         }
