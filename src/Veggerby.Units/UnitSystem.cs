@@ -1,7 +1,12 @@
-﻿namespace Veggerby.Units
+﻿namespace Veggerby.Units;
+
+/// <summary>
+/// Marker/identity class grouping related units (e.g. SI, Imperial). Immutable after construction.
+/// </summary>
+public class UnitSystem
 {
-    public class UnitSystem
-    {
-        public static UnitSystem None = new UnitSystem();
-    }
+    /// <summary>
+    /// Sentinel unit system used when no real system applies (e.g. for Unit.None or composites without explicit system resolution).
+    /// </summary>
+    public static UnitSystem None = new();
 }

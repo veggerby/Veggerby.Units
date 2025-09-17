@@ -1,0 +1,29 @@
+name: benchmark-smoke
+
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch: {}
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Restore
+        run: dotnet restore
+      - name: Build Release
+        run: dotnet build -c Release --no-restore
+      - name: Run Benchmarks (smoke subset)
+        run: dotnet run -c Release --project bench/Veggerby.Units.Benchmarks -- --filter *ReductionBenchmarks.MultiplyThenDivideCancellation*
+      - name: Archive Benchmark Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-artifacts
+          path: bench/Veggerby.Units.Benchmarks/BenchmarkDotNet.Artifacts

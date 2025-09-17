@@ -1,0 +1,10 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Tests do not need to generate XML docs or enforce missing documentation warnings -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573;1574;1712</NoWarn>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

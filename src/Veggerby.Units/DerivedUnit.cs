@@ -1,22 +1,22 @@
 using Veggerby.Units.Dimensions;
 
-namespace Veggerby.Units
+namespace Veggerby.Units;
+
+/// <summary>
+/// Represents a named unit derived from an expression of other units. Acts as an identity wrapper that preserves the
+/// composite's dimension and scale factor while providing a stable symbol/name for display and equality.
+/// </summary>
+public class DerivedUnit(string symbol, string name, Unit expression) : Unit
 {
-    public class DerivedUnit : Unit
-    {
-        private readonly Unit _expression;
-        public DerivedUnit(string symbol, string name, Unit expression)
-        {
-            Symbol = symbol;
-            Name = name;
-            _expression = expression;
-        }
+    /// <inheritdoc />
+    public override string Symbol { get; } = symbol;
+    /// <inheritdoc />
+    public override string Name { get; } = name;
 
-        public override string Symbol { get; }
-        public override string Name { get; }
+    /// <inheritdoc />
+    public override UnitSystem System => expression.System;
+    /// <inheritdoc />
+    public override Dimension Dimension => expression.Dimension;
 
-        public override UnitSystem System => _expression.System;
-        public override Dimension Dimension => _expression.Dimension;
-        internal override T Accept<T>(Visitors.Visitor<T> visitor) => visitor.Visit(this);
-    }
+    internal override double GetScaleFactor() => expression.GetScaleFactor();
 }
