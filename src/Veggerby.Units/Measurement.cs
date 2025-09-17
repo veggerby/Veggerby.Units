@@ -186,3 +186,13 @@ public class DoubleMeasurement(double value, Unit unit) : Measurement<double>(va
         return new DoubleMeasurement(v, Unit.None);
     }
 }
+
+/// <summary>Concrete decimal precision measurement convenience type.</summary>
+public class DecimalMeasurement(decimal value, Unit unit) : Measurement<decimal>(value, unit, DecimalCalculator.Instance)
+{
+    /// <summary>Implicit construction from raw integer producing a dimensionless decimal measurement.</summary>
+    public static implicit operator DecimalMeasurement(int v)
+    {
+        return new DecimalMeasurement(v, Unit.None);
+    }
+}

@@ -23,4 +23,6 @@ public abstract class Visitor<T>
     public abstract T Visit(NullUnit v);
     /// <summary>Visits a scale unit.</summary>
     public abstract T Visit(ScaleUnit v);
+    /// <summary>Visits an affine unit (e.g. Celsius).</summary>
+    public abstract T Visit(AffineUnit v);
 }

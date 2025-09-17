@@ -20,6 +20,8 @@ public class InternationalUnitSystem : UnitSystem
     public Unit A { get; }
     /// <summary>Kelvin – base unit of thermodynamic temperature.</summary>
     public Unit K { get; }
+    /// <summary>Celsius – affine temperature unit (°C).</summary>
+    public Unit C { get; }
     /// <summary>Candela – base unit of luminous intensity.</summary>
     public Unit cd { get; }
     /// <summary>Mole – base unit of amount of substance.</summary>
@@ -36,6 +38,7 @@ public class InternationalUnitSystem : UnitSystem
         s = new BasicUnit("s", "second", this, Dimension.Time);
         A = new BasicUnit("A", "ampere", this, Dimension.ElectricCurrent);
         K = new BasicUnit("K", "kelvin", this, Dimension.ThermodynamicTemperature);
+        C = new AffineUnit("°C", "celsius", K, 1d, 273.15d);
         cd = new BasicUnit("cd", "candela", this, Dimension.LuminousIntensity);
         n = new BasicUnit("mol", "mole", this, Dimension.AmountOfSubstance);
     }

@@ -7,7 +7,7 @@ This document summarizes the current features of the Veggerby.Units library.
 * Unit: Abstract representation of a measurement unit (basic, derived, product, division, power, prefixed, scaled, or null).
 * Dimension: Physical dimension (Length L, Mass M, Time T, Electric Current I, Thermodynamic Temperature Θ, Luminous Intensity J, Amount of Substance N) with full algebra support.
 * Unit System: Currently implemented systems are International (SI) and Imperial; all non‑SI units scale to SI base units for conversion.
-* Measurement&lt;T&gt;: Couples a numeric value with a Unit and a Calculator&lt;T&gt; enabling generic arithmetic (int and double implemented).
+* Measurement&lt;T&gt;: Couples a numeric value with a Unit and a Calculator&lt;T&gt; enabling generic arithmetic (int, double and decimal implemented).
 
 ## Arithmetic & Algebra
 
@@ -26,12 +26,14 @@ This document summarizes the current features of the Veggerby.Units library.
 
 * Dimension checked conversions: attempting to convert between incompatible dimensions throws a MeasurementConversionException.
 * Conversion implemented by computing relative scale factors to SI base representations (e.g. 1 ft = 0.3048 m; 1 km = 1000 m).
-* Supported numeric types: int (rounded) and double.
+* Supported numeric types: int (rounded), double, and decimal (added for higher precision scenarios).
+* Affine (offset) conversions: temperature support via °C (Celsius) defined as an affine unit relative to Kelvin.
 
 ## Equality & Comparison
 
 * Deterministic canonical equality for composite expressions via factor multiset normalization (order & lazy power distribution independent).
 * Comparison operators (&lt;, &lt;=, &gt;, &gt;=, ==, !=) on Measurement&lt;T&gt; automatically align units via conversion.
+* Non-throwing `TryConvertTo` for safe conversion attempts without exceptions.
 
 ## Error Handling
 
@@ -49,7 +51,8 @@ This document summarizes the current features of the Veggerby.Units library.
 
 * Rich physical property taxonomy (e.g. tagging J as energy/work/heat) is intentionally omitted.
 * Additional unit systems (CGS, US customary variations) could be added.
-* Support for decimals / BigInteger / arbitrary precision via additional Calculator&lt;T&gt;.
+* Additional numeric types (BigInteger / arbitrary precision) via additional Calculator&lt;T&gt;.
+* Policy / explicit prohibition for affine units inside multiplicative composites (currently allowed but semantic meaning e.g. °C*m is undefined and discouraged).
 * Parsing of unit strings into expression trees (currently only simple ToString formatting is implemented; parsing referenced in README but not yet coded).
 * Serialization helpers and culture-aware formatting.
 
@@ -74,6 +77,6 @@ For experimentation / benchmarking (all on `ReductionSettings`):
 | `LazyPowerExpansion` | false | Leaves `(Product)^n` unexpanded until required (still equal to distributed form). |
 | `UseFactorVector` | false | Enables cached factor vectors on some composite nodes (allocation reduction). |
 | `UseExponentMapForReduction` | false | Switches multiplication/division reduction to pooled exponent map accumulator. |
-| `EqualityUsesMap` | false | Legacy hash-bucket product equality (kept for comparison). |
+| (legacy flag removed) | - | Previous hash-bucket product equality removed in favour of canonical path. |
 
 Generated: 2025-09-17

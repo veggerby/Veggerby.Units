@@ -45,13 +45,9 @@ public static class Extensions
         // value_in_base = value * factor(source)
         // value_in_target = value_in_base / factor(target)
         // Works because both factors are relative to same base representation.
-        var sourceFactor = value.Unit.GetScaleFactor();
-        var targetFactor = unit.GetScaleFactor();
-
-        // We only support numeric Calculator types that can handle double intermediates (int, double).
-        // For int calculators we round the final result.
-        double baseValue = Convert.ToDouble(value.Value) * sourceFactor;
-        double converted = baseValue / targetFactor;
+        // Convert via affine-aware base methods.
+        double baseValue = value.Unit.ToBase(Convert.ToDouble(value.Value));
+        double converted = unit.FromBase(baseValue);
 
         object newValue;
         if (typeof(T) == typeof(int))
@@ -62,12 +58,77 @@ public static class Extensions
         {
             newValue = (T)(object)converted;
         }
+        else if (typeof(T) == typeof(decimal))
+        {
+            newValue = (T)(object)Convert.ToDecimal(converted);
+        }
         else
         {
             throw new NotSupportedException($"Conversion for calculator type {typeof(T).Name} is not supported.");
         }
 
         return new Measurement<T>((T)newValue, unit, value.Calculator);
+    }
+
+    /// <summary>
+    /// Attempts to convert a measurement to an equivalent value expressed in the target unit.
+    /// Unlike <see cref="ConvertTo{T}(Measurement{T}, Unit)"/> this method never throws for dimension
+    /// mismatch or unsupported numeric type; instead it returns <c>false</c> and sets <paramref name="result"/>
+    /// to <c>null</c>. Argument <c>null</c> checks still throw to surface programmer errors early.
+    /// </summary>
+    /// <typeparam name="T">Underlying numeric type (currently int or double supported).</typeparam>
+    /// <param name="value">Source measurement (must not be null).</param>
+    /// <param name="unit">Target unit (must not be null).</param>
+    /// <param name="result">Converted measurement when the operation succeeds; otherwise <c>null</c>.</param>
+    /// <returns><c>true</c> when conversion succeeded; otherwise <c>false</c>.</returns>
+    public static bool TryConvertTo<T>(this Measurement<T> value, Unit unit, out Measurement<T> result) where T : IComparable
+    {
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+        if (unit == null)
+        {
+            throw new ArgumentNullException(nameof(unit));
+        }
+
+        if (value.Unit.Dimension != unit.Dimension)
+        {
+            result = null;
+            return false;
+        }
+
+        if (value.Unit == unit)
+        {
+            result = value; // already in correct unit
+            return true;
+        }
+
+        double baseValue = value.Unit.ToBase(Convert.ToDouble(value.Value));
+        double converted = unit.FromBase(baseValue);
+
+        object newValue;
+        if (typeof(T) == typeof(int))
+        {
+            newValue = (T)(object)Convert.ToInt32(Math.Round(converted));
+        }
+        else if (typeof(T) == typeof(double))
+        {
+            newValue = (T)(object)converted;
+        }
+        else if (typeof(T) == typeof(decimal))
+        {
+            newValue = (T)(object)Convert.ToDecimal(converted);
+        }
+        else
+        {
+            result = null;
+            return false;
+        }
+
+        result = new Measurement<T>((T)newValue, unit, value.Calculator);
+        return true;
     }
 
     /// <summary>

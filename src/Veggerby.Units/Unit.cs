@@ -245,6 +245,19 @@ public abstract class Unit : IOperand
     /// <inheritdoc />
     public override string ToString() => Symbol;
 
+    /// <summary>Returns multiplicative scale factor relative to SI base representation (override in composites).</summary>
+    internal virtual double GetScaleFactor() => 1d;
+    /// <summary>
+    /// Converts a numeric value in this unit to its base (affine-aware) SI-space value. Default assumes purely
+    /// multiplicative scaling (no offset).
+    /// </summary>
+    internal virtual double ToBase(double value) => value * GetScaleFactor();
+    /// <summary>
+    /// Converts a numeric value expressed in SI base space back to this unit. Default assumes purely
+    /// multiplicative scaling.
+    /// </summary>
+    internal virtual double FromBase(double baseValue) => baseValue / GetScaleFactor();
+
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
@@ -258,9 +271,5 @@ public abstract class Unit : IOperand
 
     internal abstract T Accept<T>(Visitor<T> visitor);
 
-    /// <summary>
-    /// Scale factor relative to underlying SI base units (e.g. km => 1000, ft => 0.3048, composite units multiply/divide factors).
-    /// NullUnit returns 1.
-    /// </summary>
-    internal virtual double GetScaleFactor() => 1d;
+    // (legacy duplicate GetScaleFactor removed – single definition above)
 }

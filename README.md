@@ -21,7 +21,8 @@ Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit 
 * Deterministic canonical factor multiset normalization for product / division / power.
 * Automatic cancellation & power aggregation in operator chains (low allocation fast paths).
 * Metric prefixes (yocto → yotta) as first‑class multiplicative factors.
-* Measurement arithmetic (generic numeric backends) with safe conversions.
+* Measurement arithmetic (generic numeric backends: int, double, decimal) with safe conversions.
+* Affine temperature conversion support (°C ↔ K).
 * Benchmark‑guarded performance (≤1% regression gate on equality micro benchmarks).
 * Planned: parsing (string → expression tree), richer physical property taxonomy.
 
@@ -115,7 +116,7 @@ Toggle only in benchmark / test contexts.
 
 * Parsing (string → expression tree)
 * Additional systems (CGS, US customary variants)
-* More numeric types (decimal, BigInteger)
+* More numeric types (BigInteger, arbitrary precision) beyond current int/double/decimal
 * Property classification (Energy vs Work vs Heat) atop dimensions
 
 ## References
@@ -125,7 +126,7 @@ Toggle only in benchmark / test contexts.
 * Nondimensionalization – <https://en.wikipedia.org/wiki/Nondimensionalization>
 
 ---
-Docs index:
+Docs index (see also `TryConvertTo` and decimal support in capabilities):
 
 * Capabilities: `docs/capabilities.md`
 * Reduction architecture: `docs/reduction_architecture.md`

@@ -18,4 +18,5 @@ internal sealed class FactorVisitor : Visitor<double>
     public override double Visit(PrefixedUnit v) => 1d;
     public override double Visit(NullUnit v) => 1d;
     public override double Visit(ScaleUnit v) => 1d;
+    public override double Visit(AffineUnit v) => 1d;
 }
