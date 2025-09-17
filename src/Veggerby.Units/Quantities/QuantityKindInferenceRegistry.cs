@@ -111,6 +111,48 @@ public static class QuantityKindInferenceRegistry
         Register(new QuantityKindInference(QuantityKinds.ElectricConductance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Voltage, QuantityKinds.ElectricCurrent, Commutative: true));
         Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Divide, QuantityKinds.Voltage, QuantityKinds.ElectricConductance));
         Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricConductance, QuantityKinds.Voltage));
+
+        // --- Additional geometry / kinematics / flow single-step rules ---
+        // AngularVelocity × Time = Angle (already dimensionless) -> we map to Angle to preserve semantic; no reverse because Angle / Time = AngularVelocity
+        Register(new QuantityKindInference(QuantityKinds.AngularVelocity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Angle, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Angle, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.AngularVelocity));
+        Register(new QuantityKindInference(QuantityKinds.Angle, QuantityKindBinaryOperator.Divide, QuantityKinds.AngularVelocity, QuantityKinds.Time));
+
+        // AngularAcceleration × Time = AngularVelocity
+        Register(new QuantityKindInference(QuantityKinds.AngularAcceleration, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.AngularVelocity, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.AngularVelocity, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.AngularAcceleration));
+        Register(new QuantityKindInference(QuantityKinds.AngularVelocity, QuantityKindBinaryOperator.Divide, QuantityKinds.AngularAcceleration, QuantityKinds.Time));
+
+        // Jerk × Time = Acceleration
+        Register(new QuantityKindInference(QuantityKinds.Jerk, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Acceleration, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Acceleration, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.Jerk));
+        Register(new QuantityKindInference(QuantityKinds.Acceleration, QuantityKindBinaryOperator.Divide, QuantityKinds.Jerk, QuantityKinds.Time));
+
+
+        // VolumetricFlowRate × Time = Volume
+        Register(new QuantityKindInference(QuantityKinds.VolumetricFlowRate, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Volume, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Volume, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.VolumetricFlowRate));
+        Register(new QuantityKindInference(QuantityKinds.Volume, QuantityKindBinaryOperator.Divide, QuantityKinds.VolumetricFlowRate, QuantityKinds.Time));
+
+        // MassFlowRate × Time = Mass
+        Register(new QuantityKindInference(QuantityKinds.MassFlowRate, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Mass, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Mass, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.MassFlowRate));
+        Register(new QuantityKindInference(QuantityKinds.Mass, QuantityKindBinaryOperator.Divide, QuantityKinds.MassFlowRate, QuantityKinds.Time));
+
+        // MolarFlowRate × Time = Amount (use MolarConcentration base amount-of-substance dimension n)
+        Register(new QuantityKindInference(QuantityKinds.MolarFlowRate, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.CatalyticActivity, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.CatalyticActivity, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.MolarFlowRate));
+        Register(new QuantityKindInference(QuantityKinds.CatalyticActivity, QuantityKindBinaryOperator.Divide, QuantityKinds.MolarFlowRate, QuantityKinds.Time));
+
+        // ThermalConductance × TemperatureDifference = Power (P = ΔT / R_th -> G_th * ΔT)
+        Register(new QuantityKindInference(QuantityKinds.ThermalConductance, QuantityKindBinaryOperator.Multiply, QuantityKinds.TemperatureDelta, QuantityKinds.Power, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Power, QuantityKindBinaryOperator.Divide, QuantityKinds.TemperatureDelta, QuantityKinds.ThermalConductance));
+        Register(new QuantityKindInference(QuantityKinds.Power, QuantityKindBinaryOperator.Divide, QuantityKinds.ThermalConductance, QuantityKinds.TemperatureDelta));
+
+        // Power × ThermalResistance = TemperatureDifference
+        Register(new QuantityKindInference(QuantityKinds.Power, QuantityKindBinaryOperator.Multiply, QuantityKinds.ThermalResistance, QuantityKinds.TemperatureDelta, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.TemperatureDelta, QuantityKindBinaryOperator.Divide, QuantityKinds.ThermalResistance, QuantityKinds.Power));
+        Register(new QuantityKindInference(QuantityKinds.TemperatureDelta, QuantityKindBinaryOperator.Divide, QuantityKinds.Power, QuantityKinds.ThermalResistance));
     }
 
     /// <summary>Registers an inference rule. For commutative multiplication the symmetric rule is generated. Throws on conflict when <see cref="StrictConflictDetection"/> is true.</summary>

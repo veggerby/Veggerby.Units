@@ -35,6 +35,30 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 - Tag-based classification for built-in kinds (`Energy.StateFunction`, `Energy.PathFunction`, `Domain.Thermodynamic`, `Domain.Mechanical`, `Form.Dimensionless`).
 - Registry behavior tests enhancing semantic inference safety (conflict detection and overwrite scenarios).
 
+#### Extended Semantic Surface (this iteration)
+
+- Extensive new quantity kinds grouped by domain:
+  - Geometry / Kinematics: SolidAngle, AngularVelocity, AngularAcceleration, AngularMomentum, MomentOfInertia, Jerk, Wavenumber, Curvature, Strain, StrainRate.
+  - Flow & Rates: VolumetricFlowRate, MassFlowRate, MolarFlowRate.
+  - Materials & Mechanics: YoungsModulus, ShearModulus, BulkModulus, Compressibility, LinearMassDensity, ArealMassDensity, NumberDensity, ArealNumberDensity, Porosity.
+  - Thermal: ThermalResistance, ThermalConductance, HeatTransferCoefficient, MolarHeatCapacity, SpecificEnthalpy.
+  - Electromagnetics (additions): Magnetization, ElectricDisplacement, MagneticVectorPotential, Impedance, Admittance, ChargeMobility.
+  - Radiometry & Photometry: RadiantFlux, RadiantIntensity, Irradiance, Radiance, RadiationExposure, Luminance, LuminousIntensity, LuminousEfficacy.
+  - Chemistry & Transport: DiffusionCoefficient, ReactionRate, MoleFraction, MassFraction, OsmoticPressure.
+  - Generic / Dimensionless: DimensionlessRatio (explicit semantic ratio discriminator).
+- Factory helpers added for all new kinds (`QuantityFactories.Additional`).
+- New single-step inference rules (preserving no multi-hop expansion):
+  - AngularVelocity × Time → Angle; Angle ÷ Time → AngularVelocity.
+  - AngularAcceleration × Time → AngularVelocity.
+  - Jerk × Time → Acceleration.
+  - VolumetricFlowRate × Time → Volume; MassFlowRate × Time → Mass; MolarFlowRate × Time → CatalyticActivity.
+  - ThermalConductance × TemperatureDelta → Power; Power × ThermalResistance → TemperatureDelta.
+  - Corresponding inverse (division) rules for each of the above where semantically unambiguous.
+
+#### Developer Tooling / Safety
+
+- Static initialization safety: new kinds avoid cross-kind field references by expressing canonical units directly in base SI algebra (prevents partial static ordering faults observed during development).
+
 ### Changed
 
 - Helper parity: `Quantity<T>.Add` / `Subtract` now mirror operator semantics exactly (breaking if prior unsafe cross-kind reliance existed).
