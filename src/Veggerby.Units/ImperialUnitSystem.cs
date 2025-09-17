@@ -12,6 +12,8 @@ public sealed class ImperialUnitSystem : UnitSystem
     public const double PoundToKilogram = 0.45359237;
     /// <summary>Scale factor used for volume construction (cubic inches to pint).</summary>
     public const double CubicInchToPint = 34.677;
+    /// <summary>Scale factor: 1 lbf = 0.45359237 kg * 9.80665 m/s^2 ≈ 4.44822161526037 N.</summary>
+    public const double PoundForceToNewton = PoundToKilogram * 9.80665;
 
     //length
     /// <summary>Foot.</summary>
@@ -74,6 +76,50 @@ public sealed class ImperialUnitSystem : UnitSystem
     /// <summary>Ton.</summary>
     public Unit t { get; }
 
+    // nautical length
+    /// <summary>Fathom (6 ft).</summary>
+    public Unit fathom { get; }
+    /// <summary>Cable (100 fathoms).</summary>
+    public Unit cable { get; }
+    /// <summary>Nautical mile (1852 m exact) – uses scale over metre.</summary>
+    public Unit nmi { get; }
+
+    // agricultural / commodity volume
+    /// <summary>Peck.</summary>
+    public Unit peck { get; }
+    /// <summary>Bushel.</summary>
+    public Unit bushel { get; }
+    /// <summary>Barrel (oil barrel 42 gal US approximation using gallon chain).</summary>
+    public Unit barrel { get; }
+    /// <summary>Tun (252 gal – 6 barrels).</summary>
+    public Unit tun { get; }
+
+    // specialized weight (troy/apothecaries simplified)
+    /// <summary>Troy ounce (31.1034768 g).</summary>
+    public Unit ozt { get; }
+    /// <summary>Troy pound (12 troy ounces).</summary>
+    public Unit lbt { get; }
+
+    // engineering derived
+    /// <summary>Pound-force (defined via exact product lb * g0; represented as scale to SI newton).</summary>
+    public Unit lbf { get; }
+    /// <summary>Foot-pound (pound-force * foot).</summary>
+    public Unit ft_lb { get; }
+    /// <summary>Pound per square inch (psi).</summary>
+    public Unit psi { get; }
+    /// <summary>Horsepower (mechanical) 550 ft·lb/s.</summary>
+    public Unit hp { get; }
+
+    // area convenience
+    /// <summary>Square inch.</summary>
+    public Unit sq_in { get; }
+    /// <summary>Square foot.</summary>
+    public Unit sq_ft { get; }
+    /// <summary>Square yard.</summary>
+    public Unit sq_yd { get; }
+    /// <summary>Square mile.</summary>
+    public Unit sq_mi { get; }
+
     //other
     /// <summary>Second (reuses SI).</summary>
     public Unit s => Unit.SI.s;
@@ -127,6 +173,36 @@ public sealed class ImperialUnitSystem : UnitSystem
         qtr = new ScaleUnit("qtr", "quarter", 28, lb);
         cwt = new ScaleUnit("cwt", "hundredweight", 4, qtr);
         t = new ScaleUnit("t", "ton", 20, cwt);
+
+        // nautical
+        // Fathom is a pure scalar multiple of the foot (6 ft) so represent as a scale unit
+        fathom = new ScaleUnit("fathom", "fathom", 6, ft);
+        cable = new ScaleUnit("cable", "cable", 100, fathom);
+        nmi = new ScaleUnit("nmi", "nautical mile", 1852d / FeetToMetres, ft); // exact 1852 m
+
+        // agricultural / commodity volume (using gallon chain -> qt -> pt -> cubic inches)
+        // Peck = 2 gallons (US dry ~ 8 dry quarts) – approximate via existing gallon chain
+        peck = new ScaleUnit("pk", "peck", 2, gal);
+        bushel = new ScaleUnit("bu", "bushel", 4, peck);
+        barrel = new ScaleUnit("bbl", "barrel", 42, gal);
+        tun = new ScaleUnit("tun", "tun", 6, barrel);
+
+        // troy weights (exact factors relative to gram via SI kilogram)
+        ozt = new ScaleUnit("ozt", "troy ounce", 31.1034768 / 1000d, Unit.SI.kg, this);
+        lbt = new ScaleUnit("lbt", "troy pound", 12, ozt);
+
+        // engineering derived
+        // Standard gravity constant
+        lbf = new ScaleUnit("lbf", "pound-force", PoundForceToNewton, Unit.SI.kg * (Unit.SI.m / (Unit.SI.s ^ 2)), this);
+        ft_lb = new DerivedUnit("ft·lb", "foot-pound", lbf * ft);
+        psi = new DerivedUnit("psi", "pound per square inch", lbf / (@in ^ 2));
+        hp = new ScaleUnit("hp", "horsepower", 550, ft_lb / Unit.SI.s);
+
+        // area convenience
+        sq_in = @in ^ 2;
+        sq_ft = ft ^ 2;
+        sq_yd = ya ^ 2;
+        sq_mi = mi ^ 2;
 
         // temperature (affine) – defined relative to absolute Kelvin base. K = (F * 5/9) + 255.3722222222222
         F = new AffineUnit("°F", "fahrenheit", K, 5d / 9d, 255.3722222222222d);

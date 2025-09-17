@@ -61,6 +61,56 @@ public static class QuantityKindInferenceRegistry
         Register(new QuantityKindInference(QuantityKinds.Pressure, QuantityKindBinaryOperator.Multiply, QuantityKinds.Area, QuantityKinds.Force, Commutative: true));
         Register(new QuantityKindInference(QuantityKinds.Force, QuantityKindBinaryOperator.Divide, QuantityKinds.Area, QuantityKinds.Pressure));
         Register(new QuantityKindInference(QuantityKinds.Force, QuantityKindBinaryOperator.Divide, QuantityKinds.Pressure, QuantityKinds.Area));
+
+        // --- Electromagnetic canonical single-step rules ---
+        // Current (A) × Time (s) = Charge (C)
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.ElectricCharge, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.ElectricCurrent));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricCurrent, QuantityKinds.Time));
+
+        // Voltage (V) × Charge (C) = Energy (J)
+        Register(new QuantityKindInference(QuantityKinds.Voltage, QuantityKindBinaryOperator.Multiply, QuantityKinds.ElectricCharge, QuantityKinds.Energy, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Energy, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricCharge, QuantityKinds.Voltage));
+        Register(new QuantityKindInference(QuantityKinds.Energy, QuantityKindBinaryOperator.Divide, QuantityKinds.Voltage, QuantityKinds.ElectricCharge));
+
+        // Current (A) × Voltage (V) = Power (W)
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Multiply, QuantityKinds.Voltage, QuantityKinds.Power, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Power, QuantityKindBinaryOperator.Divide, QuantityKinds.Voltage, QuantityKinds.ElectricCurrent));
+        Register(new QuantityKindInference(QuantityKinds.Power, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricCurrent, QuantityKinds.Voltage));
+
+        // Current^2 (A^2) × Resistance (Ω) = Power (W)  (single-step only recognizes multiplicative grouping; no exponent semantics here)
+        // We model Current * Resistance = Voltage so prefer explicit: Current × Resistance = Voltage; Voltage × Current = Power already covers but we add direct mapping for clarity.
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Multiply, QuantityKinds.ElectricResistance, QuantityKinds.Voltage, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Voltage, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricResistance, QuantityKinds.ElectricCurrent));
+        Register(new QuantityKindInference(QuantityKinds.Voltage, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricCurrent, QuantityKinds.ElectricResistance));
+
+        // Voltage^2 / Resistance = Power (Ohm's law variant) not added; would require power exponent pattern – omitted by design (single-step, no chaining expansion).
+
+        // Flux (Wb) / Time (s) = Voltage (V)
+        Register(new QuantityKindInference(QuantityKinds.MagneticFlux, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.Voltage));
+        // Voltage × Time = Flux
+        Register(new QuantityKindInference(QuantityKinds.Voltage, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.MagneticFlux, Commutative: true));
+
+        // Flux (Wb) / Area (m^2) = Flux Density (T)
+        Register(new QuantityKindInference(QuantityKinds.MagneticFlux, QuantityKindBinaryOperator.Divide, QuantityKinds.Area, QuantityKinds.MagneticFluxDensity));
+        Register(new QuantityKindInference(QuantityKinds.MagneticFluxDensity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Area, QuantityKinds.MagneticFlux, Commutative: true));
+
+        // Charge (C) / Time (s) = Current already implied by first rule symmetrical division but explicitly added for clarity (non-commutative mapping already present) – skipped to avoid duplication.
+
+        // Capacitance (F) × Voltage (V) = Charge (C)
+        Register(new QuantityKindInference(QuantityKinds.Capacitance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Voltage, QuantityKinds.ElectricCharge, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Divide, QuantityKinds.Voltage, QuantityKinds.Capacitance));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCharge, QuantityKindBinaryOperator.Divide, QuantityKinds.Capacitance, QuantityKinds.Voltage));
+
+        // Inductance (H) × Current (A) = Magnetic Flux (Wb)
+        Register(new QuantityKindInference(QuantityKinds.Inductance, QuantityKindBinaryOperator.Multiply, QuantityKinds.ElectricCurrent, QuantityKinds.MagneticFlux, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.MagneticFlux, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricCurrent, QuantityKinds.Inductance));
+        Register(new QuantityKindInference(QuantityKinds.MagneticFlux, QuantityKindBinaryOperator.Divide, QuantityKinds.Inductance, QuantityKinds.ElectricCurrent));
+
+        // Conductance (S) × Voltage (V) = Current (A)
+        Register(new QuantityKindInference(QuantityKinds.ElectricConductance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Voltage, QuantityKinds.ElectricCurrent, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Divide, QuantityKinds.Voltage, QuantityKinds.ElectricConductance));
+        Register(new QuantityKindInference(QuantityKinds.ElectricCurrent, QuantityKindBinaryOperator.Divide, QuantityKinds.ElectricConductance, QuantityKinds.Voltage));
     }
 
     /// <summary>Registers an inference rule. For commutative multiplication the symmetric rule is generated. Throws on conflict when <see cref="StrictConflictDetection"/> is true.</summary>

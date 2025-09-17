@@ -37,7 +37,7 @@ public static partial class QuantityKinds
     /// <summary>Pressure (Pa) = N/m².</summary>
     public static readonly QuantityKind Pressure = new(
         "Pressure",
-        Force.CanonicalUnit / (Unit.SI.m ^ 2),
+        Unit.SI.kg / (Unit.SI.m * (Unit.SI.s ^ 2)),
         "p");
 
     /// <summary>Volume (m³) = m^3 (geometric volume).</summary>

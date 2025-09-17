@@ -26,12 +26,18 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 - Inference registry lifecycle: `QuantityKindInferenceRegistry.Seal()` and `IsSealed` to lock semantic rule set.
 - Temperature mean helper: `TemperatureMean.Mean(...)` for safe averaging of absolute temperatures via Kelvin base conversion.
 - Documentation: Expanded `docs/quantities.md` with comparison semantics, Try* APIs, sealing rationale, temperature mean usage; updated `quantity-kinds.md` list; README examples for inferred work (P·t, p·V) and semantic gotchas (Energy vs Torque).
+- Open semantic tag system (`QuantityKindTag`) replacing closed enum categories; canonical tag instances via `QuantityKindTag.Get(name)`.
+- Work and Heat quantity kinds (path energy transfers) + energy transfer aggregation helper `EnergyBalance` (distinct from state functions).
+- Tag-based classification for built-in kinds (`Energy.StateFunction`, `Energy.PathFunction`, `Domain.Thermodynamic`, `Domain.Mechanical`, `Form.Dimensionless`).
+- Registry behavior tests enhancing semantic inference safety (conflict detection and overwrite scenarios).
 
 ### Changed
 
 - Helper parity: `Quantity<T>.Add` / `Subtract` now mirror operator semantics exactly (breaking if prior unsafe cross-kind reliance existed).
 
 - Internal Add/Sub branching centralized; reduced potential for future drift between operators and helpers.
+- README, `docs/quantities.md`, and `docs/quantity-kinds.md` updated to reflect tag system (enum removed) and new Work/Heat semantics.
+- Built-in kinds now explicitly constructed with tag sets (deterministic metadata snapshot).
 
 ### Fixed
 
@@ -46,6 +52,11 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 
 - All inference remains single-hop: no transitive chaining introduced (design invariant preserved).
 - Registry sealing recommended after application startup to guarantee deterministic semantics.
+- Quantity kind categorization is now fully open-ended; downstream libraries can introduce arbitrary domain tags without core modification.
+
+### Removed
+
+- Legacy `QuantityKindCategory` enum and associated constructor/property (superseded by open tag model).
 
 ## [0.1.1] - 2025-09-17
 

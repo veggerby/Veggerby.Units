@@ -117,7 +117,7 @@ Toggle only in benchmark / test contexts.
 * Parsing (string → expression tree)
 * Additional systems (CGS, US customary variants)
 * More numeric types (BigInteger, arbitrary precision) beyond current int/double/decimal
-* Property classification (Energy vs Work vs Heat) atop dimensions
+* (Done) Property classification (Energy vs Work vs Heat) via open tag system
 
 ## Temperature (Affine Units)
 
@@ -181,6 +181,31 @@ Unsupported / intentionally rejected behaviors:
 Why these constraints: to surface ambiguous intent early, avoid “semantic drift” hiding behind dimensionally valid math, and keep the registry explicit, reviewable, and minimal. If you need a new semantic product/division outcome, register it explicitly (see `QuantityKindInferenceRegistry`).
 
 More detail & extension guidance: `docs/quantities.md` (Inference & Arithmetic sections).
+
+### Tag System (Open Semantic Classification)
+
+Each `QuantityKind` has an extensible set of canonical tags (`QuantityKindTag`) describing semantic facets:
+
+* Examples: `Energy.StateFunction`, `Energy.PathFunction`, `Domain.Thermodynamic`, `Domain.Mechanical`, `Form.Dimensionless`.
+* Tags are canonical via `QuantityKindTag.Get(name)` (same name → same instance).
+* Tags never affect dimensional algebra or operator legality; they are metadata for policy, filtering, analytics, or UI grouping.
+
+```csharp
+var work = QuantityKinds.Work; // Energy.PathFunction, Domain.Mechanical, Energy
+bool isPath = work.HasTag("Energy.PathFunction"); // true
+```
+
+Custom kind with tags:
+
+```csharp
+var Exergy = new QuantityKind(
+    name: "Exergy",
+    canonicalUnit: QuantityKinds.Energy.CanonicalUnit,
+    symbol: "Ex",
+    tags: new[]{ QuantityKindTag.Get("Energy"), QuantityKindTag.Get("Energy.StateFunction"), QuantityKindTag.Get("Domain.Thermodynamic") });
+```
+
+Guidelines: prefer dotted hierarchical names, reuse existing roots (`Energy`, `Domain`, `Form`), keep tags stable (avoid transient runtime/state flags).
 
 ### Inferred Multiplicative Examples
 
