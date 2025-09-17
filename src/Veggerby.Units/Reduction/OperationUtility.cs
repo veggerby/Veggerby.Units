@@ -25,8 +25,15 @@ internal static class OperationUtility
     /// </summary>
     internal static bool Equals(IOperand o1, IOperand o2)
     {
-        if (ReferenceEquals(o1, o2)) { return true; }
-        if (o1 == null || o2 == null) { return false; }
+        if (ReferenceEquals(o1, o2))
+        {
+            return true;
+        }
+
+        if (o1 == null || o2 == null)
+        {
+            return false;
+        }
 
         // Canonical factor multiset path (Steps 1 + 2)
         if (ReductionSettings.EqualityNormalizationEnabled && (IsAlgebraic(o1) || IsAlgebraic(o2)))
@@ -45,6 +52,31 @@ internal static class OperationUtility
                     catch { /* diagnostics must never throw */ }
                 }
 #endif
+                if (!result)
+                {
+                    // Defensive fallback: recompute ordered (symbol, exponent) canonical sequences and compare directly.
+                    // This guards against any rare key identity edge case in the primary dictionary-based path.
+                    var a1 = TryGetCanonicalFactorsForDiagnostics(o1);
+                    var a2 = TryGetCanonicalFactorsForDiagnostics(o2);
+
+                    if (a1.Length == a2.Length)
+                    {
+                        bool all = true;
+                        for (int i = 0; i < a1.Length; i++)
+                        {
+                            if (!string.Equals(a1[i].Symbol, a2[i].Symbol, System.StringComparison.Ordinal) || a1[i].Exponent != a2[i].Exponent)
+                            {
+                                all = false; break;
+                            }
+                        }
+
+                        if (all)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
                 return result;
             }
         }
@@ -54,11 +86,13 @@ internal static class OperationUtility
         {
             var c1 = CanonicalizePowerProduct(o1);
             var c2 = CanonicalizePowerProduct(o2);
+
             if (!ReferenceEquals(c1, o1) || !ReferenceEquals(c2, o2))
             {
                 return RawEquals(c1, c2);
             }
         }
+
         return RawEquals(o1, o2);
     }
 
@@ -67,12 +101,14 @@ internal static class OperationUtility
     {
         var map = new Dictionary<IOperand, int>();
         AccumulateFactors(map, operand, 1);
+
         // remove zeros
         var filtered = map.Where(kv => kv.Value != 0)
             .Select(kv => (kv.Key.ToString(), kv.Value))
             .OrderBy(x => x.Item1, StringComparer.Ordinal)
             .ThenBy(x => x.Value)
             .ToArray();
+
         return filtered;
     }
 
@@ -84,10 +120,14 @@ internal static class OperationUtility
     /// </summary>
     private static bool TryCanonicalFactorCompare(IOperand o1, IOperand o2, out bool result)
     {
+        // Pre-normalize to proactively distribute powers over products for deterministic factor accumulation.
+        var n1 = PreNormalize(o1);
+        var n2 = PreNormalize(o2);
+
         var map1 = new Dictionary<IOperand, int>();
         var map2 = new Dictionary<IOperand, int>();
-        AccumulateFactors(map1, o1, 1);
-        AccumulateFactors(map2, o2, 1);
+        AccumulateFactors(map1, n1, 1);
+        AccumulateFactors(map2, n2, 1);
 
         // Fast path: identical dictionary reference equality already handled earlier; now compare counts
         if (map1.Count != map2.Count)
@@ -99,7 +139,10 @@ internal static class OperationUtility
         foreach (var kv in map1)
         {
             var exp = kv.Value;
-            if (exp == 0) { continue; }
+            if (exp == 0)
+            {
+                continue;
+            }
 
             if (map2.TryGetValue(kv.Key, out var exp2))
             {
@@ -111,7 +154,11 @@ internal static class OperationUtility
             bool matched = false;
             foreach (var other in map2.Keys)
             {
-                if (other == kv.Key) { continue; }
+                if (other == kv.Key)
+                {
+                    continue;
+                }
+
                 if (RawEquals(other, kv.Key))
                 {
                     if (map2[other] != exp) { result = false; return true; }
@@ -125,7 +172,53 @@ internal static class OperationUtility
         }
 
         // Ensure exponents in map2 not present in map1 are zero/absent (already covered by count compare)
-        result = true; return true;
+        result = true;
+        return true;
+    }
+
+    /// <summary>
+    /// Returns an operand where simple (Product)^n shapes are eagerly distributed to a product of powered leaves.
+    /// This eliminates a structural asymmetry between lazy and eager forms that could surface as a rare canonical mismatch.
+    /// Only applied for exponent > 1 to avoid unnecessary allocation for identity exponents.
+    /// </summary>
+    private static IOperand PreNormalize(IOperand operand)
+    {
+        if (operand is IPowerOperation p && p.Exponent > 1 && p.Base is IProductOperation prod)
+        {
+            // Build distributed product: (a*b*c)^n => a^n * b^n * c^n (preserving leaf order for determinism)
+            // If an inner operand is itself a power, combine exponents multiplicatively.
+            var factors = new List<Unit>();
+            bool allUnits = true;
+
+            foreach (var op in prod.Operands)
+            {
+                if (op is IPowerOperation innerPow && innerPow.Base is Unit ub)
+                {
+                    factors.Add((Unit)(ub ^ (innerPow.Exponent * p.Exponent)));
+                }
+                else if (op is Unit u)
+                {
+                    factors.Add((Unit)(u ^ p.Exponent));
+                }
+                else
+                {
+                    allUnits = false; break; // fallback to original (mixed dimensions or composite types not handled here)
+                }
+            }
+
+            if (allUnits && factors.Count > 0)
+            {
+                Unit acc = null;
+                foreach (var f in factors)
+                {
+                    acc = acc == null ? f : acc * f;
+                }
+
+                return acc ?? operand;
+            }
+        }
+
+        return operand;
     }
 
     /// <summary>
@@ -137,18 +230,23 @@ internal static class OperationUtility
         switch (operand)
         {
             case IProductOperation prod:
-                foreach (var op in prod.Operands) { AccumulateFactors(map, op, multiplier); }
+                foreach (var op in prod.Operands)
+                {
+                    AccumulateFactors(map, op, multiplier);
+                }
                 break;
+
             case IDivisionOperation div:
                 AccumulateFactors(map, div.Dividend, multiplier);
                 AccumulateFactors(map, div.Divisor, -multiplier);
                 break;
+
             case IPowerOperation pow:
                 AccumulateFactors(map, pow.Base, multiplier * pow.Exponent);
                 break;
+
             default:
-                if (!map.TryGetValue(operand, out var current)) { map[operand] = multiplier; }
-                else { map[operand] = current + multiplier; }
+                map[operand] = !map.TryGetValue(operand, out var current) ? multiplier : current + multiplier;
                 break;
         }
     }
@@ -161,19 +259,33 @@ internal static class OperationUtility
         {
             var fv1 = c1.GetCanonicalFactors();
             var fv2 = c2.GetCanonicalFactors();
+
             if (fv1.HasValue && fv2.HasValue)
             {
-                if (ReferenceEquals(fv1.Value.Factors, fv2.Value.Factors)) { return true; }
+                if (ReferenceEquals(fv1.Value.Factors, fv2.Value.Factors))
+                {
+                    return true;
+                }
+
                 var a = fv1.Value.Factors;
                 var b = fv2.Value.Factors;
+
                 if (a.Length == b.Length)
                 {
                     bool all = true;
+
                     for (int i = 0; i < a.Length; i++)
                     {
-                        if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent) { all = false; break; }
+                        if (!Equals(a[i].Base, b[i].Base) || a[i].Exponent != b[i].Exponent)
+                        {
+                            all = false; break;
+                        }
                     }
-                    if (all) { return true; }
+
+                    if (all)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -190,15 +302,30 @@ internal static class OperationUtility
         {
             if (o1 is IPowerOperation p1 && p1.Base is IProductOperation bp1 && o2 is IProductOperation prod2)
             {
-                if (EqualsDistributedPower(bp1, p1.Exponent, prod2)) { return true; }
-                if (CompareWithForcedDistribution(p1, prod2)) { return true; }
+                if (EqualsDistributedPower(bp1, p1.Exponent, prod2))
+                {
+                    return true;
+                }
+
+                if (CompareWithForcedDistribution(p1, prod2))
+                {
+                    return true;
+                }
             }
             else if (o2 is IPowerOperation p2 && p2.Base is IProductOperation bp2 && o1 is IProductOperation prod1)
             {
-                if (EqualsDistributedPower(bp2, p2.Exponent, prod1)) { return true; }
-                if (CompareWithForcedDistribution(p2, prod1)) { return true; }
+                if (EqualsDistributedPower(bp2, p2.Exponent, prod1))
+                {
+                    return true;
+                }
+
+                if (CompareWithForcedDistribution(p2, prod1))
+                {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
@@ -207,7 +334,11 @@ internal static class OperationUtility
         if (operand is IPowerOperation p && p.Exponent > 1 && p.Base is IProductOperation prod)
         {
             var first = prod.Operands.FirstOrDefault();
-            if (first == null) { return operand; }
+            if (first == null)
+            {
+                return operand;
+            }
+
             if (first is Unit)
             {
                 var distributed = prod.Operands
@@ -215,8 +346,10 @@ internal static class OperationUtility
                     .Select(u => u ^ p.Exponent)
                     .OrderBy(u => u.Symbol)
                     .Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+
                 return distributed ?? operand;
             }
+
             if (first is Dimensions.Dimension)
             {
                 var distributed = prod.Operands
@@ -224,9 +357,11 @@ internal static class OperationUtility
                     .Select(d => d ^ p.Exponent)
                     .OrderBy(d => d.Symbol)
                     .Aggregate((Dimensions.Dimension)null, (acc, next) => acc == null ? next : acc * next);
+
                 return distributed ?? operand;
             }
         }
+
         return operand;
     }
 
@@ -242,13 +377,12 @@ internal static class OperationUtility
             if (operand is IPowerOperation innerPow && innerPow.Exponent > 0)
             {
                 var root = innerPow.Base;
-                if (!counts.TryGetValue(root, out var c)) { counts[root] = innerPow.Exponent; }
-                else { counts[root] = c + innerPow.Exponent; }
+
+                counts[root] = !counts.TryGetValue(root, out var c) ? innerPow.Exponent : c + innerPow.Exponent;
             }
             else
             {
-                if (!counts.TryGetValue(operand, out var c)) { counts[operand] = 1; }
-                else { counts[operand] = c + 1; }
+                counts[operand] = !counts.TryGetValue(operand, out var c) ? 1 : c + 1;
             }
         }
 
@@ -265,13 +399,20 @@ internal static class OperationUtility
             {
                 return false;
             }
+
             var factorMultiplicity = p.Exponent / exponent; // how many times this base appeared originally
+
             // Attempt direct key first (most common case). If no direct hit, attempt structural match
             // across existing keys (covers reference differences for equivalent base operands).
             if (counts.TryGetValue(p.Base, out var existing))
             {
                 var remainingDirect = existing - factorMultiplicity;
-                if (remainingDirect < 0) { return false; }
+
+                if (remainingDirect < 0)
+                {
+                    return false;
+                }
+
                 counts[p.Base] = remainingDirect;
                 continue;
             }
@@ -285,13 +426,18 @@ internal static class OperationUtility
                     break;
                 }
             }
+
             if (match == null)
             {
                 return false; // no structural base match
             }
 
             var remaining = counts[match] - factorMultiplicity;
-            if (remaining < 0) { return false; }
+            if (remaining < 0)
+            {
+                return false;
+            }
+
             counts[match] = remaining;
         }
 
@@ -312,6 +458,7 @@ internal static class OperationUtility
         }
 
         var first = bp.Operands.First();
+
         if (first is Unit)
         {
             // Build distributed canonical product: sort factor base symbols for determinism
@@ -320,9 +467,12 @@ internal static class OperationUtility
                 .Select(u => u ^ powerOp.Exponent)
                 .OrderBy(u => u.Symbol)
                 .ToArray();
+
             var expanded = distributedUnits.Aggregate((Unit)null, (acc, next) => acc == null ? next : acc * next);
+
             return Equals(expanded as IOperand, otherProduct);
         }
+
         if (first is Dimensions.Dimension)
         {
             var distributedDims = bp.Operands
@@ -410,6 +560,7 @@ internal static class OperationUtility
     {
         var d1 = dividend as IDivisionOperation;
         var d2 = divisor as IDivisionOperation;
+
         if (d1 != null && d2 != null) // (A/B) / (C/D) => AD/BC
         {
             return divide(multiply((T)d1.Dividend, (T)d2.Divisor), multiply((T)d1.Divisor, (T)d2.Dividend));
@@ -451,6 +602,7 @@ internal static class OperationUtility
 
             var positives = new List<T>();
             var negatives = new List<T>();
+
             foreach (var kv in Factorization.EnumerateNonZero(mapDiv))
             {
                 if (kv.Value > 0)
@@ -489,11 +641,14 @@ internal static class OperationUtility
             {
                 return default;
             }
+
             var list = new List<T>();
+
             foreach (var kv in Factorization.EnumerateNonZero(mapMul))
             {
                 list.Add(power(kv.Key, kv.Value));
             }
+
             return multiply(list);
         }
         finally
@@ -551,6 +706,7 @@ internal static class OperationUtility
             {
                 return default; // caller constructs Power wrapper
             }
+
             return multiply((@base as IProductOperation).Operands.Select(x => power((T)x, exponent)));
         }
 

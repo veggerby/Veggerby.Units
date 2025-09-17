@@ -19,6 +19,7 @@ fi
 
 if [ -x "$(command -v dotnet)" ]; then
     dotnet tool install --global dotnet-outdated-tool
+    dotnet tool install --global dotnet-script
     # dotnet tool install --global Nuke.GlobalTool
     # dotnet tool install --global GitVersion.Tool
     # dotnet tool install --global dotnet-ef

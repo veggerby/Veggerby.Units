@@ -36,7 +36,19 @@ public class ReductionEqualityFlagTests
         // Arrange
         var left = ((Unit.SI.m * Unit.SI.s) ^ 2) * Unit.SI.kg; // (m*s)^2 * kg
         var right = (Unit.SI.m ^ 2) * (Unit.SI.s ^ 2) * Unit.SI.kg; // m^2 * s^2 * kg
-        (left == right).Should().BeTrue();
+        var eq = left == right;
+        if (!eq)
+        {
+            // Diagnostic factors (best effort, will not throw)
+            try
+            {
+                var lf = Veggerby.Units.Reduction.OperationUtility.TryGetCanonicalFactorsForDiagnostics(left);
+                var rf = Veggerby.Units.Reduction.OperationUtility.TryGetCanonicalFactorsForDiagnostics(right);
+                System.Diagnostics.Debug.WriteLine($"[TEST DIAG] Adversarial equality mismatch. L=({string.Join(' ', lf.Select(f => f.Symbol+"^"+f.Exponent))}) R=({string.Join(' ', rf.Select(f => f.Symbol+"^"+f.Exponent))})");
+            }
+            catch { }
+        }
+        eq.Should().BeTrue();
     }
 
     [Fact]

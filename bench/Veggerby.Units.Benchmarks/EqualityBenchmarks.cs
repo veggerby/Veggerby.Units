@@ -9,6 +9,7 @@ namespace Veggerby.Units.Benchmarks;
 [BenchmarkCategory("equality")]
 public class EqualityBenchmarks
 {
+    private const int Ops = 500; // amplify micro equality operations per invocation for gating precision
     private Unit? _largeLeftUnit;
     private Unit? _largeRightUnit;
     private Dimension? _largeLeftDimension;
@@ -52,16 +53,35 @@ public class EqualityBenchmarks
     public bool UnitEqualityLargeProduct() => OperationUtility.Equals(_largeLeftUnit!, _largeRightUnit!);
 
     [Benchmark]
-    public bool DimensionEqualityLargeProduct() => OperationUtility.Equals(_largeLeftDimension!, _largeRightDimension!);
+    public bool DimensionEqualityLargeProduct()
+    {
+        // Keep single evaluation (dimension equality is heavier); not loop-amplified intentionally to avoid skew.
+        return OperationUtility.Equals(_largeLeftDimension!, _largeRightDimension!);
+    }
 
-    [Benchmark]
-    public bool Equality_LazyVsEager_5() => OperationUtility.Equals(_lazyPowerUnit5!, _eagerPowerUnit5!);
+    [Benchmark(OperationsPerInvoke = Ops)]
+    public bool Equality_LazyVsEager_5()
+    {
+        bool last = false;
+        for (int i = 0; i < Ops; i++) { last = OperationUtility.Equals(_lazyPowerUnit5!, _eagerPowerUnit5!); }
+        return last;
+    }
 
-    [Benchmark]
-    public bool Equality_LazyVsEager_10() => OperationUtility.Equals(_lazyPowerUnit10!, _eagerPowerUnit10!);
+    [Benchmark(OperationsPerInvoke = Ops)]
+    public bool Equality_LazyVsEager_10()
+    {
+        bool last = false;
+        for (int i = 0; i < Ops; i++) { last = OperationUtility.Equals(_lazyPowerUnit10!, _eagerPowerUnit10!); }
+        return last;
+    }
 
-    [Benchmark]
-    public bool Equality_LazyVsEager_25() => OperationUtility.Equals(_lazyPowerUnit25!, _eagerPowerUnit25!);
+    [Benchmark(OperationsPerInvoke = Ops)]
+    public bool Equality_LazyVsEager_25()
+    {
+        bool last = false;
+        for (int i = 0; i < Ops; i++) { last = OperationUtility.Equals(_lazyPowerUnit25!, _eagerPowerUnit25!); }
+        return last;
+    }
 
     private static Unit BuildLazyVsEager(int n, out Unit eager)
     {
