@@ -51,7 +51,6 @@ Quantity.Entropy(2.5);
 
 ### Future Extensions
 
-* Inference map (e.g. Energy / Temperature -> Entropy, Energy / Amount -> ChemicalPotential).
 * Compile-time generics (marker interfaces per kind) for stronger static safety.
 * Pluggable registry for domain-specific kinds (biomedical, astrophysics, etc.).
 
@@ -112,3 +111,45 @@ This separation prevents subtle mistakes (e.g. summing °C values) while keeping
 * Deltas are dimensionally identical but semantically distinct; modeling them separately preserves intent.
 * The approach is extensible (additional affine semantics like dates, times, energies with reference baselines, etc.).
 
+## Semantic Inference (Multiply / Divide)
+
+Certain quantity relationships are so standard that preserving pure dimensional reduction alone leaves ambiguity (e.g. Energy vs Torque both J). The inference registry supplies *explicit*, opt-in semantic mappings of the form:
+
+```text
+LeftKind <op> RightKind => ResultKind
+```
+
+Currently seeded rules:
+
+| Rule | Description |
+|------|-------------|
+| Entropy * TemperatureAbsolute => Energy | T*S work/heat term (commutative) |
+| Energy / TemperatureAbsolute => Entropy | Inverse of above |
+| Energy / Entropy => TemperatureAbsolute | Rearranged form |
+| Torque * Angle => Energy | Rotational work τ·θ |
+| Energy / Angle => Torque | Inverse |
+| Energy / Torque => Angle | Rearranged |
+
+All multiplicative rules marked commutative automatically install the symmetric mapping. Division is non‑commutative.
+
+### Fallback Behavior
+
+If no rule exists:
+
+* Multiply / divide by a dimensionless scalar `Measurement<T>` uses scalar operators (preserving vector-like kinds only).
+* Quantity × Quantity: if one operand is dimensionless (unit or dimension) and the other is *not* a point-like kind, the non-dimensionless kind is preserved. Point-like (absolute) kinds require an explicit inference rule.
+* Otherwise an `InvalidOperationException` is thrown to surface ambiguous semantics early.
+
+### Extending
+
+Call `QuantityKindInferenceRegistry.Register(new QuantityKindInference(left, op, right, result, Commutative:true/false))` during application startup. Conflicts throw by default (`StrictConflictDetection = true`). Set `StrictConflictDetection = false` prior to registering to allow benign duplicate mappings (mapping to same result) or intentional overwrites.
+
+Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for diagnostics or documentation.
+
+### Design Intent
+
+* Keeps semantic algebra explicit and reviewable (no hidden heuristics).
+* Maintains core purity: unit reduction and equality are untouched.
+* Scales incrementally; unknown composites fail fast instead of guessing.
+
+---

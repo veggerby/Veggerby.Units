@@ -27,6 +27,9 @@ public static partial class QuantityKinds
     /// <summary>Torque (τ) shares energy dimension but denotes rotational effect.</summary>
     public static readonly QuantityKind Torque = new("Torque", Energy.CanonicalUnit, "τ");
 
+    /// <summary>Angle (θ) is dimensionless but semantically distinct; prohibits implicit dimensionless scalar fallback preserving kind when multiplied (treated as vector-like).</summary>
+    public static readonly QuantityKind Angle = new("Angle", Unit.None, "θ");
+
     /// <summary>Heat capacity (C_p) J/K (semantic distinct from Entropy).</summary>
     public static readonly QuantityKind HeatCapacity = new("HeatCapacity", Energy.CanonicalUnit / Unit.SI.K, "C_p");
 

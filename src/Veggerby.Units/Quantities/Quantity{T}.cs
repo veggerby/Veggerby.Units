@@ -21,12 +21,21 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public Quantity(Measurement<T> measurement, QuantityKind kind, bool strictDimensionCheck = true)
     {
-        if (measurement == null) { throw new ArgumentNullException(nameof(measurement)); }
-        if (kind == null) { throw new ArgumentNullException(nameof(kind)); }
+        if (measurement == null)
+        {
+            throw new ArgumentNullException(nameof(measurement));
+        }
+
+        if (kind == null)
+        {
+            throw new ArgumentNullException(nameof(kind));
+        }
+
         if (strictDimensionCheck && !kind.Matches(measurement.Unit))
         {
             throw new UnitException(measurement.Unit, kind.CanonicalUnit);
         }
+
         Measurement = measurement;
         Kind = kind;
     }
@@ -40,11 +49,16 @@ public sealed class Quantity<T> where T : IComparable
     /// <summary>Adds two quantities. When <paramref name="requireSameKind"/> is true different kinds raise an exception.</summary>
     public static Quantity<T> Add(Quantity<T> a, Quantity<T> b, bool requireSameKind = false)
     {
-        if (a == null || b == null) { return a ?? b; }
+        if (a == null || b == null)
+        {
+            return a ?? b;
+        }
+
         if (requireSameKind && !ReferenceEquals(a.Kind, b.Kind))
         {
             throw new InvalidOperationException($"Cannot add {a.Kind.Name} to {b.Kind.Name}.");
         }
+
         var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
         return new Quantity<T>(a.Measurement + bAligned, a.Kind, strictDimensionCheck: false);
     }
@@ -52,11 +66,16 @@ public sealed class Quantity<T> where T : IComparable
     /// <summary>Subtracts two quantities with optional semantic enforcement.</summary>
     public static Quantity<T> Sub(Quantity<T> a, Quantity<T> b, bool requireSameKind = false)
     {
-        if (a == null || b == null) { return a ?? b; }
+        if (a == null || b == null)
+        {
+            return a ?? b;
+        }
+
         if (requireSameKind && !ReferenceEquals(a.Kind, b.Kind))
         {
             throw new InvalidOperationException($"Cannot subtract {b.Kind.Name} from {a.Kind.Name}.");
         }
+
         var bAligned = b.Measurement.ConvertTo(a.Measurement.Unit);
         return new Quantity<T>(a.Measurement - bAligned, a.Kind, strictDimensionCheck: false);
     }
@@ -68,8 +87,15 @@ public sealed class Quantity<T> where T : IComparable
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
     public static Quantity<T> operator +(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null) { return right; }
-        if (right == null) { return left; }
+        if (left == null)
+        {
+            return right;
+        }
+
+        if (right == null)
+        {
+            return left;
+        }
 
         // Same kind path
         if (ReferenceEquals(left.Kind, right.Kind))
@@ -78,6 +104,7 @@ public sealed class Quantity<T> where T : IComparable
             {
                 throw new InvalidOperationException($"Addition of quantities of kind '{left.Kind.Name}' is not semantically supported.");
             }
+
             var rAligned = right.Measurement.ConvertTo(left.Measurement.Unit);
             return new Quantity<T>(left.Measurement + rAligned, left.Kind, strictDimensionCheck: false);
         }
@@ -92,6 +119,7 @@ public sealed class Quantity<T> where T : IComparable
             var back = sum.ConvertTo(left.Measurement.Unit);
             return new Quantity<T>(back, left.Kind, strictDimensionCheck: true);
         }
+
         if (ReferenceEquals(right.Kind.DifferenceResultKind, left.Kind))
         {
             // right = point, left = vector
@@ -112,8 +140,15 @@ public sealed class Quantity<T> where T : IComparable
     /// <exception cref="InvalidOperationException">Thrown when kinds differ even if dimensions match.</exception>
     public static Quantity<T> operator -(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null) { return right == null ? null : new Quantity<T>(right.Measurement, right.Kind); }
-        if (right == null) { return left; }
+        if (left == null)
+        {
+            return right == null ? null : new Quantity<T>(right.Measurement, right.Kind);
+        }
+
+        if (right == null)
+        {
+            return left;
+        }
 
         if (ReferenceEquals(left.Kind, right.Kind))
         {
@@ -122,6 +157,7 @@ public sealed class Quantity<T> where T : IComparable
                 var rAligned = right.Measurement.ConvertTo(left.Measurement.Unit);
                 return new Quantity<T>(left.Measurement - rAligned, left.Kind, strictDimensionCheck: false);
             }
+
             if (left.Kind.DifferenceResultKind != null)
             {
                 // Point - Point -> Vector
@@ -130,6 +166,7 @@ public sealed class Quantity<T> where T : IComparable
                 var diff = aBase - bBase;
                 return new Quantity<T>(diff, left.Kind.DifferenceResultKind, strictDimensionCheck: true);
             }
+
             throw new InvalidOperationException($"Direct subtraction producing '{left.Kind.Name}' is not semantically supported.");
         }
 
@@ -140,6 +177,7 @@ public sealed class Quantity<T> where T : IComparable
             var delta = right.Measurement.ConvertTo(left.Kind.DifferenceResultKind.CanonicalUnit);
             var result = basePoint - delta; // subtract delta
             var back = result.ConvertTo(left.Measurement.Unit);
+
             return new Quantity<T>(back, left.Kind, strictDimensionCheck: true);
         }
 
@@ -159,10 +197,12 @@ public sealed class Quantity<T> where T : IComparable
         {
             throw new InvalidOperationException("Scaling requires a dimensionless scalar.");
         }
+
         if (quantity.Kind.DifferenceResultKind != null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
         {
             throw new InvalidOperationException($"Cannot scale point-like kind {quantity.Kind.Name}.");
         }
+
         return new Quantity<T>(quantity.Measurement * scalar, quantity.Kind, strictDimensionCheck: false);
     }
 
@@ -183,10 +223,12 @@ public sealed class Quantity<T> where T : IComparable
         {
             throw new InvalidOperationException("Scaling requires a dimensionless scalar.");
         }
+
         if (quantity.Kind.DifferenceResultKind != null && !quantity.Kind.AllowDirectAddition && !quantity.Kind.AllowDirectSubtraction)
         {
             throw new InvalidOperationException($"Cannot scale point-like kind {quantity.Kind.Name}.");
         }
+
         return new Quantity<T>(quantity.Measurement / scalar, quantity.Kind, strictDimensionCheck: false);
     }
 
@@ -197,9 +239,13 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static Quantity<T> operator *(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null || right == null) { return left ?? right; }
+        if (left == null || right == null)
+        {
+            return left ?? right;
+        }
 
         var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Multiply, right.Kind);
+
         if (inferred != null)
         {
             // Numeric multiplication (unit algebra already handled by Measurement operators)
@@ -210,15 +256,18 @@ public sealed class Quantity<T> where T : IComparable
         // Dimensionless fallback: preserve other kind
         bool leftDimless = ReferenceEquals(left.Measurement.Unit, Unit.None) || ReferenceEquals(left.Measurement.Unit.Dimension, Veggerby.Units.Dimensions.Dimension.None);
         bool rightDimless = ReferenceEquals(right.Measurement.Unit, Unit.None) || ReferenceEquals(right.Measurement.Unit.Dimension, Veggerby.Units.Dimensions.Dimension.None);
+
         if (leftDimless ^ rightDimless)
         {
             var product = left.Measurement * right.Measurement;
             var kind = leftDimless ? right.Kind : left.Kind;
+
             // Disallow preserving a point-like absolute via scalar multiply
             if (kind.DifferenceResultKind != null && !kind.AllowDirectAddition && !kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {kind.Name} in multiplication without inference.");
             }
+
             return new Quantity<T>(product, kind, strictDimensionCheck: true);
         }
 
@@ -231,7 +280,10 @@ public sealed class Quantity<T> where T : IComparable
     /// </summary>
     public static Quantity<T> operator /(Quantity<T> left, Quantity<T> right)
     {
-        if (left == null || right == null) { return left ?? right; }
+        if (left == null || right == null)
+        {
+            return left ?? right;
+        }
 
         var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Divide, right.Kind);
         if (inferred != null)
@@ -241,12 +293,14 @@ public sealed class Quantity<T> where T : IComparable
         }
 
         bool rightDimless = ReferenceEquals(right.Measurement.Unit, Unit.None) || ReferenceEquals(right.Measurement.Unit.Dimension, Veggerby.Units.Dimensions.Dimension.None);
+
         if (rightDimless)
         {
             if (left.Kind.DifferenceResultKind != null && !left.Kind.AllowDirectAddition && !left.Kind.AllowDirectSubtraction)
             {
                 throw new InvalidOperationException($"Cannot scale point-like kind {left.Kind.Name} in division without inference.");
             }
+
             var quotient = left.Measurement / right.Measurement;
             return new Quantity<T>(quotient, left.Kind, strictDimensionCheck: true);
         }
