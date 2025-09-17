@@ -31,24 +31,23 @@ jobs:
       - name: Build
         run: dotnet build Veggerby.Units.sln --configuration Release --no-restore
       - name: Test (with coverage)
-        run: |
-          dotnet test Veggerby.Units.sln \
-            --configuration Release \
-            --no-build \
-            --results-directory ./TestResults \
-            --collect:"XPlat Code Coverage" \
-            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+        run: >-
+          dotnet test test/Veggerby.Units.Tests/Veggerby.Units.Tests.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: TestResults
+          path: test/Veggerby.Units.Tests/TestResults
       - name: Upload coverage to Codecov
         if: ${{ always() && env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v5
         with:
-          files: TestResults/**/coverage.cobertura.xml
+          files: test/Veggerby.Units.Tests/TestResults/**/coverage.cobertura.xml
           flags: unittests
           name: veggerby-units-codecov
           fail_ci_if_error: false
@@ -60,7 +59,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -90,34 +89,41 @@ jobs:
                 tag
               });
               core.setOutput('body', release.body || '');
-            } catch (e) {
+            } catch {
               core.setOutput('body', '');
             }
-      - name: Write release notes
+
+      - name: Write release notes to file
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          echo "${RELEASE_NOTES:-No release notes provided.}" > RELEASE_NOTES.txt
+          NOTES_FILE="$RUNNER_TEMP/RELEASE_NOTES.txt"
+          printf "%s" "$RELEASE_NOTES" > "$NOTES_FILE"
+          echo "NOTES_FILE=$NOTES_FILE" >> "$GITHUB_ENV"
         env:
-          RELEASE_NOTES: ${{ steps.get_release_notes.outputs.body || '' }}
-      - name: Pack (Veggerby.Units)
+          RELEASE_NOTES: ${{ steps.get_release_notes.outputs.body }}
+
+      - name: Pack (all public libraries)
+        shell: bash
         run: |
-          VERSION_BASE="${{ steps.gitversion.outputs.nuGetVersionV2 }}"
           VERSION_SUFFIX=""
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
             VERSION_SUFFIX="-pr${{ github.event.pull_request.number }}.${{ github.run_number }}"
-          elif [[ "${GITHUB_REF}" == "refs/heads/master" ]]; then
-            VERSION_SUFFIX="-alpha.${{ steps.gitversion.outputs.commitsSinceVersionSource }}"
           fi
-          RELEASE_NOTES_ARG=""
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            RELEASE_NOTES_ARG="/p:PackageReleaseNotes=\"$(sed 's/\r//g' RELEASE_NOTES.txt)\""
+
+          RELEASE_NOTES_ARG=()
+          if [[ "${GITHUB_REF}" == refs/tags/* && -n "${NOTES_FILE:-}" ]]; then
+            RELEASE_NOTES_ARG=(/p:PackageReleaseNotesFile="$NOTES_FILE")
           fi
+
           mkdir -p "$NUGET_PACK_DIR"
-          dotnet pack src/Veggerby.Units/Veggerby.Units.csproj \
+
+          dotnet pack Veggerby.Units.sln \
             --configuration Release \
             --no-build \
             --output "$NUGET_PACK_DIR" \
-            /p:Version="${VERSION_BASE}${VERSION_SUFFIX}" $RELEASE_NOTES_ARG
+            /p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}$VERSION_SUFFIX \
+            "${RELEASE_NOTES_ARG[@]}"
+
       - name: Upload NuGet Packages
         uses: actions/upload-artifact@v4
         with:
@@ -159,7 +165,7 @@ jobs:
         with:
           name: nuget-package
           path: ./nupkg
-      - name: Publish prerelease to GitHub Packages (main)
+      - name: Publish prerelease to GitHub Packages (master)
         run: dotnet nuget push ./nupkg/*.nupkg --api-key "$GH_PACKAGES_TOKEN" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
         env:
           GH_PACKAGES_TOKEN: ${{ env.GH_PACKAGES_TOKEN }}
