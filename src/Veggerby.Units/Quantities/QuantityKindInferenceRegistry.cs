@@ -9,8 +9,8 @@ namespace Veggerby.Units.Quantities;
 /// </summary>
 public static class QuantityKindInferenceRegistry
 {
-    private static readonly Dictionary<(QuantityKind, QuantityKindBinaryOperator, QuantityKind), QuantityKind> _map = new();
-    private static readonly List<QuantityKindInference> _rules = new();
+    private static readonly Dictionary<(QuantityKind, QuantityKindBinaryOperator, QuantityKind), QuantityKind> _map = [];
+    private static readonly List<QuantityKindInference> _rules = [];
     private static bool _sealed;
 
     /// <summary>When true, registering a rule that overwrites an existing mapping throws instead of replacing it.</summary>

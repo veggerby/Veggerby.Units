@@ -207,6 +207,21 @@ var Exergy = new QuantityKind(
 
 Guidelines: prefer dotted hierarchical names, reuse existing roots (`Energy`, `Domain`, `Form`), keep tags stable (avoid transient runtime/state flags).
 
+### Conventional Symbol Overlaps
+
+Physics reuses concise symbols across domains. This library preserves conventional single-letter symbols instead of forcing artificial uniqueness. Governance only fails when two different kinds would be indistinguishable (same symbol + identical reduced canonical unit). Representative overlaps:
+
+| Symbol | Kinds | Distinguishing Dimension Examples |
+|--------|-------|-----------------------------------|
+| V | Voltage (kg·m²/(s³·A)), Volume (m³) | Electrical potential vs geometric extent |
+| S | Entropy (kg·m²/(s²·K)), ElectricConductance (s³·A²/(kg·m²)) | Thermal state vs transport ratio |
+| H | Enthalpy (kg·m²/s²), Inductance (kg·m²/(s²·A²)), MagneticFieldStrength (A/m) | Energy state, field storage, field intensity |
+| F | Force (kg·m/s²), Capacitance (s⁴·A²/(kg·m²)) | Mechanical interaction vs electric storage |
+| A | HelmholtzFreeEnergy (kg·m²/s²), Area (m²) | Energy potential vs geometric surface |
+| μ | ChemicalPotential (kg·m²/(s²·mol)), Permeability (kg·m/(s²·A²)), ChargeMobility (m²/(V·s)) | Thermodynamic, field medium, carrier transport |
+
+Use the semantic kind (`QuantityKind`)—not just the printed symbol—when correctness depends on meaning. Formatting layers can add additional disambiguation if desired.
+
 ### Inferred Multiplicative Examples
 
 ```csharp

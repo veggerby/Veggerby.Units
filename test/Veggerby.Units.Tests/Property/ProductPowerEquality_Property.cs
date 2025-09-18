@@ -12,7 +12,7 @@ namespace Veggerby.Units.Tests.Property;
 [Collection(ReductionSettingsCollection.Name)]
 public class ProductPowerEquality_Property
 {
-    private static readonly Unit[] Bases = new[] { Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A };
+    private static readonly Unit[] Bases = [Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A];
 
     [Fact]
     public void ProductPowerEquality_FuzzCases()

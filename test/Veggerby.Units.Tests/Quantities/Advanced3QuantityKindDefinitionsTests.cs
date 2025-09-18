@@ -18,7 +18,7 @@ public class Advanced3QuantityKindDefinitionsTests
 
         // Assert
         k.CanonicalUnit.Should().Be(QuantityKinds.Pressure.CanonicalUnit);
-        k.Tags.Select(t => t.Name).Should().Contain(new[] { "Domain.Mechanics", "Domain.Material" });
+        k.Tags.Select(t => t.Name).Should().Contain(["Domain.Mechanics", "Domain.Material"]);
     }
 
     [Fact]

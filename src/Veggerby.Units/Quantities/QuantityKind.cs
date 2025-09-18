@@ -35,7 +35,7 @@ public sealed class QuantityKind
     /// </summary>
     public QuantityKind DifferenceResultKind { get; }
 
-    private readonly HashSet<QuantityKindTag> _tags = new();
+    private readonly HashSet<QuantityKindTag> _tags = [];
 
     /// <summary>
     /// Open semantic tag set (informational only). Tags provide arbitrary, extensible classification without
