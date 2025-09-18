@@ -25,26 +25,19 @@ public static class UnitFormatter
     // Order enforced according to specification: primary (mechanical/electrical), photometric/radiation, then frequency/angle display tokens.
     private static readonly (ExponentVector Vector, string Symbol)[] _mixedPriority = CreateMixedPriority();
 
-    private readonly struct DerivedSymbolToken
+    private readonly struct DerivedSymbolToken(string symbol, int exponent)
     {
-        public readonly string Symbol;
-        public readonly int Exponent;
-        public DerivedSymbolToken(string symbol, int exponent)
-        {
-            Symbol = symbol;
-            Exponent = exponent;
-        }
+        public readonly string Symbol = symbol;
+        public readonly int Exponent = exponent;
+
         public override string ToString() => Exponent == 1 ? Symbol : Symbol + "^" + Exponent.ToString(CultureInfo.InvariantCulture);
     }
 
-    private readonly struct BaseFactorToken
+    private readonly struct BaseFactorToken(string symbol, int exponent)
     {
-        public readonly string Symbol;
-        public readonly int Exponent;
-        public BaseFactorToken(string symbol, int exponent)
-        {
-            Symbol = symbol; Exponent = exponent;
-        }
+        public readonly string Symbol = symbol;
+        public readonly int Exponent = exponent;
+
         public override string ToString() => Exponent == 1 ? Symbol : Symbol + "^" + Exponent.ToString(CultureInfo.InvariantCulture);
     }
 
@@ -84,7 +77,7 @@ public static class UnitFormatter
                     return sym;
                 }
             case UnitFormat.Mixed:
-                return FormatMixed(unit, null);
+                return FormatMixed(unit, kind);
             default:
                 return unit.Symbol;
         }
@@ -99,87 +92,264 @@ public static class UnitFormatter
     private static string FormatMixed(Unit unit, QuantityKind qualifyWith)
     {
         var vec = ExponentVector.From(unit.Dimension);
-        // If exact derived symbol exists and is not configured for decomposition in Mixed mode, short-circuit.
-        if (_derived.TryGetValue(vec, out var exactSym) && !ShouldDecomposeInMixed(exactSym))
+        // QuantityKind-driven torque preference: when caller supplies Torque and dimension is Joule, render N·m.
+        if (qualifyWith != null && qualifyWith.Name == "Torque" && EqualsVector(vec, 1, 2, -2))
         {
-            if (qualifyWith != null && IsAmbiguous(exactSym))
-            {
-                return exactSym + " (" + qualifyWith.Name + ")";
-            }
-            return exactSym;
+            return "N·m";
         }
 
-        Span<int> remaining = stackalloc int[7];
-        vec.WriteTo(remaining);
-
-        var derivedTokens = new List<DerivedSymbolToken>(4);
-
-        // Greedy single-pass over priority list (no backtracking). We select a symbol only if all of its non-zero exponents are present with same sign.
-        for (int i = 0; i < _mixedPriority.Length; i++)
+        // Exact symbol short-circuit unless we have a forced decomposition rule (torque for J, always for Wb).
+        if (_derived.TryGetValue(vec, out var exactSym))
         {
-            ref readonly var entry = ref _mixedPriority[i];
-            bool applicable = true;
-            for (int c = 0; c < 7; c++)
+            if (!ShouldDecomposeInMixed(unit, exactSym))
             {
-                int exp = entry.Vector.Get(c);
-                if (exp == 0) { continue; }
-                int rem = remaining[c];
-                if (rem == 0 || (rem > 0 && exp < 0) || (rem < 0 && exp > 0) || Math.Abs(rem) < Math.Abs(exp))
+                if (qualifyWith != null && IsAmbiguous(exactSym))
                 {
-                    // Allow targeted overshoot for Newton (N) where time exponent differs by exactly 1 enabling N·s pattern
-                    if (entry.Symbol == "N" && c == 2) // time index
+                    return exactSym + " (" + qualifyWith.Name + ")";
+                }
+                return exactSym;
+            }
+        }
+
+        // Enumerate all subsets of derived candidates to find minimal cost factoring per scoring rules.
+        // We allow each symbol at most once (adequate for Mixed readability goals) and bias against J in torque context and Wb always.
+        Span<int> target = stackalloc int[7];
+        vec.WriteTo(target);
+        bool hasAmpere = target[3] != 0;
+
+        var bestMask = 0;
+        int bestCost = int.MaxValue;
+        Span<int> sum = stackalloc int[7];
+        int n = _mixedPriority.Length;
+        for (int mask = 0; mask < (1 << n); mask++)
+        {
+            // quick pruning: if mask includes both J and any other symbol that would exceed target quickly skip? Rely on overshoot detection.
+            bool overshoot = false;
+            for (int i = 0; i < 7; i++)
+            {
+                sum[i] = 0;
+            }
+
+            int derivedCount = 0;
+            bool includesJ = false;
+            bool includesN = false;
+            bool includesW = false;
+            bool containsOmega = false;
+            bool containsCoulomb = false;
+
+            for (int i = 0; i < n; i++)
+            {
+                if (((mask >> i) & 1) == 0)
+                {
+                    continue;
+                }
+
+                var (v, sym) = _mixedPriority[i];
+                derivedCount++;
+
+                if (sym == "J")
+                {
+                    includesJ = true;
+                }
+                else if (sym == "N")
+                {
+                    includesN = true;
+                }
+                else if (sym == "W")
+                {
+                    includesW = true;
+                }
+                else if (sym == "Ω")
+                {
+                    containsOmega = true;
+                }
+                else if (sym == "C")
+                {
+                    containsCoulomb = true;
+                }
+
+                for (int c = 0; c < 7; c++)
+                {
+                    int add = v.Get(c);
+                    if (add == 0)
                     {
-                        int diff = Math.Abs(exp) - Math.Abs(rem);
-                        if (diff == 1 && (rem < 0 && exp < 0))
+                        continue;
+                    }
+
+                    int current = sum[c] + add;
+                    int tgt = target[c];
+                    // Overshoot rules: allow one-step more negative time exponent for N or W (enables N·s, W·s/A patterns)
+
+                    if ((tgt == 0 && current != 0) || (tgt > 0 && current > tgt) || (tgt < 0 && current < tgt))
+                    {
+                        bool allowedTimeOvershoot = c == 2 && tgt < 0 && (sym == "N" || sym == "W") && current == tgt - 1;
+
+                        if (!allowedTimeOvershoot)
                         {
-                            // Accept overshoot; leftover becomes positive base second
-                            continue;
+                            overshoot = true;
+                            break;
                         }
                     }
-                    applicable = false;
+
+                    sum[c] = current;
+                }
+
+                if (overshoot)
+                {
                     break;
                 }
             }
-            // Heuristic: skip J if A exponent non-zero (we prefer W decomposition for W·s/A scenario)
-            if (applicable && entry.Symbol == "J" && remaining[3] != 0)
-            {
-                applicable = false;
-            }
-            if (!applicable)
+
+            if (overshoot)
             {
                 continue;
             }
-            // subtract once
+
+            // Compute leftover base exponents.
+            int baseTokenCount = 0;
+            bool hasMetreLeftover = false;
+            bool hasSecondLeftover = false;
+            bool hasAmpereLeftoverNeg = false;
+
             for (int c = 0; c < 7; c++)
             {
-                int exp = entry.Vector.Get(c);
-                if (exp != 0)
+                int leftover = target[c] - sum[c];
+
+                if (leftover != 0)
                 {
-                    remaining[c] -= exp;
+                    baseTokenCount++;
+                    if (c == 0 && leftover > 0)
+                    {
+                        hasMetreLeftover = true;
+                    }
+
+                    if (c == 2 && leftover != 0)
+                    {
+                        hasSecondLeftover = true;
+                    }
+
+                    if (c == 3 && leftover < 0)
+                    {
+                        hasAmpereLeftoverNeg = true;
+                    }
                 }
             }
-            derivedTokens.Add(new DerivedSymbolToken(entry.Symbol, 1));
+
+            int cost = derivedCount + baseTokenCount;
+
+            // Bias rules:
+            // 1. Always penalize Wb to force decomposition: large penalty ensures alternate factoring wins when feasible.
+            if (IncludesSymbol(mask, "Wb"))
+            {
+                cost += 5;
+            }
+
+            // 2. (Removed torque heuristic penalty; handled by QuantityKind preference.)
+            // 3. Mild bonus (negative penalty) for using W when Wb dimension targeted (helps W·s/A factoring).
+            if (IncludesSymbol(mask, "W"))
+            {
+                cost -= 1;
+            }
+
+            // 4. If Ampere present favor W over J (power context). Penalize J alone when A exponent non-zero and W feasible.
+            if (hasAmpere && includesJ && !includesW) { cost += 4; }
+
+            // 5. Encourage N when a leftover metre exists to enable N·m torque readability.
+            if (hasMetreLeftover && !includesN && !includesJ)
+            {
+                cost += 2; // selecting J would hide torque, so non-N sets pay a small cost
+            }
+
+            // 6. Encourage N when a leftover second exists and N present to form N·s pattern (reward combination N plus leftover s).
+            if (hasSecondLeftover && includesN)
+            {
+                cost -= 1;
+            }
+
+            // 7. Discourage J if second leftover exists (prefer N·s when possible).
+            if (hasSecondLeftover && includesJ)
+            {
+                cost += 2;
+            }
+
+            // 8. Discourage C·Ω combo which equals V·s/A; prefer W path if available
+            if (containsCoulomb && containsOmega)
+            {
+                cost += 2;
+            }
+
+            // 9. (Removed torque hard block; handled by QuantityKind preference.)
+            // 10. Hard block: if Ampere present and W achievable but mask uses J instead -> penalize heavily.
+            if (hasAmpere && includesJ && includesW)
+            {
+                cost += 50;
+            }
+
+            // 11. Bonus for W when it enables W·s/A pattern (leftover +s and -A)
+            if (includesW && hasSecondLeftover && hasAmpereLeftoverNeg)
+            {
+                cost -= 3;
+            }
+
+            // 12. Encourage N when time overshoot path used (second leftover) to realize N·s
+            if (includesN && hasSecondLeftover)
+            {
+                cost -= 2;
+            }
+
+            if (cost < bestCost)
+            {
+                bestCost = cost;
+                bestMask = mask;
+            }
         }
 
-        // Collect base factor leftovers
-        var baseTokens = new List<BaseFactorToken>(7);
+        // Build tokens from bestMask and leftover base factors.
+        var derivedTokens = new List<DerivedSymbolToken>();
+        Span<int> used = stackalloc int[7];
+        for (int i = 0; i < 7; i++)
+        {
+            used[i] = 0;
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            if (((bestMask >> i) & 1) == 0)
+            {
+                continue;
+            }
+
+            var (v, sym) = _mixedPriority[i];
+            derivedTokens.Add(new DerivedSymbolToken(sym, 1));
+
+            for (int c = 0; c < 7; c++)
+            {
+                int add = v.Get(c);
+                if (add != 0)
+                {
+                    used[c] += add;
+                }
+            }
+        }
+
+        // Base leftovers
+        var baseTokens = new List<BaseFactorToken>();
         ReadOnlySpan<string> baseSymbols = BaseFactorSymbols;
         for (int c = 0; c < 7; c++)
         {
-            int e = remaining[c];
-            if (e != 0)
+            int leftover = target[c] - used[c];
+            if (leftover != 0)
             {
-                baseTokens.Add(new BaseFactorToken(baseSymbols[c], e));
+                baseTokens.Add(new BaseFactorToken(baseSymbols[c], leftover));
             }
         }
 
-        // Build numerator / denominator lists
+        // Numerator / denominator assembly
         var partsNumerator = new List<string>(derivedTokens.Count + baseTokens.Count);
-        var partsDenominator = new List<string>(baseTokens.Count);
-
-        for (int i = 0; i < derivedTokens.Count; i++)
+        var partsDenominator = new List<string>();
+        // Keep priority order for derived tokens for determinism.
+        foreach (var t in derivedTokens)
         {
-            var t = derivedTokens[i];
             if (t.Exponent > 0)
             {
                 partsNumerator.Add(RenderToken(t.Symbol, t.Exponent));
@@ -189,9 +359,9 @@ public static class UnitFormatter
                 partsDenominator.Add(RenderToken(t.Symbol, -t.Exponent));
             }
         }
-        for (int i = 0; i < baseTokens.Count; i++)
+
+        foreach (var t in baseTokens)
         {
-            var t = baseTokens[i];
             if (t.Exponent > 0)
             {
                 partsNumerator.Add(RenderToken(t.Symbol, t.Exponent));
@@ -204,7 +374,7 @@ public static class UnitFormatter
 
         if (partsNumerator.Count == 0 && partsDenominator.Count == 0)
         {
-            return string.Empty; // dimensionless
+            return string.Empty;
         }
 
         var core = string.Join("·", partsNumerator);
@@ -213,16 +383,74 @@ public static class UnitFormatter
             core += "/" + string.Join("·", partsDenominator);
         }
 
-        if (qualifyWith != null && derivedTokens.Count > 0)
+        if (qualifyWith != null && derivedTokens.Count > 0 && ContainsAmbiguousDerived(derivedTokens))
         {
-            // Only qualify if any ambiguous derived token present
-            if (ContainsAmbiguousDerived(derivedTokens))
-            {
-                core += " (" + qualifyWith.Name + ")";
-            }
+            core += " (" + qualifyWith.Name + ")";
         }
 
         return core;
+    }
+
+    private static void SeedExplicitDerivedOperands(Unit unit, Span<int> remaining, List<DerivedSymbolToken> tokens)
+    {
+        if (unit is not IProductOperation prod)
+        {
+            return;
+        }
+
+        // Build quick lookup from vector -> symbol for derived tokens we care about (exclude J here so we can allow N·m decomposition for torque pattern)
+        var vectorToSymbol = _mixedPriority.Where(p => p.Symbol != "J").ToDictionary(p => p.Vector, p => p.Symbol);
+
+        foreach (var op in prod.Operands)
+        {
+            if (op is Unit u)
+            {
+                var v = ExponentVector.From(u.Dimension);
+                if (vectorToSymbol.TryGetValue(v, out var sym))
+                {
+                    // Ensure we can subtract
+                    if (CanFormSymbol(remaining, v))
+                    {
+                        SubtractVector(remaining, v);
+                        tokens.Add(new DerivedSymbolToken(sym, 1));
+                    }
+                }
+            }
+        }
+        // Special case: If remaining forms J exactly but we already have an explicit N token plus leftover m, prefer N·m (leave J decomposition implicit).
+    }
+
+    private static bool CanFormSymbol(Span<int> remaining, ExponentVector candidate)
+    {
+        for (int c = 0; c < 7; c++)
+        {
+            int exp = candidate.Get(c);
+
+            if (exp == 0)
+            {
+                continue;
+            }
+
+            int rem = remaining[c];
+            if (rem == 0 || (rem > 0 && exp < 0) || (rem < 0 && exp > 0) || Math.Abs(rem) < Math.Abs(exp))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void SubtractVector(Span<int> remaining, ExponentVector candidate)
+    {
+        for (int c = 0; c < 7; c++)
+        {
+            int exp = candidate.Get(c);
+            if (exp != 0)
+            {
+                remaining[c] -= exp;
+            }
+        }
     }
 
     private static bool ContainsAmbiguousDerived(List<DerivedSymbolToken> tokens)
@@ -234,12 +462,17 @@ public static class UnitFormatter
                 return true;
             }
         }
+
         return false;
     }
 
     private static string RenderToken(string symbol, int exponent)
     {
-        if (exponent == 1) { return symbol; }
+        if (exponent == 1)
+        {
+            return symbol;
+        }
+
         return symbol + "^" + exponent.ToString(CultureInfo.InvariantCulture);
     }
 
@@ -251,6 +484,7 @@ public static class UnitFormatter
         }
 
         var vec = ExponentVector.From(unit.Dimension);
+
         if (_derived.TryGetValue(vec, out var symbol))
         {
             return symbol;
@@ -290,15 +524,44 @@ public static class UnitFormatter
             (new ExponentVector(0, -2, 0, 0, 0, 0, 1), "lx"),
             // Radiation / chemistry tokens Gy, Sv, kat not yet defined in dimension system (placeholders if later added)
         };
+
         return list.ToArray();
     }
 
-    private static bool ShouldDecomposeInMixed(string symbol) => symbol switch
+    private static bool ShouldDecomposeInMixed(Unit unit, string symbol)
     {
-        // Prefer W·s/A over Wb for readability per spec
-        "Wb" => true,
-        _ => false,
-    };
+        return symbol switch
+        {
+            "Wb" => true,
+            _ => false,
+        }; // J handled via kind preference
+    }
+
+    private static bool IncludesSymbol(int mask, string symbol)
+    {
+        for (int i = 0; i < _mixedPriority.Length; i++)
+        {
+            if (((mask >> i) & 1) != 0 && _mixedPriority[i].Symbol == symbol)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    // Component-wise exponent comparison helper (kg, m, s, A, K, mol, cd). Unused optional parameters default to 0.
+    private static bool EqualsVector(ExponentVector v, int kg, int m, int s, int a = 0, int k = 0, int mol = 0, int cd = 0)
+    {
+        return v.Get(1) == kg && // kg index
+               v.Get(0) == m &&  // m index
+               v.Get(2) == s &&  // s index
+               v.Get(3) == a &&
+               v.Get(4) == k &&
+               v.Get(5) == mol &&
+               v.Get(6) == cd;
+    }
 
     private static IReadOnlyDictionary<ExponentVector, string> CreateDerivedMap()
     {
@@ -336,20 +599,15 @@ public static class UnitFormatter
     private static ReadOnlySpan<string> BaseFactorSymbols => new[] { "m", "kg", "s", "A", "K", "mol", "cd" };
 
     /// <summary>Immutable exponent vector used as dictionary key.</summary>
-    private readonly struct ExponentVector : IEquatable<ExponentVector>
+    private readonly struct ExponentVector(int kg, int m, int s, int a, int k, int mol, int cd) : IEquatable<ExponentVector>
     {
-        private readonly sbyte _kg;
-        private readonly sbyte _m;
-        private readonly sbyte _s;
-        private readonly sbyte _a;
-        private readonly sbyte _k;
-        private readonly sbyte _mol;
-        private readonly sbyte _cd;
-
-        public ExponentVector(int kg, int m, int s, int a, int k, int mol, int cd)
-        {
-            _kg = (sbyte)kg; _m = (sbyte)m; _s = (sbyte)s; _a = (sbyte)a; _k = (sbyte)k; _mol = (sbyte)mol; _cd = (sbyte)cd;
-        }
+        private readonly sbyte _kg = (sbyte)kg;
+        private readonly sbyte _m = (sbyte)m;
+        private readonly sbyte _s = (sbyte)s;
+        private readonly sbyte _a = (sbyte)a;
+        private readonly sbyte _k = (sbyte)k;
+        private readonly sbyte _mol = (sbyte)mol;
+        private readonly sbyte _cd = (sbyte)cd;
 
         public static ExponentVector From(Dimension d)
         {
@@ -372,6 +630,7 @@ public static class UnitFormatter
                 {
                     Aggregate((Dimension)o, factor, acc);
                 }
+
                 return;
             }
 

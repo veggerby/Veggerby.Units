@@ -150,10 +150,55 @@ public class FormattingTests
         var m = new DoubleMeasurement(1, u);
 
         // Act
-        var formatted = m.Format(UnitFormat.Mixed);
+        var formatted = m.Format(UnitFormat.Mixed, QuantityKinds.Torque);
 
         // Assert
         formatted.Should().Be("1 N·m");
+    }
+
+    [Fact]
+    public void GivenJouleDimension_WhenMixed_EnergyVsTorque_ShouldDiffer()
+    {
+        // Arrange
+        var dim = QuantityKinds.Energy.CanonicalUnit; // kg·m^2/s^2
+        var energy = new DoubleMeasurement(1, dim);
+        var torque = new DoubleMeasurement(1, dim); // same dimension but different semantic kind
+
+        // Act
+        var energyFormatted = energy.Format(UnitFormat.Mixed, QuantityKinds.Energy);
+        var torqueFormatted = torque.Format(UnitFormat.Mixed, QuantityKinds.Torque);
+
+        // Assert
+        energyFormatted.Should().Be("1 J (Energy)");
+        torqueFormatted.Should().Be("1 N·m");
+    }
+
+    [Fact]
+    public void GivenCollapsedJouleStructure_WhenMixed_ShouldStayJ()
+    {
+        // Arrange (kg * m^2 / s^2) – no separable metre factor beyond m^2 aggregate
+        var u = Unit.SI.kg * ((Unit.SI.m ^ 2) / (Unit.SI.s ^ 2));
+        var m = new DoubleMeasurement(1, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("1 J");
+    }
+
+    [Fact]
+    public void GivenWattSecondPerAmperePattern_WhenMixed_ShouldRemainWattSecondPerAmpere()
+    {
+        // Arrange
+        var u = (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 3)) * (Unit.SI.s / Unit.SI.A); // W * s / A
+        var m = new DoubleMeasurement(1, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("1 W·s/A");
     }
 
     [Fact]
