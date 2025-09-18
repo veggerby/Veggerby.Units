@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 using Veggerby.Units.Dimensions;
 using Veggerby.Units.Quantities;
@@ -24,6 +25,16 @@ public static class UnitFormatter
     // Priority ordered list of derived vectors for Mixed mode substitution. Each entry stores the exponent vector and symbol.
     // Order enforced according to specification: primary (mechanical/electrical), photometric/radiation, then frequency/angle display tokens.
     private static readonly (ExponentVector Vector, string Symbol)[] _mixedPriority = CreateMixedPriority();
+
+    // Precomputed component arrays for _mixedPriority vectors to avoid repeated Get() calls during mask enumeration.
+    private static readonly sbyte[][] _mixedPriorityComponents = _mixedPriority
+        .Select(p => new sbyte[] { (sbyte)p.Vector.Get(0), (sbyte)p.Vector.Get(1), (sbyte)p.Vector.Get(2), (sbyte)p.Vector.Get(3), (sbyte)p.Vector.Get(4), (sbyte)p.Vector.Get(5), (sbyte)p.Vector.Get(6) })
+        .ToArray();
+
+    // Small bounded cache for Mixed factoring results (unqualified core string). Keyed by exponent vector.
+    private static readonly Dictionary<ExponentVector, string> _mixedCache = new();
+    private static readonly object _mixedCacheLock = new();
+    private const int MixedCacheMaxEntries = 256; // conservative bound
 
     private readonly struct DerivedSymbolToken(string symbol, int exponent)
     {
@@ -98,6 +109,7 @@ public static class UnitFormatter
     private static string FormatMixed(Unit unit, QuantityKind qualifyWith)
     {
         var vec = ExponentVector.From(unit.Dimension);
+        // Torque override short-circuit; do not cache – dependent on provided kind.
         // QuantityKind-driven torque preference: when caller supplies Torque and dimension is Joule, render N·m.
         if (qualifyWith != null && qualifyWith.Name == "Torque" && EqualsVector(vec, 1, 2, -2))
         {
@@ -115,6 +127,24 @@ public static class UnitFormatter
                 }
                 return exactSym;
             }
+        }
+
+        // Optionally serve from cache (unqualified core) when safe: only if qualification absent or will not append.
+        bool mayQualify = qualifyWith != null;
+        if (!mayQualify && TryGetMixedCache(vec, out var cachedCore))
+        {
+            return cachedCore;
+        }
+
+        // Size guard: skip full subset enumeration for very large exponent magnitudes; fall back to base factors.
+        if (VectorTooLargeForMixed(vec))
+        {
+            var baseOnly = unit.Symbol; // already canonical base expression
+            if (!mayQualify)
+            {
+                TryAddMixedCache(vec, baseOnly);
+            }
+            return baseOnly;
         }
 
         // Enumerate all subsets of derived candidates to find minimal cost factoring per scoring rules.
@@ -149,8 +179,8 @@ public static class UnitFormatter
                 {
                     continue;
                 }
-
-                var (v, sym) = _mixedPriority[i];
+                var comps = _mixedPriorityComponents[i];
+                var sym = _mixedPriority[i].Symbol;
                 derivedCount++;
 
                 if (sym == "J")
@@ -176,7 +206,7 @@ public static class UnitFormatter
 
                 for (int c = 0; c < 7; c++)
                 {
-                    int add = v.Get(c);
+                    int add = comps[c];
                     if (add == 0)
                     {
                         continue;
@@ -393,6 +423,11 @@ public static class UnitFormatter
         {
             core += " (" + qualifyWith.Name + ")";
         }
+        else if (!mayQualify)
+        {
+            // Cache unqualified core result.
+            TryAddMixedCache(vec, core);
+        }
 
         return core;
     }
@@ -546,6 +581,37 @@ public static class UnitFormatter
         }
 
         return false;
+    }
+
+    private static bool VectorTooLargeForMixed(ExponentVector v)
+    {
+        // Mixed aims at readability for reasonably small exponents; guard if total magnitude exceeds threshold.
+        int total = 0;
+        for (int i = 0; i < 7; i++) { int e = v.Get(i); total += e < 0 ? -e : e; if (total > 12) { return true; } }
+        return false;
+    }
+
+    private static bool TryGetMixedCache(ExponentVector v, out string value)
+    {
+        lock (_mixedCacheLock)
+        {
+            return _mixedCache.TryGetValue(v, out value);
+        }
+    }
+
+    private static void TryAddMixedCache(ExponentVector v, string value)
+    {
+        lock (_mixedCacheLock)
+        {
+            if (_mixedCache.Count >= MixedCacheMaxEntries)
+            {
+                return; // bounded; simple drop policy
+            }
+            if (!_mixedCache.ContainsKey(v))
+            {
+                _mixedCache[v] = value;
+            }
+        }
     }
 
 
