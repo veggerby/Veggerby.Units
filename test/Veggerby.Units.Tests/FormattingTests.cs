@@ -113,4 +113,87 @@ public class FormattingTests
         // Assert
         formatted.Should().Be("1 J (Torque)"); // foot-pound shares joule dimension; qualified shows ambiguity
     }
+
+    [Fact]
+    public void GivenJouleComponents_WhenMixed_ShouldCollapseToJ()
+    {
+        // Arrange
+        var u = Unit.SI.kg * ((Unit.SI.m ^ 2) / (Unit.SI.s ^ 2));
+        var m = new DoubleMeasurement(1, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("1 J");
+    }
+
+    [Fact]
+    public void GivenNewtonSecond_WhenMixed_ShouldRenderNs()
+    {
+        // Arrange
+        var u = (Unit.SI.kg * (Unit.SI.m / (Unit.SI.s ^ 2))) * Unit.SI.s; // N * s
+        var m = new DoubleMeasurement(1, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("1 N·s");
+    }
+
+    [Fact]
+    public void GivenNewtonMetre_WhenMixed_ShouldRenderNm()
+    {
+        // Arrange
+        var u = (Unit.SI.kg * (Unit.SI.m / (Unit.SI.s ^ 2))) * Unit.SI.m; // N * m
+        var m = new DoubleMeasurement(1, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("1 N·m");
+    }
+
+    [Fact]
+    public void GivenVoltSecondPerAmpere_WhenMixed_ShouldPreferWattThenSecondPerAmpere()
+    {
+        // Arrange
+        var u = (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 3)) * (Unit.SI.s / Unit.SI.A); // W * s / A
+        var m = new DoubleMeasurement(1, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("1 W·s/A");
+    }
+
+    [Fact]
+    public void GivenOhm_WhenMixed_ShouldRenderOhm()
+    {
+        // Arrange
+        var u = Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 3) / (Unit.SI.A ^ 2); // Ω
+        var m = new DoubleMeasurement(2, u);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("2 Ω");
+    }
+
+    [Fact]
+    public void GivenDimensionless_WhenMixed_ShouldBeValueOnly()
+    {
+        // Arrange
+        var m = new DoubleMeasurement(5, Unit.None);
+
+        // Act
+        var formatted = m.Format(UnitFormat.Mixed);
+
+        // Assert
+        formatted.Should().Be("5 ");
+    }
 }

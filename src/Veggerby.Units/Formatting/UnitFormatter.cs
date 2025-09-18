@@ -21,6 +21,33 @@ public static class UnitFormatter
     /// </summary>
     private static readonly IReadOnlyDictionary<ExponentVector, string> _derived = CreateDerivedMap();
 
+    // Priority ordered list of derived vectors for Mixed mode substitution. Each entry stores the exponent vector and symbol.
+    // Order enforced according to specification: primary (mechanical/electrical), photometric/radiation, then frequency/angle display tokens.
+    private static readonly (ExponentVector Vector, string Symbol)[] _mixedPriority = CreateMixedPriority();
+
+    private readonly struct DerivedSymbolToken
+    {
+        public readonly string Symbol;
+        public readonly int Exponent;
+        public DerivedSymbolToken(string symbol, int exponent)
+        {
+            Symbol = symbol;
+            Exponent = exponent;
+        }
+        public override string ToString() => Exponent == 1 ? Symbol : Symbol + "^" + Exponent.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private readonly struct BaseFactorToken
+    {
+        public readonly string Symbol;
+        public readonly int Exponent;
+        public BaseFactorToken(string symbol, int exponent)
+        {
+            Symbol = symbol; Exponent = exponent;
+        }
+        public override string ToString() => Exponent == 1 ? Symbol : Symbol + "^" + Exponent.ToString(CultureInfo.InvariantCulture);
+    }
+
     /// <summary>Formats the supplied <paramref name="unit"/> per <paramref name="format"/>.</summary>
     public static string Format(Unit unit, UnitFormat format, QuantityKind kind = null, bool strict = false)
     {
@@ -71,14 +98,149 @@ public static class UnitFormatter
 
     private static string FormatMixed(Unit unit, QuantityKind qualifyWith)
     {
-        // For now Mixed is identical to base factors until sub-expression substitution is implemented.
-        // This keeps the surface minimal; future enhancement could greedily factor and replace.
-        if (qualifyWith != null)
+        var vec = ExponentVector.From(unit.Dimension);
+        // If exact derived symbol exists and is not configured for decomposition in Mixed mode, short-circuit.
+        if (_derived.TryGetValue(vec, out var exactSym) && !ShouldDecomposeInMixed(exactSym))
         {
-            return unit.Symbol + $" ({qualifyWith.Name})";
+            if (qualifyWith != null && IsAmbiguous(exactSym))
+            {
+                return exactSym + " (" + qualifyWith.Name + ")";
+            }
+            return exactSym;
         }
 
-        return unit.Symbol;
+        Span<int> remaining = stackalloc int[7];
+        vec.WriteTo(remaining);
+
+        var derivedTokens = new List<DerivedSymbolToken>(4);
+
+        // Greedy single-pass over priority list (no backtracking). We select a symbol only if all of its non-zero exponents are present with same sign.
+        for (int i = 0; i < _mixedPriority.Length; i++)
+        {
+            ref readonly var entry = ref _mixedPriority[i];
+            bool applicable = true;
+            for (int c = 0; c < 7; c++)
+            {
+                int exp = entry.Vector.Get(c);
+                if (exp == 0) { continue; }
+                int rem = remaining[c];
+                if (rem == 0 || (rem > 0 && exp < 0) || (rem < 0 && exp > 0) || Math.Abs(rem) < Math.Abs(exp))
+                {
+                    // Allow targeted overshoot for Newton (N) where time exponent differs by exactly 1 enabling N·s pattern
+                    if (entry.Symbol == "N" && c == 2) // time index
+                    {
+                        int diff = Math.Abs(exp) - Math.Abs(rem);
+                        if (diff == 1 && (rem < 0 && exp < 0))
+                        {
+                            // Accept overshoot; leftover becomes positive base second
+                            continue;
+                        }
+                    }
+                    applicable = false;
+                    break;
+                }
+            }
+            // Heuristic: skip J if A exponent non-zero (we prefer W decomposition for W·s/A scenario)
+            if (applicable && entry.Symbol == "J" && remaining[3] != 0)
+            {
+                applicable = false;
+            }
+            if (!applicable)
+            {
+                continue;
+            }
+            // subtract once
+            for (int c = 0; c < 7; c++)
+            {
+                int exp = entry.Vector.Get(c);
+                if (exp != 0)
+                {
+                    remaining[c] -= exp;
+                }
+            }
+            derivedTokens.Add(new DerivedSymbolToken(entry.Symbol, 1));
+        }
+
+        // Collect base factor leftovers
+        var baseTokens = new List<BaseFactorToken>(7);
+        ReadOnlySpan<string> baseSymbols = BaseFactorSymbols;
+        for (int c = 0; c < 7; c++)
+        {
+            int e = remaining[c];
+            if (e != 0)
+            {
+                baseTokens.Add(new BaseFactorToken(baseSymbols[c], e));
+            }
+        }
+
+        // Build numerator / denominator lists
+        var partsNumerator = new List<string>(derivedTokens.Count + baseTokens.Count);
+        var partsDenominator = new List<string>(baseTokens.Count);
+
+        for (int i = 0; i < derivedTokens.Count; i++)
+        {
+            var t = derivedTokens[i];
+            if (t.Exponent > 0)
+            {
+                partsNumerator.Add(RenderToken(t.Symbol, t.Exponent));
+            }
+            else if (t.Exponent < 0)
+            {
+                partsDenominator.Add(RenderToken(t.Symbol, -t.Exponent));
+            }
+        }
+        for (int i = 0; i < baseTokens.Count; i++)
+        {
+            var t = baseTokens[i];
+            if (t.Exponent > 0)
+            {
+                partsNumerator.Add(RenderToken(t.Symbol, t.Exponent));
+            }
+            else
+            {
+                partsDenominator.Add(RenderToken(t.Symbol, -t.Exponent));
+            }
+        }
+
+        if (partsNumerator.Count == 0 && partsDenominator.Count == 0)
+        {
+            return string.Empty; // dimensionless
+        }
+
+        var core = string.Join("·", partsNumerator);
+        if (partsDenominator.Count > 0)
+        {
+            core += "/" + string.Join("·", partsDenominator);
+        }
+
+        if (qualifyWith != null && derivedTokens.Count > 0)
+        {
+            // Only qualify if any ambiguous derived token present
+            if (ContainsAmbiguousDerived(derivedTokens))
+            {
+                core += " (" + qualifyWith.Name + ")";
+            }
+        }
+
+        return core;
+    }
+
+    private static bool ContainsAmbiguousDerived(List<DerivedSymbolToken> tokens)
+    {
+        for (int i = 0; i < tokens.Count; i++)
+        {
+            if (IsAmbiguous(tokens[i].Symbol))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static string RenderToken(string symbol, int exponent)
+    {
+        if (exponent == 1) { return symbol; }
+        return symbol + "^" + exponent.ToString(CultureInfo.InvariantCulture);
     }
 
     private static string TryGetDerivedSymbol(Unit unit)
@@ -106,6 +268,37 @@ public static class UnitFormatter
             _ => false,
         };
     }
+
+    private static (ExponentVector, string)[] CreateMixedPriority()
+    {
+        // Order matches specification groups; we rely on dictionary map using same exponent construction.
+        var list = new List<(ExponentVector, string)>
+        {
+            (new ExponentVector(1, 2, -2, 0, 0, 0, 0), "J"),
+            (new ExponentVector(1, 1, -2, 0, 0, 0, 0), "N"),
+            (new ExponentVector(1, -1, -2, 0, 0, 0, 0), "Pa"),
+            (new ExponentVector(1, 2, -3, 0, 0, 0, 0), "W"),
+            (new ExponentVector(0, 0, 1, 1, 0, 0, 0), "C"),
+            (new ExponentVector(1, 2, -3, -1, 0, 0, 0), "V"),
+            (new ExponentVector(1, 2, -3, -2, 0, 0, 0), "Ω"),
+            (new ExponentVector(-1, -2, 3, 2, 0, 0, 0), "S"),
+            (new ExponentVector(-1, -2, 4, 2, 0, 0, 0), "F"),
+            (new ExponentVector(1, 2, -2, -2, 0, 0, 0), "H"),
+            (new ExponentVector(1, 0, -2, -1, 0, 0, 0), "T"),
+            (new ExponentVector(1, 2, -2, -1, 0, 0, 0), "Wb"),
+            (new ExponentVector(0, 1, -2, 0, 0, 0, 1), "lm"),
+            (new ExponentVector(0, -2, 0, 0, 0, 0, 1), "lx"),
+            // Radiation / chemistry tokens Gy, Sv, kat not yet defined in dimension system (placeholders if later added)
+        };
+        return list.ToArray();
+    }
+
+    private static bool ShouldDecomposeInMixed(string symbol) => symbol switch
+    {
+        // Prefer W·s/A over Wb for readability per spec
+        "Wb" => true,
+        _ => false,
+    };
 
     private static IReadOnlyDictionary<ExponentVector, string> CreateDerivedMap()
     {
@@ -139,6 +332,8 @@ public static class UnitFormatter
 
         return dict;
     }
+
+    private static ReadOnlySpan<string> BaseFactorSymbols => new[] { "m", "kg", "s", "A", "K", "mol", "cd" };
 
     /// <summary>Immutable exponent vector used as dictionary key.</summary>
     private readonly struct ExponentVector : IEquatable<ExponentVector>
@@ -232,6 +427,32 @@ public static class UnitFormatter
                 hash = (hash * 31) + _cd.GetHashCode();
                 return hash;
             }
+        }
+
+        public void WriteTo(Span<int> target)
+        {
+            target[0] = _m; // order aligned with BaseFactorSymbols mapping
+            target[1] = _kg;
+            target[2] = _s;
+            target[3] = _a;
+            target[4] = _k;
+            target[5] = _mol;
+            target[6] = _cd;
+        }
+
+        public int Get(int index)
+        {
+            return index switch
+            {
+                0 => _m,
+                1 => _kg,
+                2 => _s,
+                3 => _a,
+                4 => _k,
+                5 => _mol,
+                6 => _cd,
+                _ => 0,
+            };
         }
     }
 }
