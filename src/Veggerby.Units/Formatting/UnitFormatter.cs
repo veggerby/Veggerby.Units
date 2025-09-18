@@ -68,10 +68,16 @@ public static class UnitFormatter
                         return unit.Symbol; // treat as base factor expression (no partial substitutions)
                     }
 
-                    if (format == UnitFormat.Qualified && IsAmbiguous(sym))
+                    if (format == UnitFormat.Qualified)
                     {
-                        var suffix = kind is null ? string.Empty : $" ({kind.Name})";
-                        return sym + suffix;
+                        if (AmbiguityRegistry.TryGetAmbiguities(sym, out var kinds))
+                        {
+                            if (kind != null)
+                            {
+                                return sym + " (" + kind.Name + ")"; // always show explicit semantic intent
+                            }
+                        }
+                        // not ambiguous or no provided kind -> just symbol
                     }
 
                     return sym;
@@ -103,7 +109,7 @@ public static class UnitFormatter
         {
             if (!ShouldDecomposeInMixed(unit, exactSym))
             {
-                if (qualifyWith != null && IsAmbiguous(exactSym))
+                if (qualifyWith != null && AmbiguityRegistry.TryGetAmbiguities(exactSym, out _))
                 {
                     return exactSym + " (" + qualifyWith.Name + ")";
                 }
@@ -457,7 +463,7 @@ public static class UnitFormatter
     {
         for (int i = 0; i < tokens.Count; i++)
         {
-            if (IsAmbiguous(tokens[i].Symbol))
+            if (AmbiguityRegistry.TryGetAmbiguities(tokens[i].Symbol, out _))
             {
                 return true;
             }
@@ -493,15 +499,7 @@ public static class UnitFormatter
         return null;
     }
 
-    private static bool IsAmbiguous(string symbol)
-    {
-        // Current simple heuristic: known ambiguous base symbol set. Could be extended via governance reflection.
-        return symbol switch
-        {
-            "J" => true, // Joule vs N*m (Energy vs Torque) – same dimension, different KOQ
-            _ => false,
-        };
-    }
+    // Legacy heuristic removed; ambiguity now driven by AmbiguityRegistry.
 
     private static (ExponentVector, string)[] CreateMixedPriority()
     {

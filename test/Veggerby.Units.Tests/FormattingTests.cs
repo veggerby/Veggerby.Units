@@ -241,4 +241,102 @@ public class FormattingTests
         // Assert
         formatted.Should().Be("5 ");
     }
+
+        [Fact]
+        public void GivenEnergyJoule_WhenQualifiedWithEnergyKind_ThenShowsEnergySuffix()
+        {
+            // Arrange
+        var m = new DoubleMeasurement(1.0, (Unit.SI.kg * (Unit.SI.m ^ 2)) / (Unit.SI.s ^ 2)); // J
+            var energy = QuantityKinds.Energy; // assumed existing
+
+            // Act
+            var formatted = UnitFormatter.Format(m, UnitFormat.Qualified, energy);
+
+            // Assert
+            formatted.Should().Be("1 J (Energy)");
+        }
+
+        [Fact]
+        public void GivenTorqueJoule_WhenMixedWithTorqueKind_ThenShowsNewtonMetre()
+        {
+            // Arrange
+            var torque = QuantityKinds.Torque;
+            var value = new DoubleMeasurement(1.0, (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2))); // J dimension
+
+            // Act
+            var mixed = UnitFormatter.Format(value, UnitFormat.Mixed, torque);
+
+            // Assert
+            mixed.Should().Be("1 N·m");
+        }
+
+        [Fact]
+        public void GivenTorqueJoule_WhenQualifiedWithTorqueKind_ThenShowsJWithTorqueSuffix()
+        {
+            // Arrange
+            var torque = QuantityKinds.Torque;
+            var value = new DoubleMeasurement(1.0, (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)));
+
+            // Act
+            var qualified = UnitFormatter.Format(value, UnitFormat.Qualified, torque);
+
+            // Assert
+            qualified.Should().Be("1 J (Torque)");
+        }
+
+        [Fact]
+        public void GivenStressPascal_WhenQualifiedWithStressKind_ThenShowsPascalWithStress()
+        {
+            // Arrange
+            var stress = QuantityKinds.Stress; // expected existing
+            var pascalValue = new DoubleMeasurement(1.0, (Unit.SI.kg / (Unit.SI.m * (Unit.SI.s ^ 2))));
+
+            // Act
+            var qualified = UnitFormatter.Format(pascalValue, UnitFormat.Qualified, stress);
+
+            // Assert
+            qualified.Should().Be("1 Pa (Stress)");
+        }
+
+        [Fact]
+        public void GivenRadiantFluxWatt_WhenQualifiedWithRadiantFluxKind_ThenShowsWattWithRadiantFlux()
+        {
+            // Arrange
+            var radiantFlux = QuantityKinds.RadiantFlux;
+            var wattValue = new DoubleMeasurement(1.0, (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 3)));
+
+            // Act
+            var qualified = UnitFormatter.Format(wattValue, UnitFormat.Qualified, radiantFlux);
+
+            // Assert
+            qualified.Should().Be("1 W (RadiantFlux)");
+        }
+
+        [Fact]
+        public void GivenInductanceHenry_WhenQualifiedWithInductanceKind_ThenShowsHSuffix()
+        {
+            // Arrange
+            var inductance = QuantityKinds.Inductance;
+            var henryValue = new DoubleMeasurement(1.0, (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2) / (Unit.SI.A ^ 2)));
+
+            // Act
+            var qualified = UnitFormatter.Format(henryValue, UnitFormat.Qualified, inductance);
+
+            // Assert
+            qualified.Should().Be("1 H (Inductance)");
+        }
+
+        [Fact]
+        public void GivenMagneticFieldStrength_WhenQualifiedWithFieldKind_ThenShowsBaseFactorsWithSuffix()
+        {
+            // Arrange
+            var field = QuantityKinds.MagneticFieldStrength;
+            var value = new DoubleMeasurement(1.0, Unit.SI.A / Unit.SI.m);
+
+            // Act
+            var qualified = UnitFormatter.Format(value, UnitFormat.Qualified, field);
+
+            // Assert
+        qualified.Should().Be("1 A/m"); // no derived H for A/m; remain base factors (no suffix since not ambiguous symbol)
+        }
 }
