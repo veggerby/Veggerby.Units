@@ -4,6 +4,25 @@ This page lists the built-in `QuantityKind` instances shipped with the library. 
 
 > The list is intentionally explicit (maintained alongside code) to provide stable documentation without relying on reflection at runtime.
 
+## Domain Grouping (Source Layout)
+
+`QuantityKinds` is implemented as a partial static class split into domain-focused files:
+
+- EnergyAndThermodynamics
+- MechanicsAndMaterials
+- KinematicsAndGeometry
+- TransportAndFlow
+- Electromagnetics
+- RadiationAndOptics
+- Chemistry
+- DimensionlessFlowNumbers
+
+This mirrors conceptual subdomains and keeps static initialization localized to reduce cross-file ordering hazards. Adding a new kind: pick the file whose domain most narrowly matches the semantic intent. If none apply, open a discussion before creating a new partition to avoid fragmentation.
+
+## Symbol Overlap Policy
+
+Symbols intentionally follow established physics conventions and may overlap across domains (e.g. `V` for Volume and Voltage). Governance tests only fail when two kinds share both symbol and identical reduced unit signature (true ambiguity). See `quantity-kind-governance.md` for details.
+
 | Name | Symbol | Canonical Unit | Dimension (formatted) | Direct + | Direct - | Difference Result | Tags (subset) |
 |------|--------|----------------|-----------------------|----------|----------|-------------------|--------------|
 | Energy | E | J | kg·m^2/s^2 | Yes | Yes | — | Energy, Energy.StateFunction |

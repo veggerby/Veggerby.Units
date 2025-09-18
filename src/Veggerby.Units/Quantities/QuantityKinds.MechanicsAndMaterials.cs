@@ -13,12 +13,6 @@ public static partial class QuantityKinds
         "τ",
         tags: new[] { QuantityKindTags.DomainMechanics });
 
-    /// <summary>Young's modulus (Pa).</summary>
-    public static readonly QuantityKind YoungsModulus = new(
-        "YoungsModulus",
-        Unit.SI.kg / (Unit.SI.m * (Unit.SI.s ^ 2)),
-        "E",
-        tags: new[] { QuantityKindTags.DomainMaterial, QuantityKindTags.DomainMechanics });
 
     /// <summary>Shear modulus (Pa).</summary>
     public static readonly QuantityKind ShearModulus = new(
@@ -53,7 +47,7 @@ public static partial class QuantityKinds
         "Strain",
         Unit.None,
         "ε",
-        tags: new[] { QuantityKindTags.DomainMaterial });
+        tags: new[] { QuantityKindTags.DomainMaterial, QuantityKindTags.FormDimensionless });
 
     /// <summary>Strain rate (1/s).</summary>
     public static readonly QuantityKind StrainRate = new(
@@ -137,7 +131,7 @@ public static partial class QuantityKinds
         "Porosity",
         Unit.None,
         "φ",
-        tags: new[] { QuantityKindTags.DomainMaterial });
+        tags: new[] { QuantityKindTags.DomainMaterial, QuantityKindTags.FormDimensionless });
 
     /// <summary>Compressibility (1/Pa).</summary>
     public static readonly QuantityKind Compressibility = new(

@@ -16,9 +16,9 @@ public static partial class QuantityKinds
     /// <summary>Areal number density (1/m^2).</summary>
     public static readonly QuantityKind ArealNumberDensity = new("ArealNumberDensity", 1 / (Unit.SI.m ^ 2), "n_dA", tags: new[] { QuantityKindTags.DomainMaterial, QuantityKindTags.DomainChemistry });
     /// <summary>Mole fraction (dimensionless).</summary>
-    public static readonly QuantityKind MoleFraction = new("MoleFraction", Unit.None, "x", tags: new[] { QuantityKindTags.DomainChemistry });
+    public static readonly QuantityKind MoleFraction = new("MoleFraction", Unit.None, "x", tags: new[] { QuantityKindTags.DomainChemistry, QuantityKindTags.FormDimensionless });
     /// <summary>Mass fraction (dimensionless).</summary>
-    public static readonly QuantityKind MassFraction = new("MassFraction", Unit.None, "w", tags: new[] { QuantityKindTags.DomainChemistry });
+    public static readonly QuantityKind MassFraction = new("MassFraction", Unit.None, "w", tags: new[] { QuantityKindTags.DomainChemistry, QuantityKindTags.FormDimensionless });
     /// <summary>Osmotic pressure (Pa).</summary>
     public static readonly QuantityKind OsmoticPressure = new("OsmoticPressure", Unit.SI.kg / (Unit.SI.m * (Unit.SI.s ^ 2)), "π_osm", tags: new[] { QuantityKindTags.DomainChemistry, QuantityKindTags.DomainThermodynamic });
     /// <summary>Partial pressure (Pa).</summary>
