@@ -15,7 +15,7 @@ public static partial class QuantityKinds
         "ElectricCurrent",
         Unit.SI.A,
         "I",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Frequency (Hz) – occurrences per unit time (s^-1).
@@ -25,7 +25,7 @@ public static partial class QuantityKinds
         "Frequency",
         1 / Unit.SI.s,
         "Hz",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric charge (coulomb) – time integral of electric current (A·s).
@@ -35,7 +35,7 @@ public static partial class QuantityKinds
         "ElectricCharge",
         Unit.SI.A * Unit.SI.s,
         "q",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric potential (volt) – energy per unit charge (J·C^-1).
@@ -45,7 +45,7 @@ public static partial class QuantityKinds
         "Voltage",
         QuantityKinds.Energy.CanonicalUnit / (Unit.SI.A * Unit.SI.s), // (J)/(A·s) = kg·m^2/(s^3·A)
         "V",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric resistance (ohm) – voltage per unit current (V·A^-1).
@@ -56,7 +56,7 @@ public static partial class QuantityKinds
         // R = V / I = (Energy / (A·s)) / A = Energy / (A^2 · s)
         QuantityKinds.Energy.CanonicalUnit / (Unit.SI.A * Unit.SI.A * Unit.SI.s), // kg·m^2/(s^3·A^2)
         "Ω",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric conductance (siemens) – inverse of resistance (A·V^-1).
@@ -67,7 +67,7 @@ public static partial class QuantityKinds
         // G = 1/R = A^2 · s / Energy
         (Unit.SI.A * Unit.SI.A * Unit.SI.s) / QuantityKinds.Energy.CanonicalUnit,
         "S",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Capacitance (farad) – charge per unit voltage (C·V^-1).
@@ -78,7 +78,7 @@ public static partial class QuantityKinds
         // C = Q / V = Charge^2 / Energy; Charge = A·s => F = (A·s)^2 / Energy = A^2·s^4/(kg·m^2)
         ((Unit.SI.A * Unit.SI.s) ^ 2) / QuantityKinds.Energy.CanonicalUnit,
         "F",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Inductance (henry) – magnetic flux per unit current (Wb·A^-1).
@@ -89,7 +89,7 @@ public static partial class QuantityKinds
         // L = Φ / I and Φ = Energy / A => L = Energy / A^2
         QuantityKinds.Energy.CanonicalUnit / (Unit.SI.A * Unit.SI.A), // H = kg·m^2/(A^2·s^2)
         "H",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Magnetic flux (weber) – time integral of voltage (V·s).
@@ -99,7 +99,7 @@ public static partial class QuantityKinds
         "MagneticFlux",
         QuantityKinds.Energy.CanonicalUnit / Unit.SI.A, // Wb = V·s = J/A
         "Wb",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Magnetic flux density (tesla) – flux per unit area (Wb·m^-2).
@@ -109,7 +109,7 @@ public static partial class QuantityKinds
         "MagneticFluxDensity",
         QuantityKinds.Energy.CanonicalUnit / (Unit.SI.A * (Unit.SI.m ^ 2)), // T = Wb/m^2
         "T",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric field strength – voltage gradient (V·m^-1).
@@ -119,7 +119,7 @@ public static partial class QuantityKinds
         "ElectricFieldStrength",
         QuantityKinds.Energy.CanonicalUnit / (Unit.SI.A * Unit.SI.s * Unit.SI.m), // V/m
         "E_f",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric charge density – charge per unit volume (C·m^-3).
@@ -129,7 +129,7 @@ public static partial class QuantityKinds
         "ElectricChargeDensity",
         (Unit.SI.A * Unit.SI.s) / (Unit.SI.m ^ 3),
         "ρ_q",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     /// <summary>
     /// Electric current density – current per unit area (A·m^-2).
@@ -139,7 +139,7 @@ public static partial class QuantityKinds
         "ElectricCurrentDensity",
         Unit.SI.A / (Unit.SI.m ^ 2),
         "J_d",
-        tags: new[] { QuantityKindTag.Get("Domain.Electromagnetic") });
+    tags: new[] { QuantityKindTags.DomainElectromagnetic });
 
     // Luminous / Optical
     /// <summary>
@@ -150,7 +150,7 @@ public static partial class QuantityKinds
         "LuminousFlux",
         Unit.SI.cd, // lumen shares candela base with steradian dimensionless
         "lm",
-        tags: new[] { QuantityKindTag.Get("Domain.Optics") });
+    tags: new[] { QuantityKindTags.DomainOptics });
 
     /// <summary>
     /// Illuminance (lux) – luminous flux per unit area (lm·m^-2).
@@ -160,7 +160,7 @@ public static partial class QuantityKinds
         "Illuminance",
         Unit.SI.cd / (Unit.SI.m ^ 2), // lux
         "lx",
-        tags: new[] { QuantityKindTag.Get("Domain.Optics") });
+    tags: new[] { QuantityKindTags.DomainOptics });
 
     // Radiation
     /// <summary>
@@ -171,7 +171,7 @@ public static partial class QuantityKinds
         "Radioactivity",
         1 / Unit.SI.s, // Bq
         "Bq",
-        tags: new[] { QuantityKindTag.Get("Domain.Radiation") });
+    tags: new[] { QuantityKindTags.DomainRadiation });
 
     /// <summary>
     /// Absorbed dose (gray) – energy deposited per unit mass (J·kg^-1).
@@ -181,7 +181,7 @@ public static partial class QuantityKinds
         "AbsorbedDose",
         (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2), // Gy = J/kg = m^2/s^2
         "Gy",
-        tags: new[] { QuantityKindTag.Get("Domain.Radiation") });
+    tags: new[] { QuantityKindTags.DomainRadiation });
 
     /// <summary>
     /// Dose equivalent (sievert) – biological effect dose (same dimension as gray).
@@ -191,7 +191,7 @@ public static partial class QuantityKinds
         "DoseEquivalent",
         (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2), // Sv same dimension as Gy
         "Sv",
-        tags: new[] { QuantityKindTag.Get("Domain.Radiation") });
+    tags: new[] { QuantityKindTags.DomainRadiation });
 
     /// <summary>
     /// Catalytic activity (katal) – amount of substance transformed per second (mol·s^-1).
@@ -201,7 +201,7 @@ public static partial class QuantityKinds
         "CatalyticActivity",
         Unit.SI.n / Unit.SI.s, // katal
         "kat",
-        tags: new[] { QuantityKindTag.Get("Domain.Chemistry") });
+    tags: new[] { QuantityKindTags.DomainChemistry });
 
     // Transport / Material
     /// <summary>
@@ -212,7 +212,7 @@ public static partial class QuantityKinds
         "MassDensity",
         Unit.SI.kg / (Unit.SI.m ^ 3),
         "ρ",
-        tags: new[] { QuantityKindTag.Get("Domain.Material") });
+    tags: new[] { QuantityKindTags.DomainMaterial });
 
     /// <summary>
     /// Specific energy – energy per unit mass (J·kg^-1 = m^2·s^-2).
@@ -222,7 +222,7 @@ public static partial class QuantityKinds
         "SpecificEnergy",
         (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2), // J/kg
         "e_spec",
-        tags: new[] { QuantityKindTag.Get("Domain.Material") });
+    tags: new[] { QuantityKindTags.DomainMaterial });
 
     /// <summary>
     /// Specific power – power per unit mass (W·kg^-1 = m^2·s^-3).
@@ -232,7 +232,7 @@ public static partial class QuantityKinds
         "SpecificPower",
         (Unit.SI.m ^ 2) / (Unit.SI.s ^ 3), // W/kg
         "p_spec",
-        tags: new[] { QuantityKindTag.Get("Domain.Material") });
+    tags: new[] { QuantityKindTags.DomainMaterial });
 
     /// <summary>
     /// Specific volume – volume per unit mass (m^3·kg^-1).
@@ -242,7 +242,7 @@ public static partial class QuantityKinds
         "SpecificVolume",
         (Unit.SI.m ^ 3) / Unit.SI.kg,
         "v_spec",
-        tags: new[] { QuantityKindTag.Get("Domain.Material") });
+    tags: new[] { QuantityKindTags.DomainMaterial });
 
     /// <summary>
     /// Dynamic viscosity (Pa·s) – shear stress per velocity gradient (kg·m^-1·s^-1).
@@ -252,7 +252,7 @@ public static partial class QuantityKinds
         "DynamicViscosity",
         (Unit.SI.kg / (Unit.SI.m * Unit.SI.s)), // Pa·s
         "η",
-        tags: new[] { QuantityKindTag.Get("Domain.Transport") });
+    tags: new[] { QuantityKindTags.DomainTransport });
 
     /// <summary>
     /// Kinematic viscosity – dynamic viscosity divided by mass density (m^2·s^-1).
@@ -262,7 +262,7 @@ public static partial class QuantityKinds
         "KinematicViscosity",
         (Unit.SI.m ^ 2) / Unit.SI.s,
         "ν",
-        tags: new[] { QuantityKindTag.Get("Domain.Transport") });
+    tags: new[] { QuantityKindTags.DomainTransport });
 
     /// <summary>
     /// Thermal conductivity – heat flow rate per length and temperature gradient (W·m^-1·K^-1).
@@ -272,7 +272,7 @@ public static partial class QuantityKinds
         "ThermalConductivity",
         (QuantityKinds.Energy.CanonicalUnit / Unit.SI.s) / (Unit.SI.m * Unit.SI.K), // W/(m·K)
         "k_th",
-        tags: new[] { QuantityKindTag.Get("Domain.Transport"), QuantityKindTag.Get("Domain.Thermodynamic") });
+    tags: new[] { QuantityKindTags.DomainTransport, QuantityKindTags.DomainThermodynamic });
 
     /// <summary>
     /// Thermal diffusivity – thermal conductivity divided by volumetric heat capacity (m^2·s^-1).
@@ -282,7 +282,7 @@ public static partial class QuantityKinds
         "ThermalDiffusivity",
         (Unit.SI.m ^ 2) / Unit.SI.s,
         "α",
-        tags: new[] { QuantityKindTag.Get("Domain.Transport"), QuantityKindTag.Get("Domain.Thermodynamic") });
+    tags: new[] { QuantityKindTags.DomainTransport, QuantityKindTags.DomainThermodynamic });
 
     /// <summary>
     /// Heat flux – heat transfer rate per unit area (W·m^-2).
@@ -292,7 +292,7 @@ public static partial class QuantityKinds
         "HeatFlux",
         (QuantityKinds.Energy.CanonicalUnit / Unit.SI.s) / (Unit.SI.m ^ 2), // W/m^2
         "q_dot",
-        tags: new[] { QuantityKindTag.Get("Domain.Transport"), QuantityKindTag.Get("Energy.PathFunction") });
+    tags: new[] { QuantityKindTags.DomainTransport, QuantityKindTags.EnergyPathFunction });
 
     /// <summary>
     /// Surface tension – force per unit length (N·m^-1 = kg·s^-2).
@@ -302,7 +302,7 @@ public static partial class QuantityKinds
         "SurfaceTension",
         (Unit.SI.kg * Unit.SI.m / (Unit.SI.s ^ 2)) / Unit.SI.m, // N/m = kg/s^2
         "γ",
-        tags: new[] { QuantityKindTag.Get("Domain.Material") });
+    tags: new[] { QuantityKindTags.DomainMaterial });
 
     /// <summary>
     /// Molar mass – mass per amount of substance (kg·mol^-1).
@@ -312,7 +312,7 @@ public static partial class QuantityKinds
         "MolarMass",
         Unit.SI.kg / Unit.SI.n,
         "M",
-        tags: new[] { QuantityKindTag.Get("Domain.Chemistry") });
+    tags: new[] { QuantityKindTags.DomainChemistry });
 
     /// <summary>
     /// Molar volume – volume per amount of substance (m^3·mol^-1).
@@ -322,7 +322,7 @@ public static partial class QuantityKinds
         "MolarVolume",
         (Unit.SI.m ^ 3) / Unit.SI.n,
         "V_m",
-        tags: new[] { QuantityKindTag.Get("Domain.Chemistry") });
+    tags: new[] { QuantityKindTags.DomainChemistry });
 
     /// <summary>
     /// Molar concentration (amount concentration) – amount per unit volume (mol·m^-3).
@@ -332,7 +332,7 @@ public static partial class QuantityKinds
         "MolarConcentration",
         Unit.SI.n / (Unit.SI.m ^ 3),
         "c",
-        tags: new[] { QuantityKindTag.Get("Domain.Chemistry") });
+    tags: new[] { QuantityKindTags.DomainChemistry });
 
     /// <summary>
     /// Mass concentration – mass per unit volume (kg·m^-3) (duplicate dimension of mass density but distinct semantic role).
@@ -342,5 +342,5 @@ public static partial class QuantityKinds
         "MassConcentration",
         Unit.SI.kg / (Unit.SI.m ^ 3),
         "ρ_m",
-        tags: new[] { QuantityKindTag.Get("Domain.Chemistry"), QuantityKindTag.Get("Domain.Material") });
+    tags: new[] { QuantityKindTags.DomainChemistry, QuantityKindTags.DomainMaterial });
 }

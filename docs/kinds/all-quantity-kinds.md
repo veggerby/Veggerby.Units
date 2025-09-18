@@ -8,7 +8,7 @@ Columns:
 - Symbol – Conventional symbol (where applicable).
 - Canonical Unit – Unit expression used internally (before any reduction when constructed).
 - Dimension (Base Form) – Expanded base units (kg, m, s, A, K, cd, mol) with exponents.
-- + / - – Whether same‑kind direct addition / subtraction is allowed.
+- &plus; / - – Whether same‑kind direct addition / subtraction is allowed.
 - Δ Result – Difference result kind when subtracting two point (absolute) kinds (otherwise —).
 - Tags – All tags attached (governance roots described in `tags.md`).
 

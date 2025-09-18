@@ -13,8 +13,8 @@ public static partial class QuantityKinds
         "E",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy"),
-                QuantityKindTag.Get("Energy.StateFunction")
+                QuantityKindTags.Energy,
+                QuantityKindTags.EnergyStateFunction
         });
 
     /// <summary>Internal energy (U) shares energy dimensions.</summary>
@@ -24,9 +24,9 @@ public static partial class QuantityKinds
         "U",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy"),
-                QuantityKindTag.Get("Energy.StateFunction"),
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.Energy,
+                QuantityKindTags.EnergyStateFunction,
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Enthalpy (H) shares energy dimensions.</summary>
@@ -36,9 +36,9 @@ public static partial class QuantityKinds
         "H",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy"),
-                QuantityKindTag.Get("Energy.StateFunction"),
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.Energy,
+                QuantityKindTags.EnergyStateFunction,
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Gibbs free energy (G) shares energy dimensions.</summary>
@@ -48,9 +48,9 @@ public static partial class QuantityKinds
         "G",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy"),
-                QuantityKindTag.Get("Energy.StateFunction"),
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.Energy,
+                QuantityKindTags.EnergyStateFunction,
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Helmholtz free energy (A) shares energy dimensions.</summary>
@@ -60,9 +60,9 @@ public static partial class QuantityKinds
         "A",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy"),
-                QuantityKindTag.Get("Energy.StateFunction"),
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.Energy,
+                QuantityKindTags.EnergyStateFunction,
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Entropy (S) J/K.</summary>
@@ -72,7 +72,7 @@ public static partial class QuantityKinds
         "S",
         tags: new[]
         {
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Torque (τ) shares energy dimension but denotes rotational effect.</summary>
@@ -82,7 +82,7 @@ public static partial class QuantityKinds
         "τ",
         tags: new[]
         {
-                QuantityKindTag.Get("Domain.Mechanical")
+                QuantityKindTags.DomainMechanics
         });
 
     /// <summary>Angle (θ) is dimensionless but semantically distinct; prohibits implicit dimensionless scalar fallback preserving kind when multiplied (treated as vector-like).</summary>
@@ -92,8 +92,8 @@ public static partial class QuantityKinds
         "θ",
         tags: new[]
         {
-                QuantityKindTag.Get("Form.Dimensionless"),
-                QuantityKindTag.Get("Domain.Mechanical")
+                QuantityKindTags.FormDimensionless,
+                QuantityKindTags.DomainMechanics
         });
 
     /// <summary>Heat capacity (C_p) J/K (semantic distinct from Entropy).</summary>
@@ -103,7 +103,7 @@ public static partial class QuantityKinds
         "C_p",
         tags: new[]
         {
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Chemical potential (μ) J/mol.</summary>
@@ -113,7 +113,7 @@ public static partial class QuantityKinds
         "μ",
         tags: new[]
         {
-                QuantityKindTag.Get("Domain.Thermodynamic")
+                QuantityKindTags.DomainThermodynamic
         });
 
     /// <summary>Work (W) path energy transfer; dimensionally energy.</summary>
@@ -123,9 +123,9 @@ public static partial class QuantityKinds
         "Wk",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy.PathFunction"),
-                QuantityKindTag.Get("Domain.Mechanical"),
-                QuantityKindTag.Get("Energy")
+                QuantityKindTags.EnergyPathFunction,
+                QuantityKindTags.DomainMechanics,
+                QuantityKindTags.Energy
         });
 
     /// <summary>Heat (Q) path thermal energy transfer; dimensionally energy.</summary>
@@ -135,8 +135,8 @@ public static partial class QuantityKinds
         "Q",
         tags: new[]
         {
-                QuantityKindTag.Get("Energy.PathFunction"),
-                QuantityKindTag.Get("Domain.Thermodynamic"),
-                QuantityKindTag.Get("Energy")
+                QuantityKindTags.EnergyPathFunction,
+                QuantityKindTags.DomainThermodynamic,
+                QuantityKindTags.Energy
         });
 }
