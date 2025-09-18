@@ -213,6 +213,57 @@ public static class QuantityKindInferenceRegistry
         Register(new QuantityKindInference(QuantityKinds.ActivityCoefficient, QuantityKindBinaryOperator.Multiply, QuantityKinds.MoleFraction, QuantityKinds.Activity, Commutative: true));
         Register(new QuantityKindInference(QuantityKinds.Activity, QuantityKindBinaryOperator.Divide, QuantityKinds.MoleFraction, QuantityKinds.ActivityCoefficient));
         // Henry's constant mapping intentionally omitted to avoid conflict with PartialPressure / MoleFraction -> Pressure invariant.
+
+        // --- Advanced3 (unambiguous additions) ---
+        // Mechanics / structural
+        // Stiffness (N/m): Force / Length; inverse Compliance (m/N)
+        Register(new QuantityKindInference(QuantityKinds.Force, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.Stiffness));
+        Register(new QuantityKindInference(QuantityKinds.Stiffness, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.Force, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Length, QuantityKindBinaryOperator.Divide, QuantityKinds.Force, QuantityKinds.Compliance));
+        Register(new QuantityKindInference(QuantityKinds.Compliance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Force, QuantityKinds.Length, Commutative: true));
+
+        // DampingCoefficient (N·s/m): Force * Time / Length -> we express as (DampingCoefficient * Length) / Time = Force so map DampingCoefficient × Length = Force × Time
+        Register(new QuantityKindInference(QuantityKinds.DampingCoefficient, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.Impulse, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Impulse, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.DampingCoefficient));
+
+        // Photometry / Radiometry exposures
+        // LuminousExposure (lx·s): Illuminance × Time
+        Register(new QuantityKindInference(QuantityKinds.Illuminance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.LuminousExposure, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.LuminousExposure, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.Illuminance));
+        Register(new QuantityKindInference(QuantityKinds.LuminousExposure, QuantityKindBinaryOperator.Divide, QuantityKinds.Illuminance, QuantityKinds.Time));
+
+        // RadiantExposure (J/m^2): Irradiance × Time
+        Register(new QuantityKindInference(QuantityKinds.Irradiance, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.RadiantExposure, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.RadiantExposure, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.Irradiance));
+        Register(new QuantityKindInference(QuantityKinds.RadiantExposure, QuantityKindBinaryOperator.Divide, QuantityKinds.Irradiance, QuantityKinds.Time));
+
+        // Transport / fluid circulation
+        // Circulation (m^2/s): Velocity × Length
+        Register(new QuantityKindInference(QuantityKinds.Velocity, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.Circulation, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.Circulation, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.Velocity));
+        Register(new QuantityKindInference(QuantityKinds.Circulation, QuantityKindBinaryOperator.Divide, QuantityKinds.Velocity, QuantityKinds.Length));
+
+        // Nuclear / radiation
+        // ActivityConcentration (Bq/m^3): Radioactivity / Volume
+        Register(new QuantityKindInference(QuantityKinds.Radioactivity, QuantityKindBinaryOperator.Divide, QuantityKinds.Volume, QuantityKinds.ActivityConcentration));
+        Register(new QuantityKindInference(QuantityKinds.ActivityConcentration, QuantityKindBinaryOperator.Multiply, QuantityKinds.Volume, QuantityKinds.Radioactivity, Commutative: true));
+
+        // FluenceRate (1/m^2/s): Fluence / Time
+        Register(new QuantityKindInference(QuantityKinds.Fluence, QuantityKindBinaryOperator.Divide, QuantityKinds.Time, QuantityKinds.FluenceRate));
+        Register(new QuantityKindInference(QuantityKinds.FluenceRate, QuantityKindBinaryOperator.Multiply, QuantityKinds.Time, QuantityKinds.Fluence, Commutative: true));
+
+        // SeebeckCoefficient (V/K): Voltage / TemperatureDelta
+        Register(new QuantityKindInference(QuantityKinds.Voltage, QuantityKindBinaryOperator.Divide, QuantityKinds.TemperatureDelta, QuantityKinds.SeebeckCoefficient));
+        Register(new QuantityKindInference(QuantityKinds.SeebeckCoefficient, QuantityKindBinaryOperator.Multiply, QuantityKinds.TemperatureDelta, QuantityKinds.Voltage, Commutative: true));
+
+        // CoefficientOfThermalExpansion (1/K): Strain / TemperatureDelta
+        Register(new QuantityKindInference(QuantityKinds.Strain, QuantityKindBinaryOperator.Divide, QuantityKinds.TemperatureDelta, QuantityKinds.CoefficientOfThermalExpansion));
+        Register(new QuantityKindInference(QuantityKinds.CoefficientOfThermalExpansion, QuantityKindBinaryOperator.Multiply, QuantityKinds.TemperatureDelta, QuantityKinds.Strain, Commutative: true));
+
+        // OpticalDepth (dimensionless): LinearAttenuationCoefficient (1/m) * Length (m)
+        Register(new QuantityKindInference(QuantityKinds.LinearAttenuationCoefficient, QuantityKindBinaryOperator.Multiply, QuantityKinds.Length, QuantityKinds.OpticalDepth, Commutative: true));
+        Register(new QuantityKindInference(QuantityKinds.OpticalDepth, QuantityKindBinaryOperator.Divide, QuantityKinds.Length, QuantityKinds.LinearAttenuationCoefficient));
+        Register(new QuantityKindInference(QuantityKinds.OpticalDepth, QuantityKindBinaryOperator.Divide, QuantityKinds.LinearAttenuationCoefficient, QuantityKinds.Length));
     }
 
     /// <summary>Registers an inference rule. For commutative multiplication the symmetric rule is generated. Throws on conflict when <see cref="StrictConflictDetection"/> is true.</summary>

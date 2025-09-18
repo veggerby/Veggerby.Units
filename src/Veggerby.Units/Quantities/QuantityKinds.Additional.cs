@@ -363,5 +363,5 @@ public static partial class QuantityKinds
         "DimensionlessRatio",
         Unit.None,
         "R_dim",
-        tags: new[] { QuantityKindTag.Get("Domain.Geometry") });
+        tags: new[] { QuantityKindTag.Get("Form.Dimensionless") });
 }

@@ -204,4 +204,96 @@ public static partial class Quantity
     public static Quantity<double> MassAttenuationCoefficient(double squareMetresPerKilogram) => new(Create(squareMetresPerKilogram, QuantityKinds.MassAttenuationCoefficient.CanonicalUnit), QuantityKinds.MassAttenuationCoefficient);
     /// <summary>Create Henry's constant quantity (Pa·m^3/mol).</summary>
     public static Quantity<double> HenrysConstant(double pascalCubicMetrePerMole) => new(Create(pascalCubicMetrePerMole, QuantityKinds.HenrysConstant.CanonicalUnit), QuantityKinds.HenrysConstant);
+
+    // Advanced3 Mechanics & Structures
+    /// <summary>Create stress quantity (Pa).</summary>
+    public static Quantity<double> Stress(double pascals) => new(Create(pascals, QuantityKinds.Stress.CanonicalUnit), QuantityKinds.Stress);
+    /// <summary>Create shear stress quantity (Pa).</summary>
+    public static Quantity<double> ShearStress(double pascals) => new(Create(pascals, QuantityKinds.ShearStress.CanonicalUnit), QuantityKinds.ShearStress);
+    /// <summary>Create second moment of area quantity (m^4).</summary>
+    public static Quantity<double> SecondMomentOfArea(double metreFourth) => new(Create(metreFourth, QuantityKinds.SecondMomentOfArea.CanonicalUnit), QuantityKinds.SecondMomentOfArea);
+    /// <summary>Create section modulus quantity (m^3).</summary>
+    public static Quantity<double> SectionModulus(double metreCubed) => new(Create(metreCubed, QuantityKinds.SectionModulus.CanonicalUnit), QuantityKinds.SectionModulus);
+    /// <summary>Create stiffness quantity (N/m).</summary>
+    public static Quantity<double> Stiffness(double newtonPerMetre) => new(Create(newtonPerMetre, QuantityKinds.Stiffness.CanonicalUnit), QuantityKinds.Stiffness);
+    /// <summary>Create compliance quantity (m/N).</summary>
+    public static Quantity<double> Compliance(double metrePerNewton) => new(Create(metrePerNewton, QuantityKinds.Compliance.CanonicalUnit), QuantityKinds.Compliance);
+    /// <summary>Create damping coefficient quantity (N·s/m).</summary>
+    public static Quantity<double> DampingCoefficient(double newtonSecondPerMetre) => new(Create(newtonSecondPerMetre, QuantityKinds.DampingCoefficient.CanonicalUnit), QuantityKinds.DampingCoefficient);
+    /// <summary>Create coefficient of friction quantity (dimensionless).</summary>
+    public static Quantity<double> CoefficientOfFriction(double value) => new(Create(value, QuantityKinds.CoefficientOfFriction.CanonicalUnit), QuantityKinds.CoefficientOfFriction);
+    /// <summary>Create Poisson ratio quantity (dimensionless).</summary>
+    public static Quantity<double> PoissonRatio(double value) => new(Create(value, QuantityKinds.PoissonRatio.CanonicalUnit), QuantityKinds.PoissonRatio);
+
+    // Advanced3 Kinematics & Fluids
+    /// <summary>Create vorticity quantity (1/s).</summary>
+    public static Quantity<double> Vorticity(double reciprocalSeconds) => new(Create(reciprocalSeconds, QuantityKinds.Vorticity.CanonicalUnit), QuantityKinds.Vorticity);
+    /// <summary>Create circulation quantity (m^2/s).</summary>
+    public static Quantity<double> Circulation(double squareMetrePerSecond) => new(Create(squareMetrePerSecond, QuantityKinds.Circulation.CanonicalUnit), QuantityKinds.Circulation);
+    /// <summary>Create Mach number (dimensionless).</summary>
+    public static Quantity<double> MachNumber(double value) => new(Create(value, QuantityKinds.MachNumber.CanonicalUnit), QuantityKinds.MachNumber);
+    /// <summary>Create Froude number (dimensionless).</summary>
+    public static Quantity<double> FroudeNumber(double value) => new(Create(value, QuantityKinds.FroudeNumber.CanonicalUnit), QuantityKinds.FroudeNumber);
+    /// <summary>Create Weber number (dimensionless).</summary>
+    public static Quantity<double> WeberNumber(double value) => new(Create(value, QuantityKinds.WeberNumber.CanonicalUnit), QuantityKinds.WeberNumber);
+    /// <summary>Create Péclet number (dimensionless).</summary>
+    public static Quantity<double> PecletNumber(double value) => new(Create(value, QuantityKinds.PecletNumber.CanonicalUnit), QuantityKinds.PecletNumber);
+    /// <summary>Create Stanton number (dimensionless).</summary>
+    public static Quantity<double> StantonNumber(double value) => new(Create(value, QuantityKinds.StantonNumber.CanonicalUnit), QuantityKinds.StantonNumber);
+    /// <summary>Create Strouhal number (dimensionless).</summary>
+    public static Quantity<double> StrouhalNumber(double value) => new(Create(value, QuantityKinds.StrouhalNumber.CanonicalUnit), QuantityKinds.StrouhalNumber);
+    /// <summary>Create Euler number (dimensionless).</summary>
+    public static Quantity<double> EulerNumber(double value) => new(Create(value, QuantityKinds.EulerNumber.CanonicalUnit), QuantityKinds.EulerNumber);
+    /// <summary>Create Knudsen number (dimensionless).</summary>
+    public static Quantity<double> KnudsenNumber(double value) => new(Create(value, QuantityKinds.KnudsenNumber.CanonicalUnit), QuantityKinds.KnudsenNumber);
+    /// <summary>Create Damköhler number (dimensionless).</summary>
+    public static Quantity<double> DamkohlerNumber(double value) => new(Create(value, QuantityKinds.DamkohlerNumber.CanonicalUnit), QuantityKinds.DamkohlerNumber);
+    /// <summary>Create Richardson number (dimensionless).</summary>
+    public static Quantity<double> RichardsonNumber(double value) => new(Create(value, QuantityKinds.RichardsonNumber.CanonicalUnit), QuantityKinds.RichardsonNumber);
+
+    // Advanced3 Thermal
+    /// <summary>Create coefficient of thermal expansion quantity (1/K).</summary>
+    public static Quantity<double> CoefficientOfThermalExpansion(double reciprocalKelvin) => new(Create(reciprocalKelvin, QuantityKinds.CoefficientOfThermalExpansion.CanonicalUnit), QuantityKinds.CoefficientOfThermalExpansion);
+    /// <summary>Create specific latent heat quantity (J/kg).</summary>
+    public static Quantity<double> SpecificLatentHeat(double joulePerKilogram) => new(Create(joulePerKilogram, QuantityKinds.SpecificLatentHeat.CanonicalUnit), QuantityKinds.SpecificLatentHeat);
+    /// <summary>Create molar latent heat quantity (J/mol).</summary>
+    public static Quantity<double> MolarLatentHeat(double joulePerMole) => new(Create(joulePerMole, QuantityKinds.MolarLatentHeat.CanonicalUnit), QuantityKinds.MolarLatentHeat);
+    /// <summary>Create isentropic exponent quantity (dimensionless).</summary>
+    public static Quantity<double> IsentropicExponent(double value) => new(Create(value, QuantityKinds.IsentropicExponent.CanonicalUnit), QuantityKinds.IsentropicExponent);
+
+    // Advanced3 Optics / Radiometry
+    /// <summary>Create radiant exposure quantity (J/m^2).</summary>
+    public static Quantity<double> RadiantExposure(double joulePerSquareMetre) => new(Create(joulePerSquareMetre, QuantityKinds.RadiantExposure.CanonicalUnit), QuantityKinds.RadiantExposure);
+    /// <summary>Create luminous exposure quantity (lx·s).</summary>
+    public static Quantity<double> LuminousExposure(double luxSeconds) => new(Create(luxSeconds, QuantityKinds.LuminousExposure.CanonicalUnit), QuantityKinds.LuminousExposure);
+    /// <summary>Create linear attenuation coefficient quantity (1/m).</summary>
+    public static Quantity<double> LinearAttenuationCoefficient(double reciprocalMetres) => new(Create(reciprocalMetres, QuantityKinds.LinearAttenuationCoefficient.CanonicalUnit), QuantityKinds.LinearAttenuationCoefficient);
+    /// <summary>Create optical depth quantity (dimensionless).</summary>
+    public static Quantity<double> OpticalDepth(double value) => new(Create(value, QuantityKinds.OpticalDepth.CanonicalUnit), QuantityKinds.OpticalDepth);
+
+    // Advanced3 Electromagnetics / Materials
+    /// <summary>Create Hall coefficient quantity (m^3/C).</summary>
+    public static Quantity<double> HallCoefficient(double cubicMetrePerCoulomb) => new(Create(cubicMetrePerCoulomb, QuantityKinds.HallCoefficient.CanonicalUnit), QuantityKinds.HallCoefficient);
+    /// <summary>Create Seebeck coefficient quantity (V/K).</summary>
+    public static Quantity<double> SeebeckCoefficient(double voltPerKelvin) => new(Create(voltPerKelvin, QuantityKinds.SeebeckCoefficient.CanonicalUnit), QuantityKinds.SeebeckCoefficient);
+    /// <summary>Create magnetic susceptibility quantity (dimensionless).</summary>
+    public static Quantity<double> MagneticSusceptibility(double value) => new(Create(value, QuantityKinds.MagneticSusceptibility.CanonicalUnit), QuantityKinds.MagneticSusceptibility);
+    /// <summary>Create electric susceptibility quantity (dimensionless).</summary>
+    public static Quantity<double> ElectricSusceptibility(double value) => new(Create(value, QuantityKinds.ElectricSusceptibility.CanonicalUnit), QuantityKinds.ElectricSusceptibility);
+    /// <summary>Create relative permittivity quantity (dimensionless).</summary>
+    public static Quantity<double> RelativePermittivity(double value) => new(Create(value, QuantityKinds.RelativePermittivity.CanonicalUnit), QuantityKinds.RelativePermittivity);
+    /// <summary>Create relative permeability quantity (dimensionless).</summary>
+    public static Quantity<double> RelativePermeability(double value) => new(Create(value, QuantityKinds.RelativePermeability.CanonicalUnit), QuantityKinds.RelativePermeability);
+
+    // Advanced3 Chemistry / Nuclear
+    /// <summary>Create activity concentration quantity (Bq/m^3).</summary>
+    public static Quantity<double> ActivityConcentration(double becquerelPerCubicMetre) => new(Create(becquerelPerCubicMetre, QuantityKinds.ActivityConcentration.CanonicalUnit), QuantityKinds.ActivityConcentration);
+    /// <summary>Create absorbed dose rate quantity (Gy/s).</summary>
+    public static Quantity<double> AbsorbedDoseRate(double grayPerSecond) => new(Create(grayPerSecond, QuantityKinds.AbsorbedDoseRate.CanonicalUnit), QuantityKinds.AbsorbedDoseRate);
+    /// <summary>Create equivalent dose rate quantity (Sv/s).</summary>
+    public static Quantity<double> EquivalentDoseRate(double sievertPerSecond) => new(Create(sievertPerSecond, QuantityKinds.EquivalentDoseRate.CanonicalUnit), QuantityKinds.EquivalentDoseRate);
+    /// <summary>Create fluence quantity (1/m^2).</summary>
+    public static Quantity<double> Fluence(double perSquareMetre) => new(Create(perSquareMetre, QuantityKinds.Fluence.CanonicalUnit), QuantityKinds.Fluence);
+    /// <summary>Create fluence rate quantity (1/(m^2·s)).</summary>
+    public static Quantity<double> FluenceRate(double perSquareMetreSecond) => new(Create(perSquareMetreSecond, QuantityKinds.FluenceRate.CanonicalUnit), QuantityKinds.FluenceRate);
 }

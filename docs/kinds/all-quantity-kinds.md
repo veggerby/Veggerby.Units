@@ -124,7 +124,7 @@ Columns:
 | LuminousIntensity | I_v | cd | cd | Yes | Yes | — | Domain.Optics |
 | Luminance | L_v | cd/m^2 | cd·m^-2 | Yes | Yes | — | Domain.Optics |
 | Illuminance | E_v (lx) | cd·sr/m^2 | cd·m^-2 | Yes | Yes | — | Domain.Optics |
-| LuminousEfficacy | K_cd | lm/W | cd·sr·s^3/(kg·m^2) | Yes | Yes | — | Domain.Optics |
+| LuminousEfficacy | K_cd | lm/W | cd·s^3/(kg·m^2) | Yes | Yes | — | Domain.Optics |
 | Emissivity | ε_emis | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
 | Absorptivity | α_abs | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
 | Reflectivity | ρ_refl | 1 | 1 | Yes | Yes | — | Domain.Thermodynamic |
@@ -187,7 +187,7 @@ Columns:
 | MoleFraction | x | 1 | 1 | Yes | Yes | — | Domain.Chemistry |
 | MassFraction | w | 1 | 1 | Yes | Yes | — | Domain.Chemistry |
 | OsmoticPressure | π_osm | kg/(m·s^2) | kg·m^-1·s^-2 | Yes | Yes | — | Domain.Chemistry, Domain.Thermodynamic |
-| DimensionlessRatio | R_dim | 1 | 1 | Yes | Yes | — | Domain.Geometry |
+| DimensionlessRatio | R_dim | 1 | 1 | Yes | Yes | — | Form.Dimensionless |
 | VolumetricHeatCapacity | C_vol | kg/(m·s^2·K) | kg·m^-1·s^-2·K^-1 | Yes | Yes | — | Domain.Thermodynamic |
 | SpecificWeight | γ_spec | kg/(m^2·s^2) | kg·m^-2·s^-2 | Yes | Yes | — | Domain.Transport, Domain.Material |
 | PartialPressure | p_i | kg/(m·s^2) | kg·m^-1·s^-2 | Yes | Yes | — | Domain.Chemistry, Domain.Thermodynamic |
@@ -201,6 +201,46 @@ Columns:
 | Schmidt | Sc | 1 | 1 | Yes | Yes | — | Domain.Transport |
 | Sherwood | Sh | 1 | 1 | Yes | Yes | — | Domain.Transport |
 | Biot | Bi | 1 | 1 | Yes | Yes | — | Domain.Transport |
+| Stress | σ | kg/(m·s^2) | kg·m^-1·s^-2 | Yes | Yes | — | Domain.Mechanics, Domain.Material |
+| ShearStress | τ_s | kg/(m·s^2) | kg·m^-1·s^-2 | Yes | Yes | — | Domain.Mechanics, Domain.Material |
+| SecondMomentOfArea | I_A | m^4 | m^4 | Yes | Yes | — | Domain.Mechanics |
+| SectionModulus | Z_sec | m^3 | m^3 | Yes | Yes | — | Domain.Mechanics |
+| Stiffness | k_st | kg/s^2 | kg·s^-2 | Yes | Yes | — | Domain.Mechanics |
+| Compliance | C_comp | s^2/kg | s^2·kg^-1 | Yes | Yes | — | Domain.Mechanics |
+| DampingCoefficient | c_d | kg/s | kg·s^-1 | Yes | Yes | — | Domain.Mechanics |
+| CoefficientOfFriction | μ_f | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Mechanics |
+| PoissonRatio | ν_p | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Material |
+| Vorticity | ω_v | 1/s | s^-1 | Yes | Yes | — | Domain.Transport, Domain.Kinematics |
+| Circulation | Γ | m^2/s | m^2·s^-1 | Yes | Yes | — | Domain.Transport, Domain.Kinematics |
+| MachNumber | Ma | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| FroudeNumber | Fr | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| WeberNumber | We | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| PecletNumber | Pe | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| StantonNumber | St | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| StrouhalNumber | St_r | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| EulerNumber | Eu | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| KnudsenNumber | Kn | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| DamkohlerNumber | Da | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport, Domain.Chemistry |
+| RichardsonNumber | Ri | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Transport |
+| CoefficientOfThermalExpansion | α_th | 1/K | K^-1 | Yes | Yes | — | Domain.Thermodynamic |
+| SpecificLatentHeat | L_spec | m^2/s^2 | m^2·s^-2 | Yes | Yes | — | Domain.Thermodynamic |
+| MolarLatentHeat | L_mol | kg·m^2/(s^2·mol) | kg·m^2·s^-2·mol^-1 | Yes | Yes | — | Domain.Thermodynamic, Domain.Chemistry |
+| IsentropicExponent | γ_iso | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Thermodynamic |
+| RadiantExposure | H_e | kg/s^2 | kg·s^-2 | Yes | Yes | — | Domain.Radiation |
+| LuminousExposure | H_v | cd·s/m^2 | cd·m^-2·s | Yes | Yes | — | Domain.Optics |
+| LinearAttenuationCoefficient | μ_lin | 1/m | m^-1 | Yes | Yes | — | Domain.Radiation, Domain.Material |
+| OpticalDepth | τ_opt | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Optics |
+| HallCoefficient | R_H | m^3/(A·s) | m^3·A^-1·s^-1 | Yes | Yes | — | Domain.Electromagnetic |
+| SeebeckCoefficient | S_seeb | kg·m^2/(A·s^3·K) | kg·m^2·A^-1·s^-3·K^-1 | Yes | Yes | — | Domain.Electromagnetic, Domain.Thermodynamic |
+| MagneticSusceptibility | χ_m | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Electromagnetic |
+| ElectricSusceptibility | χ_e | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Electromagnetic |
+| RelativePermittivity | ε_r | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Electromagnetic |
+| RelativePermeability | μ_r | 1 | 1 | Yes | Yes | — | Form.Dimensionless, Domain.Electromagnetic |
+| ActivityConcentration | A_c | 1/(m^3·s) | m^-3·s^-1 | Yes | Yes | — | Domain.Radiation, Domain.Chemistry |
+| AbsorbedDoseRate | Ḋ_abs | m^2/s^3 | m^2·s^-3 | Yes | Yes | — | Domain.Radiation |
+| EquivalentDoseRate | Ḋ_eq | m^2/s^3 | m^2·s^-3 | Yes | Yes | — | Domain.Radiation |
+| Fluence | Φ_flu | 1/m^2 | m^-2 | Yes | Yes | — | Domain.Radiation |
+| FluenceRate | Φ̇_flu | 1/(m^2·s) | m^-2·s^-1 | Yes | Yes | — | Domain.Radiation |
 
 ---
 
