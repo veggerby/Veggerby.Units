@@ -30,11 +30,19 @@ Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit 
 
 ```csharp
 using Veggerby.Units;
+using Veggerby.Units.Fluent;      // formatting + Quantity facade
+using Veggerby.Units.Fluent.SI;   // SI numeric extensions
 
 var distance = new DoubleMeasurement(5, Prefix.k * Unit.SI.m);    // 5 km
 var time     = new DoubleMeasurement(30, Unit.SI.s);              // 30 s
 var speed    = distance / time;                                   // ≈ 0.166666 km/s
 var speedMS  = speed.ConvertTo(Unit.SI.m / Unit.SI.s);            // ≈ 166.666 m/s
+
+// Fluent equivalents:
+var d2 = 5.0.Kilometers();            // 5000 m
+var t2 = 30.0.Seconds();              // 30 s
+var v2 = d2 / t2;                     // m/s
+var vFmt = v2.Format(Formatting.UnitFormat.BaseFactors); // "166.66666666666666 m/s"
 ```
 
 More examples: `docs/capabilities.md`.
@@ -318,6 +326,7 @@ Docs index (see also `TryConvertTo` and decimal support in capabilities):
 * Reduction pipeline narrative: `docs/reduction-pipeline.md`
 * Performance guide: `docs/performance.md`
 * Quantity kinds list: `docs/quantity-kinds.md`
+* Fluent quickstart: `docs/fluent-quickstart.md`
 * Changelog: `CHANGELOG.md` (Unreleased changes)
 
 ## Contributing & Formatting

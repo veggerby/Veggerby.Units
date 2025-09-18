@@ -78,5 +78,4 @@ public class Advanced3InferenceOmissionTests
         // Assert
         act.Should().Throw<InvalidOperationException>();
     }
-
 }
