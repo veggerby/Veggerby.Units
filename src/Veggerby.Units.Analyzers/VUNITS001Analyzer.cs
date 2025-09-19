@@ -21,7 +21,7 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
     {
-        if (context == null)
+        if (context is null)
         {
             return;
         }
@@ -40,7 +40,7 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
 
         var leftType = context.SemanticModel.GetTypeInfo(binary.Left).Type;
         var rightType = context.SemanticModel.GetTypeInfo(binary.Right).Type;
-        if (leftType == null || rightType == null)
+        if (leftType is null || rightType is null)
         {
             return;
         }
@@ -62,7 +62,7 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
         var leftUnitSyntax = ExtractUnitExpression(binary.Left);
         var rightUnitSyntax = ExtractUnitExpression(binary.Right);
 
-        if (leftUnitSyntax == null || rightUnitSyntax == null)
+        if (leftUnitSyntax is null || rightUnitSyntax is null)
         {
             return; // cannot confidently resolve both units => no flag (avoid false positives)
         }
@@ -128,7 +128,7 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
         }
 
         // Object creation pattern new <MeasurementType>(value, unit)
-        if (expression is ObjectCreationExpressionSyntax oce && oce.ArgumentList != null && oce.ArgumentList.Arguments.Count >= 2)
+        if (expression is ObjectCreationExpressionSyntax oce && oce.ArgumentList is not null && oce.ArgumentList.Arguments.Count >= 2)
         {
             return oce.ArgumentList.Arguments[1].Expression;
         }
@@ -141,11 +141,11 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
                 .FirstOrDefault();
             // Fallback traversal: search variable declarators with same identifier within method body scope
             var method = id.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
-            if (method != null)
+            if (method is not null)
             {
                 foreach (var declarator in method.DescendantNodes().OfType<VariableDeclaratorSyntax>())
                 {
-                    if (declarator.Identifier.Text == id.Identifier.Text && declarator.Initializer?.Value is ObjectCreationExpressionSyntax initOce && initOce.ArgumentList != null && initOce.ArgumentList.Arguments.Count >= 2)
+                    if (declarator.Identifier.Text == id.Identifier.Text && declarator.Initializer?.Value is ObjectCreationExpressionSyntax initOce && initOce.ArgumentList is not null && initOce.ArgumentList.Arguments.Count >= 2)
                     {
                         return initOce.ArgumentList.Arguments[1].Expression;
                     }
@@ -163,7 +163,7 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
         var leftSymbol = model.GetSymbolInfo(left, token).Symbol;
         var rightSymbol = model.GetSymbolInfo(right, token).Symbol;
 
-        if (leftSymbol != null && rightSymbol != null)
+        if (leftSymbol is not null && rightSymbol is not null)
         {
             if (SymbolEqualityComparer.Default.Equals(leftSymbol, rightSymbol))
             {

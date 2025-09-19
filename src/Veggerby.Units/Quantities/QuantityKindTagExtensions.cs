@@ -27,7 +27,7 @@ internal static class QuantityKindTagExtensions
     /// <summary>Returns true if the tag's first dotted segment is a reserved or whitelisted root.</summary>
     public static bool IsReservedRoot(this QuantityKindTag tag)
     {
-        if (tag == null)
+        if (tag is null)
         {
             return false;
         }

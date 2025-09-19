@@ -20,7 +20,7 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
     {
-        if (context == null)
+        if (context is null)
         {
             return;
         }
@@ -38,7 +38,7 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
         }
 
         var method = context.SemanticModel.GetSymbolInfo(invocation).Symbol as IMethodSymbol;
-        if (method == null)
+        if (method is null)
         {
             return;
         }
@@ -50,7 +50,7 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
 
         // Ensure we are operating on Measurement<T> or a Quantity wrapper in Veggerby.Units namespace.
         var containingType = method.ContainingType;
-        if (containingType == null || !containingType.ContainingNamespace?.ToDisplayString().StartsWith("Veggerby.Units", System.StringComparison.Ordinal) == true)
+        if (containingType is null || !containingType.ContainingNamespace?.ToDisplayString().StartsWith("Veggerby.Units", System.StringComparison.Ordinal) == true)
         {
             return;
         }
@@ -59,7 +59,7 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
         foreach (var arg in invocation.ArgumentList.Arguments)
         {
             var argType = context.SemanticModel.GetTypeInfo(arg.Expression).Type;
-            if (argType != null && argType.Name == "UnitFormat")
+            if (argType is not null && argType.Name == "UnitFormat")
             {
                 return;
             }
@@ -79,14 +79,14 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
             receiverExpression = parentMaes.Expression;
         }
 
-        if (receiverExpression != null)
+        if (receiverExpression is not null)
         {
             var receiverType = context.SemanticModel.GetTypeInfo(receiverExpression).Type;
             // Look for a Unit property returning a type with a Symbol property constant.
-            if (receiverType != null)
+            if (receiverType is not null)
             {
                 var unitProp = receiverType.GetMembers().OfType<IPropertySymbol>().FirstOrDefault(p => p.Name == "Unit");
-                if (unitProp?.Type != null)
+                if (unitProp?.Type is not null)
                 {
                     // Search for a string constant Symbol on the Unit type.
                     var symbolMember = unitProp.Type.GetMembers("Symbol").FirstOrDefault();
@@ -94,7 +94,7 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
                     {
                         symbolText = s1;
                     }
-                    else if (symbolMember is IPropertySymbol ps && ps.GetMethod != null && ps.Type.SpecialType == SpecialType.System_String)
+                    else if (symbolMember is IPropertySymbol ps && ps.GetMethod is not null && ps.Type.SpecialType == SpecialType.System_String)
                     {
                         // Best effort: attempt constant value from attributes not available; skip invocation of property for performance.
                         // Without execution we cannot get runtime value; fall back to name-based heuristics.
@@ -111,11 +111,11 @@ public sealed class VUNITS002Analyzer : DiagnosticAnalyzer
             if (receiverExpression is IdentifierNameSyntax id)
             {
                 var enclosingMethod = id.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
-                if (enclosingMethod != null)
+                if (enclosingMethod is not null)
                 {
                     foreach (var declarator in enclosingMethod.DescendantNodes().OfType<VariableDeclaratorSyntax>())
                     {
-                        if (declarator.Identifier.Text == id.Identifier.Text && declarator.Initializer?.Value is ObjectCreationExpressionSyntax oce && oce.ArgumentList != null && oce.ArgumentList.Arguments.Count >= 2)
+                        if (declarator.Identifier.Text == id.Identifier.Text && declarator.Initializer?.Value is ObjectCreationExpressionSyntax oce && oce.ArgumentList is not null && oce.ArgumentList.Arguments.Count >= 2)
                         {
                             var unitArgText = oce.ArgumentList.Arguments[1].Expression.NormalizeWhitespace().ToFullString().Replace(" ", string.Empty);
                             // Very narrow canonical pattern recognition for Joule dimensional expression used in tests.

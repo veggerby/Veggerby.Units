@@ -32,26 +32,26 @@ public sealed class VUNITS001CodeFixProvider : CodeFixProvider
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         var diagnostic = context.Diagnostics.FirstOrDefault();
-        if (diagnostic == null)
+        if (diagnostic is null)
         {
             return;
         }
 
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-        if (root == null)
+        if (root is null)
         {
             return;
         }
 
         var node = root.FindNode(diagnostic.Location.SourceSpan) as BinaryExpressionSyntax;
-        if (node == null)
+        if (node is null)
         {
             return;
         }
 
         // We require left to expose .Unit and right not already converted.
         var leftUnitAccess = TryGetUnitAccess(node.Left);
-        if (leftUnitAccess == null)
+        if (leftUnitAccess is null)
         {
             return; // cannot safely construct conversion call
         }

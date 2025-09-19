@@ -83,7 +83,7 @@ public static class UnitFormatter
                     {
                         if (AmbiguityRegistry.TryGetAmbiguities(sym, out var kinds))
                         {
-                            if (kind != null)
+                            if (kind is not null)
                             {
                                 return sym + " (" + kind.Name + ")"; // always show explicit semantic intent
                             }
@@ -111,7 +111,7 @@ public static class UnitFormatter
         var vec = ExponentVector.From(unit.Dimension);
         // Torque override short-circuit; do not cache – dependent on provided kind.
         // QuantityKind-driven torque preference: when caller supplies Torque and dimension is Joule, render N·m.
-        if (qualifyWith != null && qualifyWith.Name == "Torque" && EqualsVector(vec, 1, 2, -2))
+        if (qualifyWith is not null && qualifyWith.Name == "Torque" && EqualsVector(vec, 1, 2, -2))
         {
             return "N·m";
         }
@@ -121,7 +121,7 @@ public static class UnitFormatter
         {
             if (!ShouldDecomposeInMixed(unit, exactSym))
             {
-                if (qualifyWith != null && AmbiguityRegistry.TryGetAmbiguities(exactSym, out _))
+                if (qualifyWith is not null && AmbiguityRegistry.TryGetAmbiguities(exactSym, out _))
                 {
                     return exactSym + " (" + qualifyWith.Name + ")";
                 }
@@ -130,7 +130,7 @@ public static class UnitFormatter
         }
 
         // Optionally serve from cache (unqualified core) when safe: only if qualification absent or will not append.
-        bool mayQualify = qualifyWith != null;
+        bool mayQualify = qualifyWith is not null;
         if (!mayQualify && TryGetMixedCache(vec, out var cachedCore))
         {
             return cachedCore;
@@ -419,7 +419,7 @@ public static class UnitFormatter
             core += "/" + string.Join("·", partsDenominator);
         }
 
-        if (qualifyWith != null && derivedTokens.Count > 0 && ContainsAmbiguousDerived(derivedTokens))
+        if (qualifyWith is not null && derivedTokens.Count > 0 && ContainsAmbiguousDerived(derivedTokens))
         {
             core += " (" + qualifyWith.Name + ")";
         }
