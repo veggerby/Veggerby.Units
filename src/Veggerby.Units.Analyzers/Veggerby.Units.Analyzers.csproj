@@ -4,7 +4,6 @@
     <AssemblyName>Veggerby.Units.Analyzers</AssemblyName>
     <RootNamespace>Veggerby.Units.Analyzers</RootNamespace>
     <PackageId>Veggerby.Units.Analyzers</PackageId>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
@@ -13,6 +12,16 @@
     <Deterministic>true</Deterministic>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <NoWarn>$(NoWarn);RS2007;RS2000</NoWarn>
+    <Description>Roslyn analyzers for Veggerby.Units: detects incompatible unit arithmetic and ambiguous unit formatting. Complements the core deterministic dimensional algebra library.</Description>
+    <PackageTags>units;measurement;dimensional-analysis;analyzers;roslyn;code-analysis;unit-conversion;formatting;veggerby</PackageTags>
+    <Authors>veggerby</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/veggerby/Veggerby.Units</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/veggerby/Veggerby.Units</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>Includes VUNITS001 (unit mismatch in + / -) and VUNITS002 (ambiguous formatting without explicit UnitFormat). See CHANGELOG.md for details.</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
@@ -23,5 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="/" />
+    <None Include="../../docs/icon.png" Pack="true" PackagePath="/" Link="icon.png" Condition="Exists('../../docs/icon.png')" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="bin/$(Configuration)/netstandard2.0/Veggerby.Units.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
   </ItemGroup>
 </Project>
