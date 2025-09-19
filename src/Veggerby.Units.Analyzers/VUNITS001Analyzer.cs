@@ -75,11 +75,23 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
 
     private static bool IsMeasurementType(ITypeSymbol type)
     {
-        if (type is INamedTypeSymbol named && named.IsGenericType)
+        if (type is INamedTypeSymbol named)
         {
-            if (named.Name == "Measurement" && named.ContainingNamespace.ToDisplayString().StartsWith("Veggerby.Units", System.StringComparison.Ordinal))
+            // Direct generic Measurement<T>
+            if (named.IsGenericType && named.Name == "Measurement" && named.ContainingNamespace.ToDisplayString().StartsWith("Veggerby.Units", System.StringComparison.Ordinal))
             {
                 return true;
+            }
+
+            // Derived concrete measurement types (e.g., Int32Measurement) inherit from Measurement<T>
+            var baseType = named.BaseType;
+            while (baseType is INamedTypeSymbol baseNamed)
+            {
+                if (baseNamed.IsGenericType && baseNamed.Name == "Measurement" && baseNamed.ContainingNamespace.ToDisplayString().StartsWith("Veggerby.Units", System.StringComparison.Ordinal))
+                {
+                    return true;
+                }
+                baseType = baseNamed.BaseType;
             }
         }
         return false;
@@ -119,6 +131,26 @@ public sealed class VUNITS001Analyzer : DiagnosticAnalyzer
         if (expression is ObjectCreationExpressionSyntax oce && oce.ArgumentList != null && oce.ArgumentList.Arguments.Count >= 2)
         {
             return oce.ArgumentList.Arguments[1].Expression;
+        }
+
+        // Identifier referencing a local variable with initializer new <MeasurementType>(value, unit)
+        if (expression is IdentifierNameSyntax id)
+        {
+            var symbol = id.AncestorsAndSelf()
+                .OfType<CompilationUnitSyntax>()
+                .FirstOrDefault();
+            // Fallback traversal: search variable declarators with same identifier within method body scope
+            var method = id.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (method != null)
+            {
+                foreach (var declarator in method.DescendantNodes().OfType<VariableDeclaratorSyntax>())
+                {
+                    if (declarator.Identifier.Text == id.Identifier.Text && declarator.Initializer?.Value is ObjectCreationExpressionSyntax initOce && initOce.ArgumentList != null && initOce.ArgumentList.Arguments.Count >= 2)
+                    {
+                        return initOce.ArgumentList.Arguments[1].Expression;
+                    }
+                }
+            }
         }
 
         // For now, we skip identifier/other expressions because retrieving their 'Unit' property would need points-to analysis.

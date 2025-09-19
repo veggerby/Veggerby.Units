@@ -8,6 +8,45 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 
 ## [Unreleased]
 
+### Added (Analyzers & Formatting)
+
+- Roslyn analyzers package: `VUNITS001` (additive unit mismatch) and `VUNITS002` (ambiguous formatting) with accompanying code fixes.
+- Mixed formatting optimization: deterministic minimal token selection with caching and ambiguity qualification (`docs/format-mixed-and-ambiguity.md`).
+- Analyzer documentation (`docs/analyzers/`) for rule rationale, examples, and suppression guidance.
+
+### Performance (Formatting)
+
+- Mixed mode formatting: added bounded cache and enumeration guard (no regressions in existing benchmarks; improved median Mixed formatting latency).
+
+### Documentation
+
+- New Mixed formatting & ambiguity policy spec.
+- Rule docs for analyzers, README references (pending link update if not yet committed).
+
+## [0.2.0] - 2025-09-19
+
+### Added (Semantic & Analyzers)
+
+- Quantity semantic expansion and tag system (see prior Unreleased entry migrated here).
+- New inference rules and electromagnetic corrections.
+- Mixed formatting algorithm & ambiguity policy (J, Pa, W, H) with qualification support.
+- Roslyn analyzers: VUNITS001 (Error) enforcing explicit unit conversion on additive operations; VUNITS002 (Info) enforcing explicit format for ambiguous symbols.
+
+### Changed (Formatting & Docs)
+
+- Performance improvements in Mixed formatting (subset enumeration + cache) without changing external formatting semantics.
+- Documentation restructured: added analyzer docs directory and Mixed formatting specification.
+
+### Tooling
+
+- Analyzer code fixes: automatic `ConvertTo(left.Unit)` insertion and `UnitFormat.Qualified` argument injection.
+- Release tracking temporarily suppresses RS2000/RS2007 (to be re-enabled after format alignment).
+
+### Notes
+
+- Minor version bump reflects introduction of analyzers and developer-facing formatting behavior (non-breaking runtime API surface).
+
+
 ### Added
 
 - Quantity semantic guard: Angle no longer silently behaves as generic scalar; participates only via explicit rules (e.g. Torque × Angle → Energy).
@@ -98,11 +137,11 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 - Corrected electromagnetic canonical unit exponents (R, G, C, L) ensuring dimensional consistency.
 - Pressure canonical unit explicitly defined to avoid rare reduction anomaly in composite expressions.
 
-### Performance
+### Performance (Baseline)
 
 - No regression: existing equality / reduction benchmarks unaffected (allocation profile unchanged). (Informal validation; formal gate maintained via benchmarks.)
 
-### Notes
+### Notes (Semantic Layer)
 
 - All inference remains single-hop: no transitive chaining introduced (design invariant preserved).
 - Registry sealing recommended after application startup to guarantee deterministic semantics; internal test-only reset helper used for isolation.
@@ -140,6 +179,7 @@ This project adheres to [Semantic Versioning](https://semver.org/) (pre-1.0: min
 
 ---
 
-[Unreleased]: https://github.com/veggerby/Veggerby.Units/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/veggerby/Veggerby.Units/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/veggerby/Veggerby.Units/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/veggerby/Veggerby.Units/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/veggerby/Veggerby.Units/releases/tag/v0.1.0

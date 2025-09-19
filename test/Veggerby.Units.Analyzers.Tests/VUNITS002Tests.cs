@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Veggerby.Units.Analyzers;
+using Veggerby.Units;
 using Xunit;
 using AwesomeAssertions;
 
@@ -26,20 +28,20 @@ public class VUNITS002Tests
     public void GivenAmbiguousSymbolFormattingWithoutUnitFormat_ThenDiagnostic()
     {
         // Arrange (Joule dimension ambiguous: Energy/Torque etc.)
-        const string src = @"using Veggerby.Units;class T{void M(){var e=new Measurement<int>(1,Unit.SI.m*Unit.SI.m*Unit.SI.kg/(Unit.SI.s*Unit.SI.s));var s=e.ToString();}}";
+    const string src = @"using Veggerby.Units;class T{void M(){var e=new Int32Measurement(1,Unit.SI.m*Unit.SI.m*Unit.SI.kg/(Unit.SI.s*Unit.SI.s));var s=e.ToString();}}";
 
         // Act
         var (_, diags) = Run(src);
 
         // Assert
-        diags.Should().Contain(d => d.Id == VUNITS002_Descriptor.DiagnosticId);
+    diags.Should().Contain(d => d.Id == "VUNITS002");
     }
 
     [Fact]
     public void GivenFormattingWithExplicitUnitFormat_ThenNoDiagnostic()
     {
         // Arrange
-        const string src = @"using Veggerby.Units;using Veggerby.Units.Formatting;class T{void M(){var e=new Measurement<int>(1,Unit.SI.m*Unit.SI.m*Unit.SI.kg/(Unit.SI.s*Unit.SI.s));var s=e.Format(UnitFormat.Qualified);}}";
+    const string src = @"using Veggerby.Units;using Veggerby.Units.Formatting;class T{void M(){var e=new Int32Measurement(1,Unit.SI.m*Unit.SI.m*Unit.SI.kg/(Unit.SI.s*Unit.SI.s));var s=e.Format(UnitFormat.Qualified);}}";
 
         // Act
         var (_, diags) = Run(src);

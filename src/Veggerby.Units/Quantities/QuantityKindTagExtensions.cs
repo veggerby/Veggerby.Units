@@ -20,7 +20,9 @@ internal static class QuantityKindTagExtensions
         "Legacy", "Experimental"
     };
 
+#if DEBUG
     private static bool _validated;
+#endif
 
     /// <summary>Returns true if the tag's first dotted segment is a reserved or whitelisted root.</summary>
     public static bool IsReservedRoot(this QuantityKindTag tag)

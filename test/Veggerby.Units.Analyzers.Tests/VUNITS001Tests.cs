@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Veggerby.Units.Analyzers;
+using Veggerby.Units;
 using Xunit;
 using AwesomeAssertions;
 
@@ -26,20 +28,20 @@ public class VUNITS001Tests
     public void GivenDifferentUnitsAddition_WhenNoConversion_ThenDiagnostic()
     {
         // Arrange
-        const string src = @"using Veggerby.Units;class T{void M(){var a=new Measurement<int>(1,Unit.SI.m);var b=new Measurement<int>(2,Unit.SI.s);var c=a+b;}}";
+        const string src = @"using Veggerby.Units;class T{void M(){var a=new Int32Measurement(1,Unit.SI.m);var b=new Int32Measurement(2,Unit.SI.s);var c=a+b;}}";
 
         // Act
         var (_, diags) = Run(src);
 
         // Assert
-        diags.Should().Contain(d => d.Id == VUNITS001_Descriptor.DiagnosticId);
+        diags.Should().Contain(d => d.Id == "VUNITS001");
     }
 
     [Fact]
     public void GivenSameUnitsAddition_WhenSafe_ThenNoDiagnostic()
     {
         // Arrange
-        const string src = @"using Veggerby.Units;class T{void M(){var a=new Measurement<int>(1,Unit.SI.m);var b=new Measurement<int>(2,Unit.SI.m);var c=a+b;}}";
+        const string src = @"using Veggerby.Units;class T{void M(){var a=new Int32Measurement(1,Unit.SI.m);var b=new Int32Measurement(2,Unit.SI.m);var c=a+b;}}";
 
         // Act
         var (_, diags) = Run(src);
