@@ -38,31 +38,38 @@ public class DivisionUnit : Unit, IDivisionOperation, ICanonicalFactorsProvider
         {
             return null;
         }
+
         if (_cachedFactors.HasValue)
         {
             return _cachedFactors;
         }
+
         // Represent dividend factors with positive exponents, divisor with negative.
         var map = ExponentMap<IOperand>.Rent();
+
         try
         {
-            Factorization.AccumulateProduct(map, new[] { (IOperand)_dividend });
+            Factorization.AccumulateProduct(map, [(IOperand)_dividend]);
             var dividendEntries = map.Entries().ToDictionary(kv => kv.Key, kv => kv.Value);
             map.Return();
             var map2 = ExponentMap<IOperand>.Rent();
+
             try
             {
-                Factorization.AccumulateProduct(map2, new[] { (IOperand)_divisor });
+                Factorization.AccumulateProduct(map2, [(IOperand)_divisor]);
+
                 foreach (var kv in map2.Entries())
                 {
                     dividendEntries[kv.Key] = dividendEntries.TryGetValue(kv.Key, out var v) ? v - kv.Value : -kv.Value;
                 }
+
                 var arr = dividendEntries
                     .Where(x => x.Value != 0)
                     .OrderBy(t => t.Key.GetType().FullName)
                     .ThenBy(t => (t.Key as Unit)?.Symbol ?? string.Empty)
                     .Select(t => (t.Key, t.Value))
                     .ToArray();
+
                 _cachedFactors = new FactorVector<IOperand>(arr);
                 return _cachedFactors;
             }
@@ -80,6 +87,7 @@ public class DivisionUnit : Unit, IDivisionOperation, ICanonicalFactorsProvider
 
     /// <inheritdoc />
     public override bool Equals(object obj) => OperationUtility.Equals(this, obj as IDivisionOperation);
+
     /// <inheritdoc />
     public override int GetHashCode()
     {

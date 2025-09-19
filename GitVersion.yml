@@ -4,7 +4,7 @@ tag-prefix: v
 branches:
   master:
     regex: ^master$
-    increment: Patch
+    increment: Minor
     is-mainline: true
     prevent-increment-of-merged-branch-version: true
     tag: prerelease
@@ -15,7 +15,7 @@ ignore:
   sha: []
 
 commit-message-incrementing: Enabled
-increment: Patch
+increment: Minor
 
 assembly-versioning-scheme: MajorMinorPatch
 assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{CommitsSinceVersionSource}'

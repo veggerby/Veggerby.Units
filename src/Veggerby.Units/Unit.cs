@@ -170,6 +170,11 @@ public abstract class Unit : IOperand
     /// <summary>Creates a reciprocal unit (1/divisor) with reduction and cancellation applied.</summary>
     public static Unit operator /(int dividend, Unit divisor)
     {
+        if (IsAffine(divisor))
+        {
+            throw new UnitException(None, divisor);
+        }
+
         return OperationUtility.RearrangeDivision((x, y) => x * y, (x, y) => x / y, None, divisor) ??
             Divide(None, divisor);
     }
@@ -199,6 +204,23 @@ public abstract class Unit : IOperand
     /// </summary>
     public static Unit operator ^(Unit @base, int exponent)
     {
+        // Affine guard first so negative exponent path cannot bypass it.
+        if (IsAffine(@base))
+        {
+            if (exponent == 0)
+            {
+                return None;
+            }
+
+            if (exponent == 1)
+            {
+                return @base;
+            }
+
+            // Any other exponent (negative or >1) invalid for affine units.
+            throw new UnitException(@base, @base);
+        }
+
         if (exponent < 0)
         {
             return 1 / (@base ^ (-exponent));
@@ -212,11 +234,6 @@ public abstract class Unit : IOperand
         if (exponent == 1)
         {
             return @base;
-        }
-
-        if (IsAffine(@base))
-        {
-            throw new UnitException(@base, @base);
         }
 
         return OperationUtility.ExpandPower(x => x.Multiply((a, b) => a * b, None), (x, y) => x / y, (x, y) => x ^ y, @base, exponent) ??

@@ -28,10 +28,12 @@ public class PowerDimension : Dimension, IPowerOperation, ICanonicalFactorsProvi
         {
             return OperationUtility.Equals(this, po);
         }
+
         if (obj is IOperand op)
         {
             return OperationUtility.Equals(this, op);
         }
+
         return false;
     }
 
@@ -46,12 +48,14 @@ public class PowerDimension : Dimension, IPowerOperation, ICanonicalFactorsProvi
             return hash ^ 0x7777AAAA;
         }
     }
+
     FactorVector<IOperand>? ICanonicalFactorsProvider.GetCanonicalFactors()
     {
         if (!ReductionSettings.UseFactorVector)
         {
             return null;
         }
-        return new FactorVector<IOperand>(new[] { ((IOperand)_base, _exponent) });
+
+        return new FactorVector<IOperand>([((IOperand)_base, _exponent)]);
     }
 }

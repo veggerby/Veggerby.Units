@@ -10,7 +10,7 @@ namespace Veggerby.Units.Tests;
 
 public class ReductionEqualityFlagTests
 {
-    private readonly Unit[] _baseUnits = new[] { Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A, Unit.SI.K };
+    private readonly Unit[] _baseUnits = [Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A, Unit.SI.K];
 
     [Fact]
     public void GivenRandomisedComposites_WhenComparingEquality_ThenCanonicalParityMaintained()
