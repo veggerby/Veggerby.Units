@@ -30,11 +30,19 @@ Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit 
 
 ```csharp
 using Veggerby.Units;
+using Veggerby.Units.Fluent;      // formatting + Quantity facade
+using Veggerby.Units.Fluent.SI;   // SI numeric extensions
 
 var distance = new DoubleMeasurement(5, Prefix.k * Unit.SI.m);    // 5 km
 var time     = new DoubleMeasurement(30, Unit.SI.s);              // 30 s
 var speed    = distance / time;                                   // ≈ 0.166666 km/s
 var speedMS  = speed.ConvertTo(Unit.SI.m / Unit.SI.s);            // ≈ 166.666 m/s
+
+// Fluent equivalents:
+var d2 = 5.0.Kilometers();            // 5000 m
+var t2 = 30.0.Seconds();              // 30 s
+var v2 = d2 / t2;                     // m/s
+var vFmt = v2.Format(Formatting.UnitFormat.BaseFactors); // "166.66666666666666 m/s"
 ```
 
 More examples: `docs/capabilities.md`.
@@ -117,7 +125,7 @@ Toggle only in benchmark / test contexts.
 * Parsing (string → expression tree)
 * Additional systems (CGS, US customary variants)
 * More numeric types (BigInteger, arbitrary precision) beyond current int/double/decimal
-* Property classification (Energy vs Work vs Heat) atop dimensions
+* (Done) Property classification (Energy vs Work vs Heat) via open tag system
 
 ## Temperature (Affine Units)
 
@@ -181,6 +189,46 @@ Unsupported / intentionally rejected behaviors:
 Why these constraints: to surface ambiguous intent early, avoid “semantic drift” hiding behind dimensionally valid math, and keep the registry explicit, reviewable, and minimal. If you need a new semantic product/division outcome, register it explicitly (see `QuantityKindInferenceRegistry`).
 
 More detail & extension guidance: `docs/quantities.md` (Inference & Arithmetic sections).
+
+### Tag System (Open Semantic Classification)
+
+Each `QuantityKind` has an extensible set of canonical tags (`QuantityKindTag`) describing semantic facets:
+
+* Examples: `Energy.StateFunction`, `Energy.PathFunction`, `Domain.Thermodynamic`, `Domain.Mechanical`, `Form.Dimensionless`.
+* Tags are canonical via `QuantityKindTag.Get(name)` (same name → same instance).
+* Tags never affect dimensional algebra or operator legality; they are metadata for policy, filtering, analytics, or UI grouping.
+
+```csharp
+var work = QuantityKinds.Work; // Energy.PathFunction, Domain.Mechanical, Energy
+bool isPath = work.HasTag("Energy.PathFunction"); // true
+```
+
+Custom kind with tags:
+
+```csharp
+var Exergy = new QuantityKind(
+    name: "Exergy",
+    canonicalUnit: QuantityKinds.Energy.CanonicalUnit,
+    symbol: "Ex",
+    tags: new[]{ QuantityKindTag.Get("Energy"), QuantityKindTag.Get("Energy.StateFunction"), QuantityKindTag.Get("Domain.Thermodynamic") });
+```
+
+Guidelines: prefer dotted hierarchical names, reuse existing roots (`Energy`, `Domain`, `Form`), keep tags stable (avoid transient runtime/state flags).
+
+### Conventional Symbol Overlaps
+
+Physics reuses concise symbols across domains. This library preserves conventional single-letter symbols instead of forcing artificial uniqueness. Governance only fails when two different kinds would be indistinguishable (same symbol + identical reduced canonical unit). Representative overlaps:
+
+| Symbol | Kinds | Distinguishing Dimension Examples |
+|--------|-------|-----------------------------------|
+| V | Voltage (kg·m²/(s³·A)), Volume (m³) | Electrical potential vs geometric extent |
+| S | Entropy (kg·m²/(s²·K)), ElectricConductance (s³·A²/(kg·m²)) | Thermal state vs transport ratio |
+| H | Enthalpy (kg·m²/s²), Inductance (kg·m²/(s²·A²)), MagneticFieldStrength (A/m) | Energy state, field storage, field intensity |
+| F | Force (kg·m/s²), Capacitance (s⁴·A²/(kg·m²)) | Mechanical interaction vs electric storage |
+| A | HelmholtzFreeEnergy (kg·m²/s²), Area (m²) | Energy potential vs geometric surface |
+| μ | ChemicalPotential (kg·m²/(s²·mol)), Permeability (kg·m/(s²·A²)), ChargeMobility (m²/(V·s)) | Thermodynamic, field medium, carrier transport |
+
+Use the semantic kind (`QuantityKind`)—not just the printed symbol—when correctness depends on meaning. Formatting layers can add additional disambiguation if desired.
 
 ### Inferred Multiplicative Examples
 
@@ -278,6 +326,7 @@ Docs index (see also `TryConvertTo` and decimal support in capabilities):
 * Reduction pipeline narrative: `docs/reduction-pipeline.md`
 * Performance guide: `docs/performance.md`
 * Quantity kinds list: `docs/quantity-kinds.md`
+* Fluent quickstart: `docs/fluent-quickstart.md`
 * Changelog: `CHANGELOG.md` (Unreleased changes)
 
 ## Contributing & Formatting

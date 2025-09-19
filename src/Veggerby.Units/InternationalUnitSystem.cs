@@ -26,6 +26,10 @@ public sealed class InternationalUnitSystem : UnitSystem
     public Unit cd { get; }
     /// <summary>Mole – base unit of amount of substance.</summary>
     public Unit n { get; }
+    /// <summary>Radian – coherent SI unit of plane angle (dimensionless).</summary>
+    public Unit rad { get; }
+    /// <summary>Steradian – coherent SI unit of solid angle (dimensionless).</summary>
+    public Unit sr { get; }
 
     /// <summary>
     /// Creates a new SI system instance with all base units initialised. Instances are immutable after construction.
@@ -41,5 +45,7 @@ public sealed class InternationalUnitSystem : UnitSystem
         C = new AffineUnit("°C", "celsius", K, 1d, 273.15d);
         cd = new BasicUnit("cd", "candela", this, Dimension.LuminousIntensity);
         n = new BasicUnit("mol", "mole", this, Dimension.AmountOfSubstance);
+        rad = new BasicUnit("rad", "radian", this, Dimension.None);
+        sr = new BasicUnit("sr", "steradian", this, Dimension.None);
     }
 }

@@ -40,10 +40,12 @@ public class PowerUnit : Unit, IPowerOperation, ICanonicalFactorsProvider
         {
             return OperationUtility.Equals(this, po);
         }
+
         if (obj is IOperand op)
         {
             return OperationUtility.Equals(this, op);
         }
+
         return false;
     }
 
@@ -64,7 +66,8 @@ public class PowerUnit : Unit, IPowerOperation, ICanonicalFactorsProvider
         {
             return null;
         }
+
         // Single factor representation
-        return new FactorVector<IOperand>(new[] { ((IOperand)_base, _exponent) });
+        return new FactorVector<IOperand>([((IOperand)_base, _exponent)]);
     }
 }

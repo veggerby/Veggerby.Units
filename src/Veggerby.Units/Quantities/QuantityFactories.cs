@@ -6,7 +6,7 @@ namespace Veggerby.Units.Quantities;
 /// Convenience creation helpers prioritising semantic intent over raw unit composition. All factories use double
 /// precision. For other numeric types construct the underlying measurement and wrap manually.
 /// </summary>
-public static class Quantity
+public static partial class Quantity
 {
     /// <summary>Generic semantic quantity factory.</summary>
     public static Quantity<double> Of(double value, Unit unit, QuantityKind kind, bool strict = true)
@@ -31,6 +31,14 @@ public static class Quantity
     /// <summary>Internal energy (Joules) quantity.</summary>
     public static Quantity<double> InternalEnergy(double joules)
         => Of(joules, QuantityKinds.Energy.CanonicalUnit, QuantityKinds.InternalEnergy);
+
+    /// <summary>Work (Joules) quantity (energy transfer).</summary>
+    public static Quantity<double> Work(double joules)
+        => Of(joules, QuantityKinds.Energy.CanonicalUnit, QuantityKinds.Work);
+
+    /// <summary>Heat (Joules) quantity (thermal energy transfer).</summary>
+    public static Quantity<double> Heat(double joules)
+        => Of(joules, QuantityKinds.Energy.CanonicalUnit, QuantityKinds.Heat);
 
     /// <summary>Entropy (J/K) quantity.</summary>
     public static Quantity<double> Entropy(double value, Unit unit = null)

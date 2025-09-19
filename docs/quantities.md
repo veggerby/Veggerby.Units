@@ -49,10 +49,50 @@ Quantity.Of(1.0, Unit.SI.J, QuantityKinds.Entropy, strict: true);
 Quantity.Entropy(2.5);
 ```
 
+### Tag System (Replaces Closed Categories)
+
+Earlier iterations used a closed `QuantityKindCategory` enum. This has been removed in favor of an **open tag system**:
+
+* Tags are lightweight canonical objects (`QuantityKindTag`) retrieved via `QuantityKindTag.Get("Name")`.
+* Names are case-sensitive and may use dotted namespace style (e.g. `Energy.StateFunction`, `Domain.Thermodynamic`, `Form.Dimensionless`).
+* Tags never affect dimensional reduction or operator legality; they are **descriptive metadata** for policies, reporting, filtering, analytics.
+* Canonical instances allow fast reference comparisons (`object.ReferenceEquals`) or hash-based lookups.
+
+Examples:
+
+```csharp
+var energy = QuantityKinds.Energy;                // Tags: Energy, Energy.StateFunction
+var work   = QuantityKinds.Work;                  // Tags: Energy, Energy.PathFunction, Domain.Mechanical
+bool isPath = work.HasTag("Energy.PathFunction"); // true
+```
+
+Adding a custom kind with tags:
+
+```csharp
+var Exergy = new QuantityKind(
+    name: "Exergy",
+    canonicalUnit: QuantityKinds.Energy.CanonicalUnit,
+    symbol: "Ex",
+    tags: new []
+    {
+        QuantityKindTag.Get("Energy"),
+        QuantityKindTag.Get("Energy.StateFunction"),
+        QuantityKindTag.Get("Domain.Thermodynamic")
+    });
+```
+
+Guidelines:
+
+1. Prefer reusing existing namespaces before inventing new hierarchies.
+2. Use singular nouns (e.g. `Energy`, not `Energies`).
+3. Reserve top-level prefixes (`Energy`, `Domain`, `Form`) for broad taxonomies.
+4. Avoid encoding algorithmic states or runtime modes in tags (keep them stable semantic descriptors).
+
 ### Future Extensions
 
 * Compile-time generics (marker interfaces per kind) for stronger static safety.
 * Pluggable registry for domain-specific kinds (biomedical, astrophysics, etc.).
+* Tag introspection utilities (e.g. query by prefix, export manifest) – planned.
 
 ### Non-Goals
 
@@ -110,6 +150,21 @@ This separation prevents subtle mistakes (e.g. summing °C values) while keeping
 * Affine units cannot be naively added/subtracted for semantic meaning (offset distortion).
 * Deltas are dimensionally identical but semantically distinct; modeling them separately preserves intent.
 * The approach is extensible (additional affine semantics like dates, times, energies with reference baselines, etc.).
+
+## Electromagnetic Kinds Overview
+
+An extended set of electromagnetic quantity kinds (Charge, Current, Voltage, Resistance, Conductance, Capacitance, Inductance, Flux, FluxDensity, FieldStrengths, Permittivity, Permeability, DipoleMoments, etc.) is provided. Their full canonical units and add/sub semantics are listed in `quantity-kinds.md`.
+
+Canonical unit corrections (September 2025) fixed exponent issues for Resistance, Conductance, Capacitance, and Inductance to align with SI base derivations:
+
+* R = Energy / (A^2·s)
+* G = 1 / R
+* C = (A·s)^2 / Energy
+* L = Energy / A^2
+
+All electromagnetic kinds allow direct addition and subtraction (they are not modeled as point-like). Semantic multiplication/division rules (e.g. Current \* Time => Charge, Voltage \* Charge => Energy, Current \* Voltage => Power) are registered explicitly in the inference registry.
+
+See `quantity-kinds.md` for the authoritative tabular listing.
 
 ## Semantic Inference (Multiply / Divide)
 
@@ -188,7 +243,7 @@ Enumerate active rules with `QuantityKindInferenceRegistry.EnumerateRules()` for
 
 #### Angle Is Not A Generic Scalar
 
-Although angle is dimensionless in SI, it is **not** treated as an interchangeable scalar here. Angles carry affine/periodic semantics (wrapping at 2π, directional context) and appear in explicit physical work relationships (Torque × Angle → Energy). Allowing Angle to silently behave like an unlabelled scalar in arbitrary multiplications would erase this meaning and permit accidental semantic leakage (e.g. scaling unrelated kinds by a radian value). Therefore Angle only participates via explicit inference rules (e.g. torque work) and is rejected as a passive fallback scalar.
+Although angle is dimensionless in SI, it is **not** treated as an interchangeable scalar here. Angles carry affine/periodic semantics (wrapping at 2π, directional context) and appear in explicit physical work relationships (Torque × Angle → Energy). Allowing Angle to silently behave like an unlabelled scalar in arbitrary multiplications would erase this meaning and permit accidental semantic leakage (e.g. scaling unrelated kinds by a radian value). Therefore Angle only participates via explicit inference rules (e.g. torque work) and is rejected as a passive fallback scalar. Tags (e.g. `Form.Dimensionless`) make the distinction explicit without granting scalar privileges.
 
 Raising a semantic quantity to a power frequently changes its meaning (Area vs Length^2, Energy^0.5 → sqrt(E) with no standard semantic alias). Absent universally accepted semantics, the library defers to explicit wrapping by user code.
 

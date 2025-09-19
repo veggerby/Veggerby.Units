@@ -12,7 +12,7 @@ namespace Veggerby.Units.Tests.Property;
 [Collection(ReductionSettingsCollection.Name)]
 public class ProductPowerEquality_Property
 {
-    private static readonly Unit[] Bases = new[] { Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A };
+    private static readonly Unit[] Bases = [Unit.SI.m, Unit.SI.s, Unit.SI.kg, Unit.SI.A];
 
     [Fact]
     public void ProductPowerEquality_FuzzCases()
@@ -32,12 +32,17 @@ public class ProductPowerEquality_Property
                     {
                         list.Add(Bases[rnd.Next(Bases.Length)]);
                     }
+
                     int exponent = 0;
                     while (exponent == 0) { exponent = rnd.Next(-5, 6); } // exclude 0
 
                     // Build lazy: (product)^n (if positive); for negative: reciprocal handled by ^ operator already
                     var product = list[0];
-                    for (int i = 1; i < list.Count; i++) { product *= list[i]; }
+                    for (int i = 1; i < list.Count; i++)
+                    {
+                        product *= list[i];
+                    }
+
                     var lazy = product ^ exponent;
 
                     // Build eager distributed equivalent by aggregating base counts * exponent magnitude
@@ -46,6 +51,7 @@ public class ProductPowerEquality_Property
                     {
                         counts[u] = counts.TryGetValue(u, out var c) ? c + 1 : 1;
                     }
+
                     Unit eager = Unit.None;
                     foreach (var kv in counts)
                     {
@@ -53,7 +59,11 @@ public class ProductPowerEquality_Property
                         var pow = kv.Key ^ exp;
                         eager = eager == Unit.None ? pow : eager * pow;
                     }
-                    if (exponent < 0) { eager = 1 / eager; }
+
+                    if (exponent < 0)
+                    {
+                        eager = 1 / eager;
+                    }
 
                     // Act & Assert
                     (lazy == eager).Should().BeTrue();

@@ -18,6 +18,7 @@ public class DivisionDimension : Dimension, IDivisionOperation, ICanonicalFactor
 
     /// <inheritdoc />
     public override string Symbol => string.Format("{0}/{1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Symbol, _divisor.Symbol);
+
     /// <inheritdoc />
     public override string Name => string.Format("{0} / {1}", _dividend.Symbol == string.Empty ? "1" : _dividend.Name, _divisor.Name);
 
@@ -44,30 +45,36 @@ public class DivisionDimension : Dimension, IDivisionOperation, ICanonicalFactor
         {
             return null;
         }
+
         if (_cachedFactors.HasValue)
         {
             return _cachedFactors;
         }
+
         var map = ExponentMap<IOperand>.Rent();
         try
         {
-            Factorization.AccumulateProduct(map, new[] { (IOperand)_dividend });
+            Factorization.AccumulateProduct(map, [(IOperand)_dividend]);
             var dict = map.Entries().ToDictionary(kv => kv.Key, kv => kv.Value);
             map.Return();
             var map2 = ExponentMap<IOperand>.Rent();
+
             try
             {
-                Factorization.AccumulateProduct(map2, new[] { (IOperand)_divisor });
+                Factorization.AccumulateProduct(map2, [(IOperand)_divisor]);
+
                 foreach (var kv in map2.Entries())
                 {
                     dict[kv.Key] = dict.TryGetValue(kv.Key, out var v) ? v - kv.Value : -kv.Value;
                 }
+
                 var arr = dict
                     .Where(x => x.Value != 0)
                     .OrderBy(t => t.Key.GetType().FullName)
                     .ThenBy(t => (t.Key as Dimension)?.Symbol ?? string.Empty)
                     .Select(t => (t.Key, t.Value))
                     .ToArray();
+
                 _cachedFactors = new FactorVector<IOperand>(arr);
                 return _cachedFactors;
             }

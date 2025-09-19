@@ -37,8 +37,15 @@ public static partial class QuantityKinds
     /// <summary>Pressure (Pa) = N/m².</summary>
     public static readonly QuantityKind Pressure = new(
         "Pressure",
-        Force.CanonicalUnit / (Unit.SI.m ^ 2),
+        Unit.SI.kg / (Unit.SI.m * (Unit.SI.s ^ 2)),
         "p");
+
+    /// <summary>Young's modulus (Pa).</summary>
+    public static readonly QuantityKind YoungsModulus = new(
+        "YoungsModulus",
+        Unit.SI.kg / (Unit.SI.m * (Unit.SI.s ^ 2)),
+        "E",
+        tags: [QuantityKindTags.DomainMaterial, QuantityKindTags.DomainMechanics]);
 
     /// <summary>Volume (m³) = m^3 (geometric volume).</summary>
     public static readonly QuantityKind Volume = new(
