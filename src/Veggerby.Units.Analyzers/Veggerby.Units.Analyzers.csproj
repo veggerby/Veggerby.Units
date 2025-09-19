@@ -35,6 +35,6 @@
     <None Include="../../docs/icon.png" Pack="true" PackagePath="/" Link="icon.png" Condition="Exists('../../docs/icon.png')" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="bin/$(Configuration)/netstandard2.0/Veggerby.Units.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
+    <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Condition="Exists('$(TargetPath)')" />
   </ItemGroup>
 </Project>
