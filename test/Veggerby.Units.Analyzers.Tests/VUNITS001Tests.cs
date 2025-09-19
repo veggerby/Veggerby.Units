@@ -1,12 +1,16 @@
-using System.Threading.Tasks;
 using System.Collections.Immutable;
+using System.Threading.Tasks;
+
+using AwesomeAssertions;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Veggerby.Units.Analyzers;
+
 using Veggerby.Units;
+using Veggerby.Units.Analyzers;
+
 using Xunit;
-using AwesomeAssertions;
 
 namespace Veggerby.Units.Analyzers.Tests;
 

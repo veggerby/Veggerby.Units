@@ -83,6 +83,16 @@ public sealed class VUNITS001CodeFixProvider : CodeFixProvider
             return inner;
         }
 
+        // Synthesize for identifier measurement variable: a => a.Unit
+        if (expression is IdentifierNameSyntax id)
+        {
+            var unitAccess = SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                id,
+                SyntaxFactory.IdentifierName("Unit"));
+            return unitAccess;
+        }
+
         return null;
     }
 
