@@ -2,11 +2,11 @@ name: CI & Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     tags:
       - 'v*.*.*'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -150,10 +150,10 @@ jobs:
         env:
           GH_PACKAGES_TOKEN: ${{ env.GH_PACKAGES_TOKEN }}
 
-  publish-master-prerelease:
+  publish-main-prerelease:
     needs: pack
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -165,11 +165,11 @@ jobs:
         with:
           name: nuget-package
           path: ./nupkg
-      - name: Publish prerelease to GitHub Packages (master)
+      - name: Publish prerelease to GitHub Packages (main)
         run: dotnet nuget push ./nupkg/*.nupkg --api-key "$GH_PACKAGES_TOKEN" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
         env:
           GH_PACKAGES_TOKEN: ${{ env.GH_PACKAGES_TOKEN }}
-      - name: Publish prerelease to NuGet.org (master)
+      - name: Publish prerelease to NuGet.org (main)
         run: dotnet nuget push ./nupkg/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
         env:
           NUGET_API_KEY: ${{ env.NUGET_API_KEY }}

@@ -30,7 +30,7 @@ All algorithms operate against these interfaces so Units and Dimensions share id
 5. Cancel factors across division: `(A * C)/(A * B)` → `C / B`.
 6. Expand powers over composites: `(A*B)^n` → `A^n * B^n`; `(A/B)^n` → `A^n / B^n`; `(A^m)^n` → `A^(m*n)`.
 
-These steps are applied opportunistically by operator overloads; no single master pipeline runs every step unconditionally.
+These steps are applied opportunistically by operator overloads; no single main pipeline runs every step unconditionally.
 
 ## Structural Equality (Canonical Form)
 

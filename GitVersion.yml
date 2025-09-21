@@ -2,8 +2,8 @@ mode: ContinuousDeployment
 tag-prefix: v
 
 branches:
-  master:
-    regex: ^master$
+  main:
+    regex: ^main$
     increment: Minor
     is-mainline: true
     prevent-increment-of-merged-branch-version: true
