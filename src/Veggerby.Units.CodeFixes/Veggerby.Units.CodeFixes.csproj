@@ -18,6 +18,7 @@
     <PackageProjectUrl>https://github.com/veggerby/Veggerby.Units</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>units;measurement;dimensional-analysis;analyzers;code-fix;roslyn;unit-conversion;formatting;veggerby</PackageTags>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
