@@ -25,8 +25,10 @@ public class QuantityFactoryReflectionTests
 
         foreach (var m in methods)
         {
+            var paramType = m.GetParameters()[0].ParameterType;
+            object arg = paramType == typeof(TimeSpan) ? (object)TimeSpan.FromSeconds(1) : 1d;
             // Act
-            var q = m.Invoke(null, new object[] { 1d });
+            var q = m.Invoke(null, new[] { arg });
 
             // Assert
             q.Should().NotBeNull();
