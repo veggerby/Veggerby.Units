@@ -23,17 +23,19 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>Includes VUNITS001 (unit mismatch in + / -) and VUNITS002 (ambiguous formatting without explicit UnitFormat). See CHANGELOG.md for details.</PackageReleaseNotes>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
     <PackageReference Include="System.Composition" PrivateAssets="all" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="/" />
     <None Include="../../docs/icon.png" Pack="true" PackagePath="/" Link="icon.png" Condition="Exists('../../docs/icon.png')" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="$(TargetPath)" Pack="true" PackagePath="analyzers/dotnet/cs" Condition="Exists('$(TargetPath)')" />
   </ItemGroup>

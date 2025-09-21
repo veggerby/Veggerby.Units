@@ -47,6 +47,19 @@ var vFmt = v2.Format(Formatting.UnitFormat.BaseFactors); // "166.66666666666666 
 
 More examples: `docs/capabilities.md`.
 
+### Analyzer & Code Fix Integration
+
+Add diagnostics (unit mismatch, ambiguous formatting) and IDE quick fixes with the companion packages:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="Veggerby.Units.Analyzers" Version="$(VeggerbyUnitsAnalyzersVersion)" PrivateAssets="all" />
+    <PackageReference Include="Veggerby.Units.CodeFixes" Version="$(VeggerbyUnitsCodeFixesVersion)" PrivateAssets="all" />
+</ItemGroup>
+```
+
+Omit `Veggerby.Units.CodeFixes` on CI-only projects that do not need IDE code actions.
+
 ## Core concepts
 
 | Concept | Summary |

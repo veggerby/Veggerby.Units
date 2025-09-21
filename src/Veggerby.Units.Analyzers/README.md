@@ -6,16 +6,19 @@ These analyzers complement the core library’s deterministic dimensional algebr
 
 ## Install
 
-Add the analyzer package alongside the core library (recommended):
+Add the analyzer package alongside the core library. Optionally add the code fixes package for IDE quick actions:
 
 ```xml
 <ItemGroup>
   <PackageReference Include="Veggerby.Units" Version="$(VeggerbyUnitsVersion)" />
   <PackageReference Include="Veggerby.Units.Analyzers" Version="$(VeggerbyUnitsAnalyzersVersion)" PrivateAssets="all" />
+  <PackageReference Include="Veggerby.Units.CodeFixes" Version="$(VeggerbyUnitsCodeFixesVersion)" PrivateAssets="all" />
 </ItemGroup>
 ```
 
-`PrivateAssets="all"` keeps the analyzers from flowing transitively to downstream consumers unless you intend that.
+`PrivateAssets="all"` keeps analyzers/code fixes from flowing transitively to downstream consumers unless you intend that.
+
+If you only want diagnostics in CI (no IDE code actions) omit the `Veggerby.Units.CodeFixes` reference.
 
 ## Rules
 
@@ -25,6 +28,7 @@ Add the analyzer package alongside the core library (recommended):
 | VUNITS002 | Ambiguous unit formatting | Info | Warns when calling `ToString()` / `Format()` on a measurement whose unit symbol is ambiguous without specifying `UnitFormat`. |
 
 ### VUNITS001 – Incompatible unit arithmetic
+
 Disallows adding or subtracting measurements unless their units are structurally identical. Convert explicitly first if needed.
 
 ```csharp
@@ -34,6 +38,7 @@ var bad = length + time; // VUNITS001
 ```
 
 ### VUNITS002 – Ambiguous unit formatting
+
 Some symbols (e.g. `J`, `Pa`, `W`, `H`) map to multiple quantity meanings. Use an explicit `UnitFormat` (e.g. `UnitFormat.Qualified`) to clarify output.
 
 ```csharp
@@ -41,6 +46,15 @@ var energy = new Int32Measurement(1, Unit.SI.m*Unit.SI.m*Unit.SI.kg/(Unit.SI.s*U
 var s1 = energy.ToString();          // VUNITS002
 var s2 = energy.Format(UnitFormat.Qualified); // OK
 ```
+
+## Code Fix Support
+
+Install `Veggerby.Units.CodeFixes` to enable:
+
+* VUNITS001: Adds `.ConvertTo(left.Unit)` on the right operand of `+` / `-`.
+* VUNITS002: Appends `UnitFormat.Qualified` to formatting invocation.
+
+Both fixes support Fix All in Document / Project / Solution.
 
 ## Suppression
 
@@ -54,9 +68,9 @@ var s = energy.ToString();
 
 ## Roadmap
 
-- Enrich unit extraction for complex expression flows.
-- Direct consumption of shared ambiguity registry (when public hook is finalized).
-- Additional rules: affine misuse in arithmetic, redundant unit multiplications, dead dimension factors.
+* Enrich unit extraction for complex expression flows.
+* Direct consumption of shared ambiguity registry (when public hook is finalized).
+* Additional rules: affine misuse in arithmetic, redundant unit multiplications, dead dimension factors.
 
 ## Contributing
 
