@@ -19,6 +19,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>units;measurement;dimensional-analysis;analyzers;code-fix;roslyn;unit-conversion;formatting;veggerby</PackageTags>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- Disable symbol package for analyzer-only code fix assembly (no lib PDBs) -->
+    <IncludeSymbols>false</IncludeSymbols>
+    <SymbolPackageFormat></SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
