@@ -129,12 +129,12 @@ var f = c.ConvertTo(Unit.Imperial.F); // 68 °F
 
 ## More Information
 
-- Reduction architecture: [docs/reduction-architecture.md](https://github.com/veggerby/Veggerby.Units/blob/master/docs/reduction-architecture.md)
-- Reduction pipeline: [docs/reduction-pipeline.md](https://github.com/veggerby/Veggerby.Units/blob/master/docs/reduction-pipeline.md)
-- Capabilities: [docs/capabilities.md](https://github.com/veggerby/Veggerby.Units/blob/master/docs/capabilities.md)
-- Quantities overview: [docs/quantities.md](https://github.com/veggerby/Veggerby.Units/blob/master/docs/quantities.md)
-- Quantity kinds: [docs/quantity-kinds.md](https://github.com/veggerby/Veggerby.Units/blob/master/docs/quantity-kinds.md)
-- Performance notes: [docs/performance.md](https://github.com/veggerby/Veggerby.Units/blob/master/docs/performance.md)
+- Reduction architecture: [docs/reduction-architecture.md](https://github.com/veggerby/Veggerby.Units/blob/main/docs/reduction-architecture.md)
+- Reduction pipeline: [docs/reduction-pipeline.md](https://github.com/veggerby/Veggerby.Units/blob/main/docs/reduction-pipeline.md)
+- Capabilities: [docs/capabilities.md](https://github.com/veggerby/Veggerby.Units/blob/main/docs/capabilities.md)
+- Quantities overview: [docs/quantities.md](https://github.com/veggerby/Veggerby.Units/blob/main/docs/quantities.md)
+- Quantity kinds: [docs/quantity-kinds.md](https://github.com/veggerby/Veggerby.Units/blob/main/docs/quantity-kinds.md)
+- Performance notes: [docs/performance.md](https://github.com/veggerby/Veggerby.Units/blob/main/docs/performance.md)
 
 ## License
 
