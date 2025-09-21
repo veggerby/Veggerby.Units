@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Veggerby.Units.Analyzers/Veggerby.Units.Analyzers.csproj" />
+    <ProjectReference Include="../../src/Veggerby.Units.CodeFixes/Veggerby.Units.CodeFixes.csproj" />
     <ProjectReference Include="../../src/Veggerby.Units/Veggerby.Units.csproj" />
   </ItemGroup>
 
