@@ -16,7 +16,7 @@
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
-    <PackageVersion Include="AwesomeAssertions" Version="9.1.0" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.3.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <!-- Benchmarks -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.5" />
