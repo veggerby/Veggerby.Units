@@ -132,16 +132,6 @@ public class MeasurementJsonConverter<T> : JsonConverter<Measurement<T>> where T
             return (T)(object)reader.GetDecimal();
         }
 
-        if (type == typeof(float))
-        {
-            return (T)(object)reader.GetSingle();
-        }
-
-        if (type == typeof(long))
-        {
-            return (T)(object)reader.GetInt64();
-        }
-
         throw new JsonException($"Unsupported value type {type.Name} for Measurement deserialization");
     }
 
@@ -160,14 +150,6 @@ public class MeasurementJsonConverter<T> : JsonConverter<Measurement<T>> where T
         else if (type == typeof(decimal))
         {
             writer.WriteNumberValue((decimal)(object)value);
-        }
-        else if (type == typeof(float))
-        {
-            writer.WriteNumberValue((float)(object)value);
-        }
-        else if (type == typeof(long))
-        {
-            writer.WriteNumberValue((long)(object)value);
         }
         else
         {

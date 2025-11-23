@@ -139,24 +139,44 @@ public class UnitJsonConverter : JsonConverter<Unit>
     private static Unit GetDividend(DivisionUnit divisionUnit)
     {
         var field = typeof(DivisionUnit).GetField("_dividend", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (field == null)
+        {
+            throw new InvalidOperationException("Failed to access DivisionUnit._dividend field via reflection");
+        }
+
         return (Unit)field.GetValue(divisionUnit);
     }
 
     private static Unit GetDivisor(DivisionUnit divisionUnit)
     {
         var field = typeof(DivisionUnit).GetField("_divisor", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (field == null)
+        {
+            throw new InvalidOperationException("Failed to access DivisionUnit._divisor field via reflection");
+        }
+
         return (Unit)field.GetValue(divisionUnit);
     }
 
     private static Unit GetPowerBase(PowerUnit powerUnit)
     {
         var field = typeof(PowerUnit).GetField("_base", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (field == null)
+        {
+            throw new InvalidOperationException("Failed to access PowerUnit._base field via reflection");
+        }
+
         return (Unit)field.GetValue(powerUnit);
     }
 
     private static int GetPowerExponent(PowerUnit powerUnit)
     {
         var field = typeof(PowerUnit).GetField("_exponent", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (field == null)
+        {
+            throw new InvalidOperationException("Failed to access PowerUnit._exponent field via reflection");
+        }
+
         return (int)field.GetValue(powerUnit);
     }
 }
