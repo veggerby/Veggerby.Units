@@ -522,6 +522,7 @@ public sealed class Quantity<T> where T : IComparable
     /// Multiplies two quantities attempting semantic inference. If an inference rule exists the result kind is applied; otherwise
     /// if one side is dimensionless (unitless) the other side's kind is preserved. When neither condition holds an <see cref="InvalidOperationException"/> is thrown.
     /// Absolute (point-like) kinds may participate only via inference (e.g. T_abs * Entropy -> Energy) and never preserve point semantics by dimensionless fallback.
+    /// When <see cref="QuantityKindInferenceRegistry.TransitiveInferenceEnabled"/> is true, attempts multi-step inference chains.
     /// </summary>
     public static Quantity<T> operator *(Quantity<T> left, Quantity<T> right)
     {
@@ -530,7 +531,14 @@ public sealed class Quantity<T> where T : IComparable
             return left ?? right;
         }
 
+        // Try direct inference first (always, for backward compatibility)
         var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Multiply, right.Kind);
+
+        // If no direct rule and transitive inference is enabled, try transitive
+        if (inferred is null && QuantityKindInferenceRegistry.TransitiveInferenceEnabled)
+        {
+            inferred = QuantityKindInferenceRegistry.ResolveTransitive(left.Kind, QuantityKindBinaryOperator.Multiply, right.Kind);
+        }
 
         if (inferred is not null)
         {
@@ -569,6 +577,7 @@ public sealed class Quantity<T> where T : IComparable
     /// <summary>
     /// Divides two quantities with semantic inference (e.g. Energy / TemperatureAbsolute -> Entropy). If no rule exists and the divisor is dimensionless
     /// the left kind is preserved (unless point-like). Otherwise throws.
+    /// When <see cref="QuantityKindInferenceRegistry.TransitiveInferenceEnabled"/> is true, attempts multi-step inference chains.
     /// </summary>
     public static Quantity<T> operator /(Quantity<T> left, Quantity<T> right)
     {
@@ -577,7 +586,15 @@ public sealed class Quantity<T> where T : IComparable
             return left ?? right;
         }
 
+        // Try direct inference first
         var inferred = QuantityKindInferenceRegistry.ResolveOrNull(left.Kind, QuantityKindBinaryOperator.Divide, right.Kind);
+
+        // If no direct rule and transitive inference is enabled, try transitive
+        if (inferred is null && QuantityKindInferenceRegistry.TransitiveInferenceEnabled)
+        {
+            inferred = QuantityKindInferenceRegistry.ResolveTransitive(left.Kind, QuantityKindBinaryOperator.Divide, right.Kind);
+        }
+
         if (inferred is not null)
         {
             var quotient = left.Measurement / right.Measurement;
