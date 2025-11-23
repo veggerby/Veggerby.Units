@@ -8,6 +8,12 @@ namespace Veggerby.Units.Tests;
 
 public class QuantityInferenceEdgeTests
 {
+    public QuantityInferenceEdgeTests()
+    {
+        // Ensure transitive inference is disabled for these edge case tests
+        QuantityKindInferenceRegistry.ResetForTests();
+    }
+
     [Fact]
     public void GivenFluxDividedByTimeTwice_WhenNoTransitiveRule_ThenSecondDivisionThrows()
     {
