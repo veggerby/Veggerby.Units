@@ -13,8 +13,23 @@ public static class QuantityKindInferenceRegistry
     private static readonly List<QuantityKindInference> _rules = [];
     private static bool _sealed;
 
+    // Transitive inference cache: (left, op, right, depth) -> result
+    private static readonly Dictionary<(QuantityKind, QuantityKindBinaryOperator, QuantityKind, int), QuantityKind> _transitiveCache = [];
+
     /// <summary>When true, registering a rule that overwrites an existing mapping throws instead of replacing it.</summary>
     public static bool StrictConflictDetection { get; set; } = true;
+
+    /// <summary>Enable or disable transitive inference globally (default: disabled for backward compatibility).</summary>
+    public static bool TransitiveInferenceEnabled { get; set; } = false;
+
+    /// <summary>Maximum chain depth for transitive inference (default: 1 = single-hop only).</summary>
+    public static int MaxInferenceDepth { get; set; } = 1;
+
+    /// <summary>Throw on ambiguous transitive paths leading to different results (default: true).</summary>
+    public static bool StrictTransitiveInference { get; set; } = true;
+
+    /// <summary>Cache transitive inference results for performance (default: true).</summary>
+    public static bool CacheTransitiveResults { get; set; } = true;
 
     /// <summary>Returns true when further registrations are disallowed.</summary>
     public static bool IsSealed => _sealed;
@@ -310,6 +325,150 @@ public static class QuantityKindInferenceRegistry
         return res;
     }
 
+    /// <summary>
+    /// Resolve with transitive inference up to configured depth.
+    /// Returns null if no path found within depth limit.
+    /// </summary>
+    /// <param name="left">Left operand quantity kind.</param>
+    /// <param name="op">Binary operator.</param>
+    /// <param name="right">Right operand quantity kind.</param>
+    /// <param name="maxDepth">Maximum inference depth; -1 uses <see cref="MaxInferenceDepth"/>.</param>
+    /// <returns>The inferred quantity kind, or null if no path exists.</returns>
+    /// <exception cref="AmbiguousInferenceException">Thrown when <see cref="StrictTransitiveInference"/> is true and multiple conflicting paths exist.</exception>
+    public static QuantityKind ResolveTransitive(
+        QuantityKind left,
+        QuantityKindBinaryOperator op,
+        QuantityKind right,
+        int maxDepth = -1)
+    {
+        var depth = maxDepth < 0 ? MaxInferenceDepth : maxDepth;
+
+        if (depth < 1)
+        {
+            return null;
+        }
+
+        var cache = CacheTransitiveResults ? _transitiveCache : null;
+        var path = QuantityKindInferenceEngine.FindPath(left, op, right, depth, StrictTransitiveInference, cache);
+
+        return path?.Steps.LastOrDefault()?.Result;
+    }
+
+    /// <summary>
+    /// Resolve and return the inference path (for diagnostics/explanation).
+    /// </summary>
+    /// <param name="left">Left operand quantity kind.</param>
+    /// <param name="op">Binary operator.</param>
+    /// <param name="right">Right operand quantity kind.</param>
+    /// <param name="result">The inferred result kind (if found).</param>
+    /// <param name="path">The complete inference path showing all steps.</param>
+    /// <returns>True if a path was found; otherwise false.</returns>
+    public static bool TryResolveWithPath(
+        QuantityKind left,
+        QuantityKindBinaryOperator op,
+        QuantityKind right,
+        out QuantityKind result,
+        out InferencePath path)
+    {
+        result = null;
+        path = null;
+
+        var depth = MaxInferenceDepth;
+        if (depth < 1)
+        {
+            return false;
+        }
+
+        try
+        {
+            var cache = CacheTransitiveResults ? _transitiveCache : null;
+            path = QuantityKindInferenceEngine.FindPath(left, op, right, depth, StrictTransitiveInference, cache);
+
+            if (path is not null && path.Steps.Count > 0)
+            {
+                result = path.Steps.Last().Result;
+                return true;
+            }
+
+            return false;
+        }
+        catch (AmbiguousInferenceException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Enumerates all possible paths between two kinds within the specified depth.
+    /// Useful for debugging and understanding inference behavior.
+    /// </summary>
+    /// <param name="left">Left operand quantity kind.</param>
+    /// <param name="op">Binary operator.</param>
+    /// <param name="right">Right operand quantity kind.</param>
+    /// <param name="maxDepth">Maximum inference depth to search.</param>
+    /// <returns>All discovered inference paths.</returns>
+    public static IEnumerable<InferencePath> EnumeratePaths(
+        QuantityKind left,
+        QuantityKindBinaryOperator op,
+        QuantityKind right,
+        int maxDepth)
+    {
+        if (maxDepth < 1)
+        {
+            return [];
+        }
+
+        return QuantityKindInferenceEngine.EnumerateAllPaths(left, op, right, maxDepth);
+    }
+
+    /// <summary>
+    /// Explains why an inference failed by checking for direct mappings and suggesting alternatives.
+    /// </summary>
+    /// <param name="left">Left operand quantity kind.</param>
+    /// <param name="op">Binary operator.</param>
+    /// <param name="right">Right operand quantity kind.</param>
+    /// <returns>A diagnostic message explaining the failure.</returns>
+    public static string ExplainFailure(
+        QuantityKind left,
+        QuantityKindBinaryOperator op,
+        QuantityKind right)
+    {
+        // Check direct mapping
+        var direct = ResolveOrNull(left, op, right);
+        if (direct is not null)
+        {
+            return $"Direct mapping exists: {left.Name} {op} {right.Name} → {direct.Name}";
+        }
+
+        // Check if transitive inference is disabled
+        if (!TransitiveInferenceEnabled || MaxInferenceDepth < 2)
+        {
+            return $"No direct mapping for {left.Name} {op} {right.Name}. " +
+                   $"Transitive inference is {(TransitiveInferenceEnabled ? $"enabled but limited to depth {MaxInferenceDepth}" : "disabled")}.";
+        }
+
+        // Try to find paths
+        var paths = EnumeratePaths(left, op, right, MaxInferenceDepth).ToList();
+
+        if (paths.Count == 0)
+        {
+            return $"No inference path found for {left.Name} {op} {right.Name} within depth {MaxInferenceDepth}.";
+        }
+
+        var distinctResults = paths.Select(p => p.Steps.Last().Result.Name).Distinct().ToList();
+
+        return $"Found {paths.Count} path(s) for {left.Name} {op} {right.Name} leading to: {string.Join(", ", distinctResults)}. " +
+               $"First path: {paths.First()}";
+    }
+
+    /// <summary>
+    /// Clears the transitive inference cache. Useful after configuration changes or for testing.
+    /// </summary>
+    public static void ClearTransitiveCache()
+    {
+        _transitiveCache.Clear();
+    }
+
     /// <summary>Enumerates currently registered canonical (non-symmetric duplicate) rules.</summary>
     public static IEnumerable<QuantityKindInference> EnumerateRules() => _rules.ToList();
 
@@ -320,5 +479,12 @@ public static class QuantityKindInferenceRegistry
     internal static void ResetForTests()
     {
         Seed();
+        ClearTransitiveCache();
+
+        // Reset configuration to defaults
+        TransitiveInferenceEnabled = false;
+        MaxInferenceDepth = 1;
+        StrictTransitiveInference = true;
+        CacheTransitiveResults = true;
     }
 }
