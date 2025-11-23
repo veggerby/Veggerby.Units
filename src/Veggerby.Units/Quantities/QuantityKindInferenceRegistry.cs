@@ -480,5 +480,11 @@ public static class QuantityKindInferenceRegistry
     {
         Seed();
         ClearTransitiveCache();
+
+        // Reset configuration to defaults
+        TransitiveInferenceEnabled = false;
+        MaxInferenceDepth = 1;
+        StrictTransitiveInference = true;
+        CacheTransitiveResults = true;
     }
 }
