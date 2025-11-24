@@ -29,6 +29,8 @@ public abstract class Unit : IOperand
     public static readonly InternationalUnitSystem SI = new();
     /// <summary>Singleton instance of the (subset) Imperial unit system.</summary>
     public static readonly ImperialUnitSystem Imperial = new();
+    /// <summary>Singleton instance of the CGS (Centimeter-Gram-Second) unit system.</summary>
+    public static readonly CgsUnitSystem CGS = new();
 
     /// <summary>Short symbolic representation (e.g. m, kg, N·m). Must be stable and pure.</summary>
     public abstract string Symbol { get; }
