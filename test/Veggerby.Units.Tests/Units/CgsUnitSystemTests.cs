@@ -307,7 +307,7 @@ public class CgsUnitSystemTests
 
     // Round-trip conversion tests
     [Fact]
-    public void GivenSiToChsAndBack_WhenRoundTrip_ThenPreservesValue()
+    public void GivenSiToCgsAndBack_WhenRoundTrip_ThenPreservesValue()
     {
         // Arrange
         var originalValue = 42.5;
