@@ -7,6 +7,15 @@ namespace Veggerby.Units.Quantities;
 /// Describes a semantic quantity kind (e.g. Energy, Torque, Entropy) that may share dimensions with other kinds
 /// but represents a distinct physical concept. Provides optional dimensional guard and open tagging metadata.
 /// </summary>
+/// <remarks>
+/// Conceptually aligned with the QUDT (Quantities, Units, Dimensions, and Types) ontology's
+/// <c>qudt:QuantityKind</c> class, which provides standardized categorization of physical quantities.
+/// While QUDT uses RDF/OWL ontologies for semantic reasoning, Veggerby.Units implements a deterministic,
+/// explicit design without runtime dependencies. See <c>docs/qudt-alignment.md</c> for detailed mapping.
+/// <para>
+/// QUDT Reference: http://qudt.org/schema/qudt/QuantityKind
+/// </para>
+/// </remarks>
 public sealed class QuantityKind
 {
     /// <summary>Human readable name.</summary>

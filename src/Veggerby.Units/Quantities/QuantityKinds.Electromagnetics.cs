@@ -3,29 +3,47 @@ namespace Veggerby.Units.Quantities;
 /// <summary>
 /// Electromagnetic field, circuit, and charge transport quantities (fields, potentials, impedances, mobilities, susceptibilities).
 /// </summary>
+/// <remarks>
+/// Quantity kind definitions align with QUDT ontology specifications for electromagnetic quantities.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     /// <summary>Electric current (A).</summary>
+    /// <remarks>QUDT: <c>quantitykind:ElectricCurrent</c></remarks>
     public static readonly QuantityKind ElectricCurrent = new("ElectricCurrent", Unit.SI.A, "I", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Frequency (1/s).</summary>
+    /// <remarks>QUDT: <c>quantitykind:Frequency</c></remarks>
     public static readonly QuantityKind Frequency = new("Frequency", 1 / Unit.SI.s, "Hz", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric charge (C = A·s).</summary>
+    /// <remarks>QUDT: <c>quantitykind:ElectricCharge</c></remarks>
     public static readonly QuantityKind ElectricCharge = new("ElectricCharge", Unit.SI.A * Unit.SI.s, "q", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Voltage (V = J/C).</summary>
+    /// <remarks>QUDT: <c>quantitykind:Voltage</c></remarks>
     public static readonly QuantityKind Voltage = new("Voltage", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * Unit.SI.s), "V", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric resistance (Ω).</summary>
+    /// <remarks>QUDT: <c>quantitykind:Resistance</c></remarks>
     public static readonly QuantityKind ElectricResistance = new("ElectricResistance", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * Unit.SI.A * Unit.SI.s), "Ω", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric conductance (S).</summary>
+    /// <remarks>QUDT: <c>quantitykind:Conductance</c></remarks>
     public static readonly QuantityKind ElectricConductance = new("ElectricConductance", (Unit.SI.A * Unit.SI.A * Unit.SI.s) / (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)), "S", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Capacitance (F).</summary>
+    /// <remarks>QUDT: <c>quantitykind:Capacitance</c></remarks>
     public static readonly QuantityKind Capacitance = new("Capacitance", ((Unit.SI.A * Unit.SI.s) ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)), "F", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Inductance (H).</summary>
+    /// <remarks>QUDT: <c>quantitykind:Inductance</c></remarks>
     public static readonly QuantityKind Inductance = new("Inductance", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * Unit.SI.A), "H", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Magnetic flux (Wb).</summary>
+    /// <remarks>QUDT: <c>quantitykind:MagneticFlux</c></remarks>
     public static readonly QuantityKind MagneticFlux = new("MagneticFlux", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / Unit.SI.A, "Wb", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Magnetic flux density (T).</summary>
+    /// <remarks>QUDT: <c>quantitykind:MagneticFluxDensity</c></remarks>
     public static readonly QuantityKind MagneticFluxDensity = new("MagneticFluxDensity", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * (Unit.SI.m ^ 2)), "T", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric field strength (V/m).</summary>
+    /// <remarks>QUDT: <c>quantitykind:ElectricFieldStrength</c></remarks>
     public static readonly QuantityKind ElectricFieldStrength = new("ElectricFieldStrength", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * Unit.SI.s * Unit.SI.m), "E_f", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric charge density (C/m^3).</summary>
     public static readonly QuantityKind ElectricChargeDensity = new("ElectricChargeDensity", (Unit.SI.A * Unit.SI.s) / (Unit.SI.m ^ 3), "ρ_q", tags: [QuantityKindTags.DomainElectromagnetic]);

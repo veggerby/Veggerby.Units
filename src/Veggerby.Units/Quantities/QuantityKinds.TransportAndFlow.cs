@@ -3,6 +3,13 @@ namespace Veggerby.Units.Quantities;
 /// <summary>
 /// Transport phenomena and flow: fluxes, viscosities, conductivities (thermal), heat transfer coefficients, flow rates.
 /// </summary>
+/// <remarks>
+/// Quantity kind definitions align with QUDT ontology specifications for transport phenomena.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     /// <summary>Volumetric flow rate (m^3/s).</summary>

@@ -3,6 +3,13 @@ namespace Veggerby.Units.Quantities;
 /// <summary>
 /// Mechanics (forces, motion-derived) and material response (moduli, densities, stresses, structural geometry).
 /// </summary>
+/// <remarks>
+/// Quantity kind definitions align with QUDT ontology specifications for mechanics and materials.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     // Mechanics & Materials core (structural, stress, moduli, densities)

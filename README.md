@@ -327,6 +327,14 @@ This early failure prevents accidentally mixing distinct semantic concepts that 
 
 ## References
 
+### Standards & Specifications
+* **QUDT Ontology** – Conceptual reference for unit definitions and quantity kinds (no runtime dependency): <http://www.qudt.org/>
+  * See `docs/qudt-alignment.md` for detailed alignment documentation
+  * QUDT Vocabulary: <http://www.qudt.org/doc/DOC_VOCAB-UNITS.html>
+* **SI Brochure (BIPM)** – International System of Units (9th edition): <https://www.bipm.org/en/publications/si-brochure/>
+* **NIST Guide to SI** – U.S. authority on metric system: <https://www.nist.gov/pml/owm/metric-si/si-units>
+
+### Background
 * Dimensional analysis – <https://en.wikipedia.org/wiki/Dimensional_analysis>
 * SI units – <https://en.wikipedia.org/wiki/International_System_of_Units>
 * Nondimensionalization – <https://en.wikipedia.org/wiki/Nondimensionalization>
@@ -334,6 +342,8 @@ This early failure prevents accidentally mixing distinct semantic concepts that 
 ---
 Docs index (see also `TryConvertTo` and decimal support in capabilities):
 
+* **QUDT Alignment:** `docs/qudt-alignment.md` – Conceptual reference validation
+* **QUDT Mapping Table:** `docs/qudt-mapping-table.md` – Detailed quantity kind mappings
 * Capabilities: `docs/capabilities.md`
 * Reduction architecture: `docs/reduction_architecture.md`
 * Reduction pipeline narrative: `docs/reduction-pipeline.md`

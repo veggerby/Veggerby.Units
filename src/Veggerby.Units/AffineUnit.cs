@@ -8,6 +8,19 @@ namespace Veggerby.Units;
 /// is only guaranteed for direct conversion of values, not for products like °C * m).
 /// </summary>
 /// <remarks>
+/// Affine transformation semantics align with QUDT ontology's handling of temperature scales.
+/// QUDT distinguishes absolute temperature scales (Kelvin, Celsius, Fahrenheit, Rankine) from
+/// differential temperature units (delta K, delta °C, etc.) using <c>conversionOffset</c> and
+/// <c>conversionMultiplier</c> properties.
+/// <para>
+/// QUDT Celsius: <c>unit:DEG_C</c> with conversionOffset: 273.15, conversionMultiplier: 1.0
+/// </para>
+/// <para>
+/// QUDT Fahrenheit: <c>unit:DEG_F</c> with conversionOffset: 459.67 (to Rankine), then scaled to Kelvin
+/// </para>
+/// <para>
+/// See <c>docs/qudt-alignment.md</c> for detailed temperature affine semantics validation.
+/// </para>
 /// Creates a new affine unit.
 /// </remarks>
 /// <param name="symbol">Symbolic representation (e.g. °C).</param>
