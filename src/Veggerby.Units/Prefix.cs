@@ -7,6 +7,17 @@ namespace Veggerby.Units;
 /// Represents a decimal prefix (SI style) that scales a base unit by a power of ten. Equality and hash code are based
 /// solely on the numeric factor to ensure structural equivalence irrespective of symbol or name uniqueness.
 /// </summary>
+/// <remarks>
+/// Metric prefix definitions align with QUDT ontology's <c>qudt:DecimalPrefixType</c> specifications.
+/// All prefix factors match QUDT canonical values exactly (e.g., kilo = 10³, milli = 10⁻³).
+/// Binary prefixes (kibi, mebi, etc.) are intentionally excluded as they are not part of SI/QUDT.
+/// <para>
+/// QUDT Prefix Vocabulary: http://qudt.org/vocab/prefix/
+/// </para>
+/// <para>
+/// See <c>docs/qudt-alignment.md</c> for prefix system validation.
+/// </para>
+/// </remarks>
 public class Prefix
 {
     /// <summary>Identity prefix (factor = 1).</summary>

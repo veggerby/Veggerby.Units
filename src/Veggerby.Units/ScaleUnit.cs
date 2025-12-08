@@ -5,6 +5,18 @@ namespace Veggerby.Units;
 /// <summary>
 /// Represents a unit defined by a fixed scale relative to another (usually base SI) unit, e.g. foot relative to metre.
 /// </summary>
+/// <remarks>
+/// Scale factor definitions align with QUDT ontology's <c>conversionMultiplier</c> property.
+/// All conversion factors have been validated against QUDT canonical values to ensure scientific accuracy.
+/// <para>
+/// Example QUDT definitions:
+/// - Foot: conversionMultiplier = 3.048E-1 (0.3048 m)
+/// - Pound-mass: conversionMultiplier = 4.5359237E-1 (0.45359237 kg)
+/// </para>
+/// <para>
+/// See <c>docs/qudt-alignment.md</c> for scale factor verification.
+/// </para>
+/// </remarks>
 /// <param name="symbol">Unit symbol.</param>
 /// <param name="name">Unit name.</param>
 /// <param name="scale">Scale factor relative to base.</param>

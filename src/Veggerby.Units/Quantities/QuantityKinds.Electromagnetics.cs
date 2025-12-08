@@ -43,6 +43,7 @@ public static partial class QuantityKinds
     /// <remarks>QUDT: <c>quantitykind:MagneticFluxDensity</c></remarks>
     public static readonly QuantityKind MagneticFluxDensity = new("MagneticFluxDensity", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * (Unit.SI.m ^ 2)), "T", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric field strength (V/m).</summary>
+    /// <remarks>QUDT: <c>quantitykind:ElectricFieldStrength</c></remarks>
     public static readonly QuantityKind ElectricFieldStrength = new("ElectricFieldStrength", (Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2)) / (Unit.SI.A * Unit.SI.s * Unit.SI.m), "E_f", tags: [QuantityKindTags.DomainElectromagnetic]);
     /// <summary>Electric charge density (C/m^3).</summary>
     public static readonly QuantityKind ElectricChargeDensity = new("ElectricChargeDensity", (Unit.SI.A * Unit.SI.s) / (Unit.SI.m ^ 3), "ρ_q", tags: [QuantityKindTags.DomainElectromagnetic]);
