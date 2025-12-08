@@ -3,10 +3,18 @@ namespace Veggerby.Units.Quantities;
 /// <summary>
 /// Energy, thermodynamic state/path functions, and related heat/temperature transfer coefficients.
 /// </summary>
+/// <remarks>
+/// Quantity kind definitions align with QUDT ontology specifications for energy and thermodynamics.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     // Energy core
     /// <summary>Energy (J) = kg·m²/s².</summary>
+    /// <remarks>QUDT: <c>quantitykind:Energy</c></remarks>
     public static readonly QuantityKind Energy = new(
         "Energy",
         Unit.SI.kg * (Unit.SI.m ^ 2) / (Unit.SI.s ^ 2),
@@ -18,6 +26,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Internal energy (U) shares energy dimensions.</summary>
+    /// <remarks>QUDT: <c>quantitykind:InternalEnergy</c></remarks>
     public static readonly QuantityKind InternalEnergy = new(
         "InternalEnergy",
         Energy.CanonicalUnit,
@@ -30,6 +39,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Enthalpy (H) shares energy dimensions.</summary>
+    /// <remarks>QUDT: <c>quantitykind:Enthalpy</c></remarks>
     public static readonly QuantityKind Enthalpy = new(
         "Enthalpy",
         Energy.CanonicalUnit,
@@ -42,6 +52,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Gibbs free energy (G) shares energy dimensions.</summary>
+    /// <remarks>QUDT: <c>quantitykind:GibbsEnergy</c></remarks>
     public static readonly QuantityKind GibbsFreeEnergy = new(
         "GibbsFreeEnergy",
         Energy.CanonicalUnit,
@@ -54,6 +65,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Helmholtz free energy (A) shares energy dimensions.</summary>
+    /// <remarks>QUDT: <c>quantitykind:HelmholtzEnergy</c></remarks>
     public static readonly QuantityKind HelmholtzFreeEnergy = new(
         "HelmholtzFreeEnergy",
         Energy.CanonicalUnit,
@@ -66,6 +78,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Entropy (S) J/K.</summary>
+    /// <remarks>QUDT: <c>quantitykind:Entropy</c></remarks>
     public static readonly QuantityKind Entropy = new(
         "Entropy",
         Energy.CanonicalUnit / Unit.SI.K,
@@ -76,6 +89,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Heat capacity (C_p) J/K (semantic distinct from Entropy).</summary>
+    /// <remarks>QUDT: <c>quantitykind:HeatCapacity</c></remarks>
     public static readonly QuantityKind HeatCapacity = new(
         "HeatCapacity",
         Energy.CanonicalUnit / Unit.SI.K,
@@ -86,6 +100,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Chemical potential (μ) J/mol.</summary>
+    /// <remarks>QUDT: <c>quantitykind:ChemicalPotential</c></remarks>
     public static readonly QuantityKind ChemicalPotential = new(
         "ChemicalPotential",
         Energy.CanonicalUnit / Unit.SI.n,
@@ -96,6 +111,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Work (W) path energy transfer; dimensionally energy.</summary>
+    /// <remarks>QUDT: <c>quantitykind:Work</c></remarks>
     public static readonly QuantityKind Work = new(
         "Work",
         Energy.CanonicalUnit,
@@ -108,6 +124,7 @@ public static partial class QuantityKinds
         ]);
 
     /// <summary>Heat (Q) path thermal energy transfer; dimensionally energy.</summary>
+    /// <remarks>QUDT: <c>quantitykind:Heat</c></remarks>
     public static readonly QuantityKind Heat = new(
         "Heat",
         Energy.CanonicalUnit,

@@ -4,6 +4,13 @@ namespace Veggerby.Units.Quantities;
 /// Classical dimensionless flow/transport groups and ratios (Re, Pr, Nu, Ma, Fr, We, Pe, etc.).
 /// All must include <see cref="QuantityKindTags.FormDimensionless"/>.
 /// </summary>
+/// <remarks>
+/// Dimensionless number definitions align with QUDT ontology specifications.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     /// <summary>Reynolds number (dimensionless).</summary>

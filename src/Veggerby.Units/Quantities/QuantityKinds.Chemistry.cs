@@ -3,6 +3,13 @@ namespace Veggerby.Units.Quantities;
 /// <summary>
 /// Chemistry and substance-related quantities: concentrations, potentials, fractions, rates, thermochemical specifics.
 /// </summary>
+/// <remarks>
+/// Quantity kind definitions align with QUDT ontology specifications for chemistry and substance quantities.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     /// <summary>Molar mass (kg/mol).</summary>

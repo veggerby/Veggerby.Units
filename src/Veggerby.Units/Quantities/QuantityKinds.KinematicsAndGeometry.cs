@@ -3,6 +3,13 @@ namespace Veggerby.Units.Quantities;
 /// <summary>
 /// Pure kinematics (angles, angular rates, motion derivatives) and geometric curvature/shape descriptors.
 /// </summary>
+/// <remarks>
+/// Quantity kind definitions align with QUDT ontology specifications for kinematics and geometry.
+/// See <c>docs/qudt-mapping-table.md</c> for detailed QUDT URI mappings.
+/// <para>
+/// QUDT Reference: http://qudt.org/doc/DOC_VOCAB-QUANTITY-KINDS.html
+/// </para>
+/// </remarks>
 public static partial class QuantityKinds
 {
     /// <summary>Angle (dimensionless, radians).</summary>

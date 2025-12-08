@@ -8,24 +8,46 @@ namespace Veggerby.Units.Dimensions;
 /// (e.g. L * T and T * L) compare equal. Dimensions intentionally mirror unit operator semantics but omit
 /// scaling concerns (dimensions are qualitative only).
 /// </summary>
+/// <remarks>
+/// Dimensional vectors align with the QUDT ontology's dimensional analysis framework based on
+/// the seven SI base dimensions (L, M, T, I, Θ, N, J). QUDT represents dimensions as exponent
+/// vectors enabling dimensional algebra validation.
+/// <para>
+/// QUDT uses symbols: L (length), M (mass), T (time), I (electric current), Θ (temperature),
+/// N (amount of substance), J (luminous intensity).
+/// </para>
+/// <para>
+/// Example QUDT dimensional vector for Force: L¹ M¹ T⁻²
+/// </para>
+/// <para>
+/// See <c>docs/qudt-alignment.md</c> for dimensional exponent verification.
+/// </para>
+/// </remarks>
 public abstract class Dimension : IOperand
 {
     /// <summary>Dimensionless identity (used for constants or fully cancelled expressions).</summary>
     public static readonly Dimension None = new NullDimension();
 
     /// <summary>Length (L)</summary>
+    /// <remarks>QUDT dimension symbol: <c>L</c> (http://qudt.org/vocab/dimensionvector/A0-E0-L1-I0-M0-H0-T0-D0)</remarks>
     public static readonly Dimension Length = new BasicDimension("L", "length");
     /// <summary>Mass (M)</summary>
+    /// <remarks>QUDT dimension symbol: <c>M</c> (http://qudt.org/vocab/dimensionvector/A0-E0-L0-I0-M1-H0-T0-D0)</remarks>
     public static readonly Dimension Mass = new BasicDimension("M", "mass");
     /// <summary>Time (T)</summary>
+    /// <remarks>QUDT dimension symbol: <c>T</c> (http://qudt.org/vocab/dimensionvector/A0-E0-L0-I0-M0-H0-T1-D0)</remarks>
     public static readonly Dimension Time = new BasicDimension("T", "time");
     /// <summary>Electric current (I)</summary>
+    /// <remarks>QUDT dimension symbol: <c>I</c> (http://qudt.org/vocab/dimensionvector/A0-E1-L0-I0-M0-H0-T0-D0)</remarks>
     public static readonly Dimension ElectricCurrent = new BasicDimension("I", "electric current");
     /// <summary>Thermodynamic temperature (Θ)</summary>
+    /// <remarks>QUDT dimension symbol: <c>Θ</c> (http://qudt.org/vocab/dimensionvector/A0-E0-L0-I0-M0-H1-T0-D0)</remarks>
     public static readonly Dimension ThermodynamicTemperature = new BasicDimension("Θ", "thermodynamic temperature");
     /// <summary>Luminous intensity (J)</summary>
+    /// <remarks>QUDT dimension symbol: <c>J</c> (http://qudt.org/vocab/dimensionvector/A0-E0-L0-I1-M0-H0-T0-D0)</remarks>
     public static readonly Dimension LuminousIntensity = new BasicDimension("J", "luminous intensity");
     /// <summary>Amount of substance (N)</summary>
+    /// <remarks>QUDT dimension symbol: <c>N</c> (http://qudt.org/vocab/dimensionvector/A0-E0-L0-I0-M0-H0-T0-D1)</remarks>
     public static readonly Dimension AmountOfSubstance = new BasicDimension("N", "amount of substance");
 
     internal Dimension()
