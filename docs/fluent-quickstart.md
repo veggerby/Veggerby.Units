@@ -48,7 +48,7 @@ Formatting is controlled by `UnitFormat`:
 |------|----------|
 | `BaseFactors` | Raw structural symbol (no derived substitution). |
 | `DerivedSymbols` | Exact match replacement using canonical SI derived symbols (N, J, Pa, etc.). No partial substitution. |
-| `Mixed` | (Placeholder) Currently identical to `BaseFactors`; future: partial greedy substitution. |
+| `Mixed` | Partial derived substitution with bounded search; falls back to base factors for large exponent vectors. |
 | `Qualified` | Derived substitution + semantic disambiguation (adds kind for ambiguous symbols). |
 
 ```csharp
@@ -94,9 +94,9 @@ var workQualified = new DoubleMeasurement(workImperial.Value, workImperial.Unit)
     .Format(UnitFormat.Qualified, QuantityKinds.Torque); // depends on semantic intent
 ```
 
-## Mixed Mode Placeholder
+## Mixed Mode
 
-`Mixed` intentionally returns the base factor expression today (no substitution). This keeps substitution cost predictable. Planned enhancement: minimal factor replacement (e.g., kg·m/s^2·m -> N·m) without recursive search explosion.
+`Mixed` performs partial derived substitution (e.g., kg·m/s^2·m -> N·m) with a size guard to avoid expensive search on large exponent vectors. See `docs/format-mixed-and-ambiguity.md` for the authoritative algorithm and ambiguity rules.
 
 ## Design Notes
 

@@ -16,7 +16,7 @@ Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit 
 
 ## Highlights
 
-* Unit system interoperability (SI ↔ Imperial) with strict dimensional safety.
+* Unit system interoperability (SI ↔ Imperial ↔ CGS) with strict dimensional safety.
 * Order‑independent equality: (m*s)^2 == m^2*s^2, m*s/s == m, A*B == B*A.
 * Deterministic canonical factor multiset normalization for product / division / power.
 * Automatic cancellation & power aggregation in operator chains (low allocation fast paths).
@@ -24,7 +24,7 @@ Most unit libraries wrap numbers. Veggerby.Units models algebra: composite unit 
 * Measurement arithmetic (generic numeric backends: int, double, decimal) with safe conversions.
 * Affine temperature conversion support (°C ↔ K).
 * Benchmark‑guarded performance (≤1% regression gate on equality micro benchmarks).
-* Planned: parsing (string → expression tree), richer physical property taxonomy.
+* Planned: parsing of formatted/qualified strings (string → expression tree for raw unit expressions is already supported).
 
 ## Quick start
 
@@ -135,7 +135,7 @@ Toggle only in benchmark / test contexts.
 
 ## Roadmap
 
-* Parsing (string → expression tree)
+* Parsing of formatted/qualified strings
 * Additional systems (CGS, US customary variants)
 * More numeric types (BigInteger, arbitrary precision) beyond current int/double/decimal
 * (Done) Property classification (Energy vs Work vs Heat) via open tag system

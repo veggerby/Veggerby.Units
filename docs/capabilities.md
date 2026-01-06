@@ -6,7 +6,7 @@ This document summarizes the current features of the Veggerby.Units library.
 
 * Unit: Abstract representation of a measurement unit (basic, derived, product, division, power, prefixed, scaled, or null).
 * Dimension: Physical dimension (Length L, Mass M, Time T, Electric Current I, Thermodynamic Temperature Θ, Luminous Intensity J, Amount of Substance N) with full algebra support.
-* Unit System: Currently implemented systems are International (SI) and Imperial; all non‑SI units scale to SI base units for conversion.
+* Unit System: Currently implemented systems are International (SI), Imperial, and CGS; all non‑SI units scale to SI base units for conversion.
 * Measurement&lt;T&gt;: Couples a numeric value with a Unit and a Calculator&lt;T&gt; enabling generic arithmetic (int, double and decimal implemented).
 
 ## Arithmetic & Algebra
@@ -97,10 +97,10 @@ var mean = TemperatureMean.Mean(t1, t2); // expressed in °C
 ## Not Implemented / Future Ideas
 
 * Rich compile-time kind generics (current layer is runtime semantic). Existing semantic disambiguation is opt-in.
-* Additional unit systems (CGS, US customary variations) could be added.
+* Additional unit systems (US customary variations) could be added.
 * Additional numeric types (BigInteger / arbitrary precision) via additional Calculator&lt;T&gt;.
 * Potential future: richer temperature domain helpers (dew point, heat index) building on affine units.
-* Parsing of unit strings into expression trees (currently only simple ToString formatting is implemented; parsing referenced in README but not yet coded).
+* Parsing of formatted/qualified strings back into semantic kinds and dimensions (UnitParser exists for raw unit expressions only).
 * Serialization helpers and culture-aware formatting.
 
 ## Example
