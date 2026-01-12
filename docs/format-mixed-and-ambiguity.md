@@ -51,13 +51,13 @@ The registry is authoritative—do not infer ambiguity structurally. When `UnitF
 
 **W (Watt):** Power (mechanical or electrical work per unit time) and RadiantFlux (electromagnetic energy per unit time) share dimensions but differ in domain.
 
-**H (Henry):** Inductance (electrical property) uses the derived symbol "H", while MagneticFieldStrength (A/m) also uses "H" as its quantity kind symbol in literature, though it formats as "A/m" in SI units. The ambiguity exists at the semantic level when discussing these quantities.
+**H (Henry):** Inductance (electrical property) uses the derived symbol "H" in unit formatting. MagneticFieldStrength uses "H" as a quantity‑kind symbol in some literature but formats as "A/m" in SI units, so it does not introduce an additional unit symbol collision in formatter output. In practice, `AmbiguityRegistry` only needs to disambiguate the literal "H" symbol produced for Inductance; MagneticFieldStrength is relevant at the semantic/quantity level but not as a separate formatting ambiguity.
 
 ### Excluded Potential Ambiguities
 
 **V:** While Voltage and Volume both use "V" as a quantity kind symbol, only Voltage has a derived SI unit symbol "V" (volt). Volume formats as "m³", so no unit formatting ambiguity exists in practice.
 
-**Other symbols:** After comprehensive review of SI derived units and common quantity kinds, J, Pa, W, and H represent the complete set of genuine unit formatting ambiguities in this library's scope.
+**Other symbols:** After comprehensive review of SI derived units and common quantity kinds, J, Pa, and W represent the complete set of genuine unit formatting ambiguities in this library's scope; H is included in the ambiguity registry for semantic disambiguation between Inductance and MagneticFieldStrength even though MagneticFieldStrength formats as "A/m".
 
 ## 5. Mixed vs DerivedSymbols vs Qualified
 
@@ -151,7 +151,7 @@ The registry is authoritative—do not infer ambiguity structurally. When `UnitF
 2. **Complex units** benefit from partial substitution:
    ```csharp
    var complexUnit = Unit.SI.kg * (Unit.SI.m ^ 2) / ((Unit.SI.s ^ 3) * Unit.SI.A);
-   UnitFormatter.Format(complexUnit, UnitFormat.Mixed, QuantityKinds.Voltage); // "V (Voltage)"
+   UnitFormatter.Format(complexUnit, UnitFormat.Mixed, QuantityKinds.Voltage); // "V"
    ```
 
 **Use `UnitFormat.DerivedSymbols` or `UnitFormat.BaseFactors` when:**
