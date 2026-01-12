@@ -43,6 +43,22 @@ H  -> Inductance, MagneticFieldStrength
 
 The registry is authoritative—do not infer ambiguity structurally. When `UnitFormat.Qualified` or Mixed with a provided `QuantityKind` encounters one of these symbols, the formatter appends the explicit kind name.
 
+### Rationale for Included Symbols
+
+**J (Joule):** Energy and Work are conceptually equivalent (both measure capacity to do work), but Heat represents thermal energy transfer, and Torque (N·m) is dimensionally equivalent but semantically distinct (rotational vs translational). The formatter provides explicit torque handling via `N·m` when the Torque quantity kind is supplied.
+
+**Pa (Pascal):** Pressure and Stress share the same dimensions (force per unit area) but represent different physical contexts—fluid/gas pressure vs. material deformation stress.
+
+**W (Watt):** Power (mechanical or electrical work per unit time) and RadiantFlux (electromagnetic energy per unit time) share dimensions but differ in domain.
+
+**H (Henry):** Inductance (electrical property) uses the derived symbol "H", while MagneticFieldStrength (A/m) also uses "H" as its quantity kind symbol in literature, though it formats as "A/m" in SI units. The ambiguity exists at the semantic level when discussing these quantities.
+
+### Excluded Potential Ambiguities
+
+**V:** While Voltage and Volume both use "V" as a quantity kind symbol, only Voltage has a derived SI unit symbol "V" (volt). Volume formats as "m³", so no unit formatting ambiguity exists in practice.
+
+**Other symbols:** After comprehensive review of SI derived units and common quantity kinds, J, Pa, W, and H represent the complete set of genuine unit formatting ambiguities in this library's scope.
+
 ## 5. Mixed vs DerivedSymbols vs Qualified
 
 | Format | Substitution | Partial Decomposition | Ambiguity Annotation | Torque Preference |
