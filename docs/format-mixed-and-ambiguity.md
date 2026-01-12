@@ -105,6 +105,70 @@ The registry is authoritative—do not infer ambiguity structurally. When `UnitF
 - Optional strict Mixed mode enforcing maximum token length.
 - Parsing pipeline to reconstruct dimensions from formatted strings (out of scope for current release).
 
+## 12. Usage Guidelines: When to Use Qualified Formatting
+
+### Recommended Scenarios
+
+**Use `UnitFormat.Qualified` when:**
+
+1. **Logging or diagnostics** where semantic intent must be explicit:
+   ```csharp
+   var energy = Quantity.Energy(100); // 100 J
+   var torque = Quantity.Torque(100); // 100 N·m (dimensionally equivalent to J)
+   logger.Info($"Energy: {energy.Format(UnitFormat.Qualified)}"); // "100 J (Energy)"
+   logger.Info($"Torque: {torque.Format(UnitFormat.Qualified)}"); // "100 N·m (Torque)" or "100 J (Torque)" depending on mode
+   ```
+
+2. **API responses or data export** where consumers may not have context:
+   ```csharp
+   var pressure = Quantity.Pressure(101325); // Pa
+   var stress = Quantity.YoungsModulus(200e9); // Pa (stress-like)
+   return new
+   {
+       Pressure = pressure.Format(UnitFormat.Qualified), // "101325 Pa (Pressure)"
+       Stress = stress.Format(UnitFormat.Qualified)      // "200000000000 Pa (Stress)"
+   };
+   ```
+
+3. **Documentation examples** to teach users about quantity kind distinctions.
+
+4. **Mixed calculations** involving ambiguous symbols where reader needs hints:
+   ```csharp
+   var power = voltage * current; // W (Power)
+   var radiantFlux = luminosity.ConvertTo(QuantityKinds.RadiantFlux.CanonicalUnit); // W (RadiantFlux)
+   Console.WriteLine($"Power: {power.Format(UnitFormat.Qualified)}");
+   Console.WriteLine($"Radiant flux: {radiantFlux.Format(UnitFormat.Qualified)}");
+   ```
+
+**Use `UnitFormat.Mixed` (with quantity kind) when:**
+
+1. You want **readable decomposition** plus qualification:
+   ```csharp
+   var torque = Quantity.Torque(50);
+   torque.Format(UnitFormat.Mixed, QuantityKinds.Torque); // "N·m" (not "J (Torque)")
+   ```
+
+2. **Complex units** benefit from partial substitution:
+   ```csharp
+   var complexUnit = Unit.SI.kg * (Unit.SI.m ^ 2) / ((Unit.SI.s ^ 3) * Unit.SI.A);
+   UnitFormatter.Format(complexUnit, UnitFormat.Mixed, QuantityKinds.Voltage); // "V (Voltage)"
+   ```
+
+**Use `UnitFormat.DerivedSymbols` or `UnitFormat.BaseFactors` when:**
+
+1. **No ambiguity exists** in the current context (e.g., internal calculations).
+2. **Space is limited** (UI labels, compact displays).
+3. **Target audience** understands the domain (engineer-to-engineer documentation).
+
+### Performance Considerations
+
+- **BaseFactors**: Fastest (direct symbol access, no lookups)
+- **DerivedSymbols**: Fast (single dictionary lookup)
+- **Mixed**: Moderate (subset enumeration + scoring, cached for common patterns)
+- **Qualified**: Same as DerivedSymbols/Mixed + string concatenation when ambiguous
+
+For hot paths, prefer `DerivedSymbols` or cache formatted strings. Qualification overhead is typically < 100 ns per call.
+
 ---
 
 This specification is authoritative; Mixed formatting changes must stay within these constraints and update this document.
