@@ -3,6 +3,10 @@ namespace Veggerby.Units;
 /// <summary>
 /// Factory helpers for constructing temperature measurements with common numeric types.
 /// </summary>
+/// <remarks>
+/// For advanced temperature calculations (dew point, heat index, humidex), see 
+/// <see cref="Calculations.TemperatureDomainHelpers"/>.
+/// </remarks>
 public static class Temperature
 {
     /// <summary>Create a double precision Celsius measurement.</summary>
