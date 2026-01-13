@@ -11,8 +11,6 @@ namespace Veggerby.Units.Tests;
 
 public class TemperatureDomainHelpersTests
 {
-    #region Dew Point Tests
-
     [Fact]
     public void GivenCelsiusTemperatureAndHumidity_WhenDewPointCalculated_ThenReturnsCelsius()
     {
@@ -142,10 +140,6 @@ public class TemperatureDomainHelpersTests
         dewPoint.Value.Should().BeApproximately(15.0, 0.01); // Dew point equals temperature
     }
 
-    #endregion
-
-    #region Heat Index Tests
-
     [Fact]
     public void GivenHighTempAndHighHumidity_WhenHeatIndexCalculated_ThenReturnsHigherFeelsLike()
     {
@@ -261,10 +255,6 @@ public class TemperatureDomainHelpersTests
         // Assert
         heatIndex.Value.Should().BeGreaterThan(140.0); // Dangerously high heat index
     }
-
-    #endregion
-
-    #region Humidex Tests
 
     [Fact]
     public void GivenCelsiusTemperatureAndHumidity_WhenHumidexCalculated_ThenReturnsCelsius()
@@ -401,10 +391,6 @@ public class TemperatureDomainHelpersTests
         double.IsFinite(humidex.Value).Should().BeTrue();
     }
 
-    #endregion
-
-    #region Cross-Scale Consistency Tests
-
     [Fact]
     public void GivenSameConditionsInDifferentScales_WhenDewPointCalculated_ThenResultsEquivalent()
     {
@@ -456,10 +442,6 @@ public class TemperatureDomainHelpersTests
         humidexC.Value.Should().BeApproximately(humidexKtoC.Value, 0.1);
     }
 
-    #endregion
-
-    #region Edge Case Tests
-
     [Fact]
     public void GivenExtremeColdTemperature_WhenDewPointCalculated_ThenHandlesGracefully()
     {
@@ -489,6 +471,4 @@ public class TemperatureDomainHelpersTests
         dewPoint.Value.Should().BeLessThan(temp.Value);
         double.IsFinite(dewPoint.Value).Should().BeTrue();
     }
-
-    #endregion
 }
