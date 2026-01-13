@@ -13,6 +13,7 @@ public class UnitFormatterAmbiguityBaselineTests
     [InlineData("J")]
     [InlineData("Pa")]
     [InlineData("W")]
+    [InlineData("H")]
     public void GivenAmbiguousDerivedSymbol_WhenFormattingWithoutKind_ThenNoQualification(string symbol)
     {
         // Arrange
@@ -21,6 +22,7 @@ public class UnitFormatterAmbiguityBaselineTests
             "J" => QuantityKinds.Energy.CanonicalUnit, // kg·m^2/s^2
             "Pa" => QuantityKinds.Pressure.CanonicalUnit, // kg/(m·s^2)
             "W" => QuantityKinds.Power.CanonicalUnit, // J/s
+            "H" => QuantityKinds.Inductance.CanonicalUnit, // kg·m^2/(s^2·A^2)
             _ => QuantityKinds.Energy.CanonicalUnit
         };
 

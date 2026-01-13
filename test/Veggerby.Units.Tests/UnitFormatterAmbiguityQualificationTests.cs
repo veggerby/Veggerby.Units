@@ -17,6 +17,7 @@ public class UnitFormatterAmbiguityQualificationTests
     [InlineData("Pa", "Stress")]
     [InlineData("W", "Power")]
     [InlineData("W", "RadiantFlux")]
+    [InlineData("H", "Inductance")]
     public void GivenAmbiguousSymbolAndKind_WhenQualifiedFormat_ThenAppendsKind(string symbol, string kindName)
     {
         // Arrange
@@ -59,6 +60,7 @@ public class UnitFormatterAmbiguityQualificationTests
             "Stress" => QuantityKinds.YoungsModulus, // stress-like Pa (Young's modulus shares Pa dimensions)
             "Power" => QuantityKinds.Power,
             "RadiantFlux" => QuantityKinds.RadiantFlux,
+            "Inductance" => QuantityKinds.Inductance,
             _ => QuantityKinds.Energy
         };
     }
@@ -70,6 +72,7 @@ public class UnitFormatterAmbiguityQualificationTests
             "J" => QuantityKinds.Energy.CanonicalUnit,
             "Pa" => QuantityKinds.Pressure.CanonicalUnit,
             "W" => QuantityKinds.Power.CanonicalUnit,
+            "H" => QuantityKinds.Inductance.CanonicalUnit,
             _ => QuantityKinds.Energy.CanonicalUnit
         };
     }

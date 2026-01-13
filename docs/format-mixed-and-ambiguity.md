@@ -43,6 +43,22 @@ H  -> Inductance, MagneticFieldStrength
 
 The registry is authoritative—do not infer ambiguity structurally. When `UnitFormat.Qualified` or Mixed with a provided `QuantityKind` encounters one of these symbols, the formatter appends the explicit kind name.
 
+### Rationale for Included Symbols
+
+**J (Joule):** Energy and Work are conceptually equivalent (both measure capacity to do work), but Heat represents thermal energy transfer, and Torque (N·m) is dimensionally equivalent but semantically distinct (rotational vs translational). The formatter provides explicit torque handling via `N·m` when the Torque quantity kind is supplied.
+
+**Pa (Pascal):** Pressure and Stress share the same dimensions (force per unit area) but represent different physical contexts—fluid/gas pressure vs. material deformation stress.
+
+**W (Watt):** Power (mechanical or electrical work per unit time) and RadiantFlux (electromagnetic energy per unit time) share dimensions but differ in domain.
+
+**H (Henry):** Inductance (electrical property) uses the derived symbol "H" in unit formatting. MagneticFieldStrength uses "H" as a quantity‑kind symbol in some literature but formats as "A/m" in SI units, so it does not introduce an additional unit symbol collision in formatter output. In practice, `AmbiguityRegistry` only needs to disambiguate the literal "H" symbol produced for Inductance; MagneticFieldStrength is relevant at the semantic/quantity level but not as a separate formatting ambiguity.
+
+### Excluded Potential Ambiguities
+
+**V:** While Voltage and Volume both use "V" as a quantity kind symbol, only Voltage has a derived SI unit symbol "V" (volt). Volume formats as "m³", so no unit formatting ambiguity exists in practice.
+
+**Other symbols:** After comprehensive review of SI derived units and common quantity kinds, J, Pa, and W represent the complete set of genuine unit formatting ambiguities in this library's scope; H is included in the ambiguity registry for semantic disambiguation between Inductance and MagneticFieldStrength even though MagneticFieldStrength formats as "A/m".
+
 ## 5. Mixed vs DerivedSymbols vs Qualified
 
 | Format | Substitution | Partial Decomposition | Ambiguity Annotation | Torque Preference |
@@ -88,6 +104,70 @@ The registry is authoritative—do not infer ambiguity structurally. When `UnitF
 
 - Optional strict Mixed mode enforcing maximum token length.
 - Parsing pipeline to reconstruct dimensions from formatted strings (out of scope for current release).
+
+## 12. Usage Guidelines: When to Use Qualified Formatting
+
+### Recommended Scenarios
+
+**Use `UnitFormat.Qualified` when:**
+
+1. **Logging or diagnostics** where semantic intent must be explicit:
+   ```csharp
+   var energy = Quantity.Energy(100); // 100 J
+   var torque = Quantity.Torque(100); // 100 N·m (dimensionally equivalent to J)
+   logger.Info($"Energy: {energy.Format(UnitFormat.Qualified)}"); // "100 J (Energy)"
+   logger.Info($"Torque: {torque.Format(UnitFormat.Qualified)}"); // "100 N·m (Torque)" or "100 J (Torque)" depending on mode
+   ```
+
+2. **API responses or data export** where consumers may not have context:
+   ```csharp
+   var pressure = Quantity.Pressure(101325); // Pa
+   var stress = Quantity.YoungsModulus(200e9); // Pa (stress-like)
+   return new
+   {
+       Pressure = pressure.Format(UnitFormat.Qualified), // "101325 Pa (Pressure)"
+       Stress = stress.Format(UnitFormat.Qualified)      // "200000000000 Pa (Stress)"
+   };
+   ```
+
+3. **Documentation examples** to teach users about quantity kind distinctions.
+
+4. **Mixed calculations** involving ambiguous symbols where reader needs hints:
+   ```csharp
+   var power = voltage * current; // W (Power)
+   var radiantFlux = luminosity.ConvertTo(QuantityKinds.RadiantFlux.CanonicalUnit); // W (RadiantFlux)
+   Console.WriteLine($"Power: {power.Format(UnitFormat.Qualified)}");
+   Console.WriteLine($"Radiant flux: {radiantFlux.Format(UnitFormat.Qualified)}");
+   ```
+
+**Use `UnitFormat.Mixed` (with quantity kind) when:**
+
+1. You want **readable decomposition** plus qualification:
+   ```csharp
+   var torque = Quantity.Torque(50);
+   torque.Format(UnitFormat.Mixed, QuantityKinds.Torque); // "N·m" (not "J (Torque)")
+   ```
+
+2. **Complex units** benefit from partial substitution:
+   ```csharp
+   var complexUnit = Unit.SI.kg * (Unit.SI.m ^ 2) / ((Unit.SI.s ^ 3) * Unit.SI.A);
+   UnitFormatter.Format(complexUnit, UnitFormat.Mixed, QuantityKinds.Voltage); // "V"
+   ```
+
+**Use `UnitFormat.DerivedSymbols` or `UnitFormat.BaseFactors` when:**
+
+1. **No ambiguity exists** in the current context (e.g., internal calculations).
+2. **Space is limited** (UI labels, compact displays).
+3. **Target audience** understands the domain (engineer-to-engineer documentation).
+
+### Performance Considerations
+
+- **BaseFactors**: Fastest (direct symbol access, no lookups)
+- **DerivedSymbols**: Fast (single dictionary lookup)
+- **Mixed**: Moderate (subset enumeration + scoring, cached for common patterns)
+- **Qualified**: Same as DerivedSymbols/Mixed + string concatenation when ambiguous
+
+For hot paths, prefer `DerivedSymbols` or cache formatted strings. Qualification overhead is typically < 100 ns per call.
 
 ---
 
