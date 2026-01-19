@@ -29,7 +29,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="5.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Features" Version="4.10.0" />
-    <PackageVersion Include="System.Composition" Version="10.0.0" />
+    <PackageVersion Include="System.Composition" Version="10.0.2" />
   </ItemGroup>
 
 </Project>
