@@ -402,17 +402,45 @@ Typical performance:
 
 ### Round-Trip Guarantees
 
-All serialization operations guarantee structural equality on round-trip:
+Serialization operations preserve value and unit information on round-trip. The specific equality guarantee depends on the unit format used:
+
+- **For DerivedSymbols and simple units**: Structural equality via `==` operator is guaranteed
+- **For BaseFactors with concatenation**: Dimensional equivalence is guaranteed, but structural equality may differ due to parsing ambiguities (e.g., `kgm^2` may parse with different grouping than the original)
 
 ```csharp
 var original = new DoubleMeasurement(100, Unit.SI.m / Unit.SI.s);
 var json = JsonSerializer.Serialize(original, options);
 var deserialized = JsonSerializer.Deserialize<DoubleMeasurement>(json, options);
 
-// Guaranteed:
+// Always guaranteed:
 // deserialized.Value == original.Value
-// deserialized.Unit == original.Unit (structural equality)
+// For simple/derived units: deserialized.Unit == original.Unit
+// For complex BaseFactors: dimensional equivalence maintained
 ```
+
+**Parsing Support:**
+
+The library provides comprehensive parsing for all formatter output modes, enabling full round-trip serialization:
+
+```csharp
+// Parse formatted units
+var unit1 = UnitParser.Parse("J");                    // Joule
+var unit2 = UnitParser.Parse("N·m");                  // Newton-meter
+var unit3 = UnitParser.Parse("kgm^2/s^2");           // Base factors
+
+// Parse qualified units with quantity kind
+var (unit, kind) = UnitParser.ParseQualified("J (Energy)");
+// unit = Joule, kind = QuantityKinds.Energy
+
+// Parse quantity kind names
+var energy = QuantityParser.Parse("Energy");          // QuantityKinds.Energy
+```
+
+See `docs/parsing.md` for complete parsing documentation including:
+- All supported unit formats (BaseFactors, DerivedSymbols, Mixed, Qualified)
+- Round-trip examples for all formatting modes
+- Handling of ambiguous symbols (J, Pa, W, H)
+- Error handling and TryParse methods
 
 ### Null Handling
 
