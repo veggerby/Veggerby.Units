@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
+using Veggerby.Units.Quantities;
+
 namespace Veggerby.Units.Parsing;
 
 /// <summary>
@@ -73,6 +75,68 @@ public static class UnitParser
         }
     }
 
+    /// <summary>
+    /// Parses a qualified unit expression (e.g., "J (Energy)", "Pa (Pressure)") into a unit and quantity kind.
+    /// </summary>
+    /// <param name="expression">The qualified unit expression to parse.</param>
+    /// <returns>A tuple containing the parsed unit and its quantity kind.</returns>
+    /// <exception cref="ParseException">Thrown when the expression cannot be parsed.</exception>
+    public static (Unit Unit, QuantityKind Kind) ParseQualified(string expression)
+    {
+        if (string.IsNullOrWhiteSpace(expression))
+        {
+            throw new ParseException("Unit expression cannot be null or empty.");
+        }
+
+        var lexer = new Lexer(expression);
+        var tokens = lexer.Tokenize();
+        var parser = new Parser(tokens, qualifiedMode: true);
+        return parser.ParseQualifiedUnit();
+    }
+
+    /// <summary>
+    /// Tries to parse a qualified unit expression into a unit and quantity kind.
+    /// </summary>
+    /// <param name="expression">The qualified unit expression to parse.</param>
+    /// <param name="unit">The parsed unit if successful, otherwise null.</param>
+    /// <param name="kind">The parsed quantity kind if successful, otherwise null.</param>
+    /// <returns>True if parsing succeeded, false otherwise.</returns>
+    public static bool TryParseQualified(string expression, out Unit unit, out QuantityKind kind)
+    {
+        return TryParseQualified(expression, out unit, out kind, out _);
+    }
+
+    /// <summary>
+    /// Tries to parse a qualified unit expression into a unit and quantity kind.
+    /// </summary>
+    /// <param name="expression">The qualified unit expression to parse.</param>
+    /// <param name="unit">The parsed unit if successful, otherwise null.</param>
+    /// <param name="kind">The parsed quantity kind if successful, otherwise null.</param>
+    /// <param name="errorMessage">The error message if parsing failed.</param>
+    /// <returns>True if parsing succeeded, false otherwise.</returns>
+    public static bool TryParseQualified(string expression, out Unit unit, out QuantityKind kind, out string errorMessage)
+    {
+        unit = null;
+        kind = null;
+        errorMessage = null;
+
+        try
+        {
+            (unit, kind) = ParseQualified(expression);
+            return true;
+        }
+        catch (ParseException ex)
+        {
+            errorMessage = ex.Message;
+            return false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unexpected error: {ex.Message}";
+            return false;
+        }
+    }
+
     private static Dictionary<string, Unit> BuildUnitRegistry()
     {
         var registry = new Dictionary<string, Unit>();
@@ -120,6 +184,20 @@ public static class UnitParser
         registry["Hz"] = Unit.None / Unit.SI.s;
         // C (Coulomb) = A·s
         registry["Cb"] = Unit.SI.A * Unit.SI.s;
+        // F (Farad) = C/V = s⁴·A²/(kg·m²)
+        registry["Fd"] = (Unit.SI.s ^ 4) * (Unit.SI.A ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2));
+        // H (Henry) = Wb/A = kg·m²/(s²·A²)
+        registry["H"] = Unit.SI.kg * (Unit.SI.m ^ 2) / ((Unit.SI.s ^ 2) * (Unit.SI.A ^ 2));
+        // S (Siemens) = 1/Ω = s³·A²/(kg·m²)
+        registry["Sm"] = (Unit.SI.s ^ 3) * (Unit.SI.A ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2));
+        // T (Tesla) = Wb/m² = kg/(s²·A)
+        registry["T"] = Unit.SI.kg / ((Unit.SI.s ^ 2) * Unit.SI.A);
+        // Wb (Weber) = V·s = kg·m²/(s²·A)
+        registry["Wb"] = Unit.SI.kg * (Unit.SI.m ^ 2) / ((Unit.SI.s ^ 2) * Unit.SI.A);
+        // lm (lumen) = cd·sr
+        registry["lm"] = Unit.SI.cd * Unit.SI.sr;
+        // lx (lux) = lm/m²
+        registry["lx"] = Unit.SI.cd * Unit.SI.sr / (Unit.SI.m ^ 2);
 
         return registry;
     }
@@ -162,11 +240,13 @@ public static class UnitParser
     {
         private readonly List<Token> _tokens;
         private int _current;
+        private bool _qualifiedMode;
 
-        internal Parser(List<Token> tokens)
+        internal Parser(List<Token> tokens, bool qualifiedMode = false)
         {
             _tokens = tokens;
             _current = 0;
+            _qualifiedMode = qualifiedMode;
         }
 
         private Token CurrentToken => _tokens[_current];
@@ -217,6 +297,46 @@ public static class UnitParser
             return result;
         }
 
+        internal (Unit, QuantityKind) ParseQualifiedUnit()
+        {
+            var unit = ParseExpression();
+
+            // Optionally parse qualifier: whitespace followed by (KindName)
+            QuantityKind kind = null;
+
+            // Check if we have a qualifier pattern: ( <identifier> )
+            if (!IsAtEnd && Match(TokenType.LeftParen))
+            {
+                // Peek ahead to see if this looks like a qualifier (not a complex expression)
+                // A qualifier is: ( <single identifier> )
+                if (_current + 2 < _tokens.Count &&
+                    _tokens[_current + 1].Type == TokenType.Identifier &&
+                    _tokens[_current + 2].Type == TokenType.RightParen)
+                {
+                    // This looks like a qualifier, consume it
+                    Advance(); // consume (
+                    var kindToken = Advance(); // consume identifier
+                    Advance(); // consume )
+
+                    // Parse the kind name
+                    kind = QuantityParser.Parse(kindToken.Value);
+                }
+                else
+                {
+                    // This is a complex parenthesized expression, let the normal parser handle it
+                    // by throwing an error since we already parsed the unit
+                    throw new ParseException($"Unexpected token '(' at position {CurrentToken.Position}", CurrentToken.Position);
+                }
+            }
+
+            if (!IsAtEnd)
+            {
+                throw new ParseException($"Unexpected token '{CurrentToken.Value}' at position {CurrentToken.Position}", CurrentToken.Position);
+            }
+
+            return (unit, kind);
+        }
+
         private Unit ParseExpression()
         {
             return ParseAdditive();
@@ -249,7 +369,8 @@ public static class UnitParser
             }
 
             // Handle implicit multiplication (when two identifiers or a closing paren followed by identifier)
-            while (Match(TokenType.Identifier, TokenType.LeftParen) && !IsAtEnd)
+            // In qualified mode, skip implicit multiplication for '(' as it may be a qualifier
+            while (Match(TokenType.Identifier) || (!_qualifiedMode && Match(TokenType.LeftParen)) && !IsAtEnd)
             {
                 var right = ParsePower();
                 left = left * right;
