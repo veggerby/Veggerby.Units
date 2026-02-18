@@ -402,7 +402,7 @@ Typical performance:
 
 ### Round-Trip Guarantees
 
-All serialization operations guarantee structural equality on round-trip:
+All serialization operations guarantee structural or dimensional equality on round-trip:
 
 ```csharp
 var original = new DoubleMeasurement(100, Unit.SI.m / Unit.SI.s);
@@ -413,6 +413,30 @@ var deserialized = JsonSerializer.Deserialize<DoubleMeasurement>(json, options);
 // deserialized.Value == original.Value
 // deserialized.Unit == original.Unit (structural equality)
 ```
+
+**Parsing Support:**
+
+The library provides comprehensive parsing for all formatter output modes, enabling full round-trip serialization:
+
+```csharp
+// Parse formatted units
+var unit1 = UnitParser.Parse("J");                    // Joule
+var unit2 = UnitParser.Parse("N·m");                  // Newton-meter
+var unit3 = UnitParser.Parse("kgm^2/s^2");           // Base factors
+
+// Parse qualified units with quantity kind
+var (unit, kind) = UnitParser.ParseQualified("J (Energy)");
+// unit = Joule, kind = QuantityKinds.Energy
+
+// Parse quantity kind names
+var energy = QuantityParser.Parse("Energy");          // QuantityKinds.Energy
+```
+
+See `docs/parsing.md` for complete parsing documentation including:
+- All supported unit formats (BaseFactors, DerivedSymbols, Mixed, Qualified)
+- Round-trip examples for all formatting modes
+- Handling of ambiguous symbols (J, Pa, W, H)
+- Error handling and TryParse methods
 
 ### Null Handling
 
