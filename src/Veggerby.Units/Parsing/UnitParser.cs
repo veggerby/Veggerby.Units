@@ -303,18 +303,110 @@ public static class UnitParser
             if (Match(TokenType.Identifier))
             {
                 var identifierToken = Advance();
+                
+                // Check if there's a power operator following this identifier
+                // If so, and if the identifier can be split into units, we need to handle this carefully
+                // The convention is that "kgm^2" means "kg * m^2", not "(kg * m)^2"
+                if (Match(TokenType.Power, TokenType.Superscript))
+                {
+                    // Try to split the identifier and apply power only to the last part
+                    var splitResult = TrySplitForPower(identifierToken.Value, identifierToken.Position);
+                    if (splitResult.HasValue)
+                    {
+                        var (prefix, suffix) = splitResult.Value;
+                        
+                        // Get the exponent
+                        int exponent;
+                        if (Match(TokenType.Power))
+                        {
+                            Advance();
+                            var exponentToken = Consume(TokenType.Number, "Expected exponent after '^'");
+                            if (!int.TryParse(exponentToken.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out exponent))
+                            {
+                                throw new ParseException($"Invalid exponent '{exponentToken.Value}'", exponentToken.Position);
+                            }
+                        }
+                        else // Superscript
+                        {
+                            var superscriptToken = Advance();
+                            if (!int.TryParse(superscriptToken.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out exponent))
+                            {
+                                throw new ParseException($"Invalid superscript exponent '{superscriptToken.Value}'", superscriptToken.Position);
+                            }
+                        }
+                        
+                        // Return prefix * (suffix ^ exponent)
+                        return prefix * (suffix ^ exponent);
+                    }
+                }
+                
                 return ResolveUnit(identifierToken.Value, identifierToken.Position);
             }
 
             if (Match(TokenType.Number))
             {
-                // If we encounter a number in unit context, it should be dimensionless
-                // But this is likely an error in unit-only parsing
                 var numberToken = Advance();
+                
+                // Special case: "1" represents dimensionless unit (Unit.None)
+                // This is used in expressions like "1/s" for Hz
+                if (numberToken.Value == "1")
+                {
+                    return Unit.None;
+                }
+                
                 throw new ParseException($"Unexpected number '{numberToken.Value}' in unit expression", numberToken.Position);
             }
 
             throw new ParseException($"Expected unit identifier or '(' but found '{CurrentToken.Value}'", CurrentToken.Position);
+        }
+
+        private (Unit prefix, Unit suffix)? TrySplitForPower(string symbol, int position)
+        {
+            // Try to split the symbol such that we can apply power to just the last part
+            // Prefer the longest valid suffix that forms a unit
+            for (int splitAt = 1; splitAt < symbol.Length; splitAt++)
+            {
+                var leftPart = symbol.Substring(0, splitAt);
+                var rightPart = symbol.Substring(splitAt);
+                
+                // Try to resolve both parts
+                var leftUnit = TryResolveUnitQuietly(leftPart);
+                var rightUnit = TryResolveUnitQuietly(rightPart);
+                
+                if (leftUnit != null && rightUnit != null)
+                {
+                    return (leftUnit, rightUnit);
+                }
+            }
+            
+            return null;
+        }
+
+        private Unit TryResolveUnitQuietly(string symbol)
+        {
+            // Try as a direct unit
+            if (_unitRegistry.TryGetValue(symbol, out var unit))
+            {
+                return unit;
+            }
+
+            // Try as a prefixed unit
+            foreach (var prefixLength in new[] { 2, 1 })
+            {
+                if (symbol.Length > prefixLength)
+                {
+                    var prefixPart = symbol.Substring(0, prefixLength);
+                    var unitPart = symbol.Substring(prefixLength);
+
+                    if (_prefixRegistry.TryGetValue(prefixPart, out var prefix) &&
+                        _unitRegistry.TryGetValue(unitPart, out var baseUnit))
+                    {
+                        return prefix * baseUnit;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private Unit ResolveUnit(string symbol, int position)
@@ -342,7 +434,91 @@ public static class UnitParser
                 }
             }
 
+            // Try splitting as implicit multiplication of consecutive units (e.g., "kgm" -> "kg" * "m")
+            // This handles base factor format output like "kgm^2/s^2"
+            var implicitProduct = TrySplitImplicitProduct(symbol, position);
+            if (implicitProduct != null)
+            {
+                return implicitProduct;
+            }
+
             throw new ParseException($"Unknown unit symbol '{symbol}'", position);
+        }
+
+        private Unit TrySplitImplicitProduct(string symbol, int position)
+        {
+            // Try all possible split points to find valid unit combinations
+            // Prefer longest matches first (greedy left-to-right)
+            for (int splitAt = symbol.Length - 1; splitAt >= 1; splitAt--)
+            {
+                var leftPart = symbol.Substring(0, splitAt);
+                var rightPart = symbol.Substring(splitAt);
+
+                // Try to resolve left part (may be prefixed)
+                Unit leftUnit = null;
+                if (_unitRegistry.TryGetValue(leftPart, out leftUnit))
+                {
+                    // Found left part as a unit, try to resolve right recursively
+                    var rightUnit = TryResolveUnitForSplit(rightPart);
+                    if (rightUnit != null)
+                    {
+                        return leftUnit * rightUnit;
+                    }
+                }
+                else
+                {
+                    // Try left part as a prefixed unit
+                    foreach (var prefixLength in new[] { 2, 1 })
+                    {
+                        if (leftPart.Length > prefixLength)
+                        {
+                            var prefixPart = leftPart.Substring(0, prefixLength);
+                            var unitPart = leftPart.Substring(prefixLength);
+
+                            if (_prefixRegistry.TryGetValue(prefixPart, out var prefix) &&
+                                _unitRegistry.TryGetValue(unitPart, out var baseUnit))
+                            {
+                                leftUnit = prefix * baseUnit;
+                                var rightUnit = TryResolveUnitForSplit(rightPart);
+                                if (rightUnit != null)
+                                {
+                                    return leftUnit * rightUnit;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private Unit TryResolveUnitForSplit(string symbol)
+        {
+            // Try as a direct unit
+            if (_unitRegistry.TryGetValue(symbol, out var unit))
+            {
+                return unit;
+            }
+
+            // Try as a prefixed unit
+            foreach (var prefixLength in new[] { 2, 1 })
+            {
+                if (symbol.Length > prefixLength)
+                {
+                    var prefixPart = symbol.Substring(0, prefixLength);
+                    var unitPart = symbol.Substring(prefixLength);
+
+                    if (_prefixRegistry.TryGetValue(prefixPart, out var prefix) &&
+                        _unitRegistry.TryGetValue(unitPart, out var baseUnit))
+                    {
+                        return prefix * baseUnit;
+                    }
+                }
+            }
+
+            // Try recursive split
+            return TrySplitImplicitProduct(symbol, 0);
         }
     }
 }
