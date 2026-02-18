@@ -5,9 +5,9 @@ This document describes the parsing capabilities for reversing formatter output 
 ## Overview
 
 The parsing layer supports full round-trip serialization for all formatting modes:
-- **BaseFactors**: Raw base unit composition (`kg·m²/s²`)
+- **BaseFactors**: Raw base unit composition with concatenation (`kgm^2/s^2` - no separators, uses `^` for exponents)
 - **DerivedSymbols**: Recognized derived SI symbols (`J`, `Pa`, `W`)
-- **Mixed**: Optimal token substitution (`N·m` for torque)
+- **Mixed**: Optimal token substitution with separators (`N·m` for torque)
 - **Qualified**: Disambiguated symbols (`J (Energy)`, `Pa (Pressure)`)
 
 ## Basic Unit Parsing
@@ -150,9 +150,11 @@ var (u2, k2) = UnitParser.ParseQualified("J (Torque)");
 ## Format-Specific Notes
 
 ### BaseFactors Limitations
-- Concatenated units without separators (e.g., `kgm^2`) may parse with different structure
+- BaseFactors format concatenates units without separators (ProductUnit.Symbol joins with empty string)
+- Examples: `kgm^2/s^2` (not `kg·m²/s²`), uses `^` notation (not superscripts)
+- Concatenated units (e.g., `kgm^2`) may parse with different structure than originally created
 - Dimensional equivalence is preserved but structural equality may differ
-- Parser uses left-to-right precedence for implicit multiplication
+- Parser uses smart splitting to apply exponents to the rightmost unit segment
 
 ### Qualified Mode
 - Qualifiers are optional; unqualified units parse normally

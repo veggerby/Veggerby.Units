@@ -99,17 +99,17 @@ public class UnitParserRoundTripTests
     }
 
     [Fact]
-    public void GivenSimpleVoltUnit_WhenRoundTripDerivedSymbols_ThenReturnsEquivalentUnit()
+    public void GivenCoulombUnit_WhenRoundTrip_ThenReturnsEquivalentUnit()
     {
         // Arrange  
-        var original = QuantityKinds.Voltage.CanonicalUnit; // V
+        var coulomb = Unit.SI.A * Unit.SI.s; // C = A·s
 
         // Act
-        var formatted = UnitFormatter.Format(original, UnitFormat.DerivedSymbols);
+        var formatted = UnitFormatter.Format(coulomb, UnitFormat.DerivedSymbols);
         var parsed = UnitParser.Parse(formatted);
 
         // Assert
-        parsed.Should().Be(original);
+        parsed.Should().Be(coulomb);
     }
 
     [Fact]
@@ -138,5 +138,22 @@ public class UnitParserRoundTripTests
 
         // Assert
         parsed.Should().Be(original);
+    }
+
+    [Fact]
+    public void GivenMultiFactorConcatenation_WhenRoundTrip_ThenParsesCorrectly()
+    {
+        // Arrange
+        // Create a unit that would format as kgms^2 (kg·m·s²)
+        var original = Unit.SI.kg * Unit.SI.m * (Unit.SI.s ^ 2);
+
+        // Act
+        var formatted = UnitFormatter.Format(original, UnitFormat.BaseFactors);
+        // formatted should be "kgms^2"
+        var parsed = UnitParser.Parse(formatted);
+
+        // Assert
+        // Verify dimensional equivalence
+        parsed.Dimension.Should().Be(original.Dimension);
     }
 }

@@ -148,8 +148,7 @@ public static class UnitParser
         registry["s"] = Unit.SI.s;
         registry["A"] = Unit.SI.A;
         registry["K"] = Unit.SI.K;
-        registry["°C"] = Unit.SI.C;
-        registry["C"] = Unit.SI.C;
+        registry["°C"] = Unit.SI.C;  // Celsius (temperature) - use degree symbol only
         registry["cd"] = Unit.SI.cd;
         registry["mol"] = Unit.SI.n;
         registry["rad"] = Unit.SI.rad;
@@ -162,8 +161,7 @@ public static class UnitParser
         registry["mi"] = Unit.Imperial.mi;
         registry["lb"] = Unit.Imperial.lb;
         registry["oz"] = Unit.Imperial.oz;
-        registry["°F"] = Unit.Imperial.F;
-        registry["F"] = Unit.Imperial.F;
+        registry["°F"] = Unit.Imperial.F;  // Fahrenheit (temperature) - use degree symbol only
 
         // Common derived SI units (these will be added as we discover them in the codebase)
         // For now, we'll construct them on the fly from their base units
@@ -183,13 +181,13 @@ public static class UnitParser
         // Hz = 1/s
         registry["Hz"] = Unit.None / Unit.SI.s;
         // C (Coulomb) = A·s
-        registry["Cb"] = Unit.SI.A * Unit.SI.s;
+        registry["C"] = Unit.SI.A * Unit.SI.s;
         // F (Farad) = C/V = s⁴·A²/(kg·m²)
-        registry["Fd"] = (Unit.SI.s ^ 4) * (Unit.SI.A ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2));
+        registry["F"] = (Unit.SI.s ^ 4) * (Unit.SI.A ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2));
         // H (Henry) = Wb/A = kg·m²/(s²·A²)
         registry["H"] = Unit.SI.kg * (Unit.SI.m ^ 2) / ((Unit.SI.s ^ 2) * (Unit.SI.A ^ 2));
         // S (Siemens) = 1/Ω = s³·A²/(kg·m²)
-        registry["Sm"] = (Unit.SI.s ^ 3) * (Unit.SI.A ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2));
+        registry["S"] = (Unit.SI.s ^ 3) * (Unit.SI.A ^ 2) / (Unit.SI.kg * (Unit.SI.m ^ 2));
         // T (Tesla) = Wb/m² = kg/(s²·A)
         registry["T"] = Unit.SI.kg / ((Unit.SI.s ^ 2) * Unit.SI.A);
         // Wb (Weber) = V·s = kg·m²/(s²·A)
@@ -484,26 +482,31 @@ public static class UnitParser
         private (Unit prefix, Unit suffix)? TrySplitForPower(string symbol, int position)
         {
             // Try to split the symbol such that we can apply power to just the last part
-            // Prefer the longest valid suffix that forms a unit
-            for (int splitAt = 1; splitAt < symbol.Length; splitAt++)
+            // Strategy: Try shortest valid suffix first (rightmost unit gets the exponent)
+            // This handles "kgm^2" -> kg * (m^2) correctly
+            // Start from the right and look for the shortest unit that can take the exponent
+            for (int splitAt = symbol.Length - 1; splitAt >= 1; splitAt--)
             {
                 var leftPart = symbol.Substring(0, splitAt);
                 var rightPart = symbol.Substring(splitAt);
                 
-                // Try to resolve both parts
-                var leftUnit = TryResolveUnitQuietly(leftPart);
-                var rightUnit = TryResolveUnitQuietly(rightPart);
-                
-                if (leftUnit != null && rightUnit != null)
+                // Try to resolve right part as a simple unit (not prefixed, to avoid ambiguity)
+                Unit rightUnit = null;
+                if (_unitRegistry.TryGetValue(rightPart, out rightUnit))
                 {
-                    return (leftUnit, rightUnit);
+                    // Found a valid suffix, now try to resolve the left part
+                    var leftUnit = TryResolveUnitForSplit(leftPart);
+                    if (leftUnit != null)
+                    {
+                        return (leftUnit, rightUnit);
+                    }
                 }
             }
             
             return null;
         }
 
-        private Unit TryResolveUnitQuietly(string symbol)
+        private Unit TryResolveUnitForSplit(string symbol)
         {
             // Try as a direct unit
             if (_unitRegistry.TryGetValue(symbol, out var unit))
@@ -511,7 +514,15 @@ public static class UnitParser
                 return unit;
             }
 
-            // Try as a prefixed unit
+            // Try recursive implicit product split first (prefer multiplication over prefixing)
+            // This ensures "kgm" splits as "kg * m" not "k * gm"
+            var splitProduct = TrySplitImplicitProduct(symbol, 0);
+            if (splitProduct != null)
+            {
+                return splitProduct;
+            }
+
+            // Only try as a prefixed unit if implicit product splitting failed
             foreach (var prefixLength in new[] { 2, 1 })
             {
                 if (symbol.Length > prefixLength)
@@ -612,34 +623,6 @@ public static class UnitParser
             }
 
             return null;
-        }
-
-        private Unit TryResolveUnitForSplit(string symbol)
-        {
-            // Try as a direct unit
-            if (_unitRegistry.TryGetValue(symbol, out var unit))
-            {
-                return unit;
-            }
-
-            // Try as a prefixed unit
-            foreach (var prefixLength in new[] { 2, 1 })
-            {
-                if (symbol.Length > prefixLength)
-                {
-                    var prefixPart = symbol.Substring(0, prefixLength);
-                    var unitPart = symbol.Substring(prefixLength);
-
-                    if (_prefixRegistry.TryGetValue(prefixPart, out var prefix) &&
-                        _unitRegistry.TryGetValue(unitPart, out var baseUnit))
-                    {
-                        return prefix * baseUnit;
-                    }
-                }
-            }
-
-            // Try recursive split
-            return TrySplitImplicitProduct(symbol, 0);
         }
     }
 }
