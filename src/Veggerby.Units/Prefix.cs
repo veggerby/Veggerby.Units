@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace Veggerby.Units;
 /// See <c>docs/qudt-alignment.md</c> for prefix system validation.
 /// </para>
 /// </remarks>
-public class Prefix
+public class Prefix : IEquatable<Prefix>
 {
     /// <summary>Identity prefix (factor = 1).</summary>
     public static Prefix Empty = new(string.Empty, string.Empty, 1);
@@ -125,11 +126,22 @@ public class Prefix
     }
 
     /// <inheritdoc />
+    public bool Equals(Prefix other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return Factor == other.Factor;
+    }
+
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
-        if (obj is Prefix)
+        if (obj is Prefix p)
         {
-            return Factor == (obj as Prefix).Factor;
+            return Equals(p);
         }
 
         return base.Equals(obj);

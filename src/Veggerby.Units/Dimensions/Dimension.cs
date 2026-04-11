@@ -1,4 +1,6 @@
-﻿using Veggerby.Units.Reduction;
+﻿using System;
+
+using Veggerby.Units.Reduction;
 
 namespace Veggerby.Units.Dimensions;
 
@@ -23,7 +25,7 @@ namespace Veggerby.Units.Dimensions;
 /// See <c>docs/qudt-alignment.md</c> for dimensional exponent verification.
 /// </para>
 /// </remarks>
-public abstract class Dimension : IOperand
+public abstract class Dimension : IOperand, IEquatable<Dimension>
 {
     /// <summary>Dimensionless identity (used for constants or fully cancelled expressions).</summary>
     public static readonly Dimension None = new NullDimension();
@@ -187,6 +189,16 @@ public abstract class Dimension : IOperand
     /// <summary>Inequality inverse of structural equality.</summary>
     public static bool operator !=(Dimension d1, Dimension d2)
     {
+        if (ReferenceEquals(d1, d2))
+        {
+            return false;
+        }
+
+        if ((object)d1 is null || (object)d2 is null)
+        {
+            return true;
+        }
+
         return !d1.Equals(d2);
     }
 
@@ -202,12 +214,25 @@ public abstract class Dimension : IOperand
     /// <inheritdoc />
     public override int GetHashCode() => Symbol.GetHashCode();
 
+    /// <summary>Typed equality for <see cref="Dimension"/> comparisons (avoids boxing).</summary>
+    /// <param name="other">The dimension to compare with.</param>
+    /// <returns><c>true</c> when this dimension is structurally equal to <paramref name="other"/>.</returns>
+    public bool Equals(Dimension other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return OperationUtility.Equals(this, other);
+    }
+
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-        if (obj is Dimension)
+        if (obj is Dimension d)
         {
-            return OperationUtility.Equals(this, obj as Dimension);
+            return Equals(d);
         }
 
         return false;
