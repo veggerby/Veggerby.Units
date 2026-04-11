@@ -14,7 +14,7 @@ namespace Veggerby.Units;
 /// <param name="value">The numeric scalar value.</param>
 /// <param name="unit">The physical unit associated with the value.</param>
 /// <param name="calculator">The arithmetic strategy used for operations on <typeparamref name="T"/>.</param>
-public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) : IEquatable<Measurement<T>> where T : IComparable
+public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) : IEquatable<Measurement<T>>, IComparable<Measurement<T>> where T : IComparable
 {
     /// <summary>
     /// Adds two measurements retaining the left unit. Units must be structurally equal; no conversion is performed.
@@ -54,6 +54,20 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) : IEqu
         return new Measurement<T>(v1.Calculator.Subtract(v1.Value, v2.Value), v1.Unit, v1.Calculator);
     }
 
+    /// <summary>
+    /// Negates a measurement (unary minus). Value is negated; unit is preserved.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator -(Measurement<T> v)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Negate(v.Value), v.Unit, v.Calculator);
+    }
+
     /// <summary>Multiplies two measurements and composes their units via <see cref="Unit.op_Multiply(Unit, Unit)"/>.</summary>
     public static Measurement<T> operator *(Measurement<T> v1, Measurement<T> v2)
     {
@@ -64,6 +78,42 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) : IEqu
     public static Measurement<T> operator /(Measurement<T> v1, Measurement<T> v2)
     {
         return new Measurement<T>(v1.Calculator.Divide(v1.Value, v2.Value), v1.Unit / v2.Unit, v1.Calculator);
+    }
+
+    /// <summary>Scales the measurement value by a scalar of the same numeric type. Unit is preserved.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator *(Measurement<T> v, T scalar)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Multiply(v.Value, scalar), v.Unit, v.Calculator);
+    }
+
+    /// <summary>Scales the measurement value by a scalar (commutative). Unit is preserved.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator *(T scalar, Measurement<T> v)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Multiply(scalar, v.Value), v.Unit, v.Calculator);
+    }
+
+    /// <summary>Divides the measurement value by a scalar of the same numeric type. Unit is preserved.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator /(Measurement<T> v, T scalar)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Divide(v.Value, scalar), v.Unit, v.Calculator);
     }
 
     /// <summary>Applies unit multiplication to this measurement (value unchanged) producing a new measurement.</summary>
@@ -221,6 +271,26 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) : IEqu
         }
 
         return base.Equals(obj);
+    }
+
+    /// <summary>
+    /// Compares this measurement with another of the same type after aligning units. Null is considered less than
+    /// any non-null measurement. Throws <see cref="Conversion.MeasurementConversionException"/> when dimensions
+    /// are incompatible.
+    /// </summary>
+    /// <param name="other">The measurement to compare with, or <c>null</c>.</param>
+    /// <returns>
+    /// A negative integer when this is less than <paramref name="other"/>, zero when equal, and a positive integer
+    /// when greater.
+    /// </returns>
+    public int CompareTo(Measurement<T> other)
+    {
+        if (other is null)
+        {
+            return 1; // non-null > null by convention
+        }
+
+        return Value.CompareTo(other.AlignUnits(this).Value);
     }
 
     /// <summary>Combines value and unit hash codes ensuring equal measurements share the same hash.</summary>

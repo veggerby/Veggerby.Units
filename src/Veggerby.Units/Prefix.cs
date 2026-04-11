@@ -125,6 +125,28 @@ public class Prefix : IEquatable<Prefix>
             .SingleOrDefault(x => x.Factor == value);
     }
 
+    /// <summary>Structural equality: two prefixes are equal when their factors are equal.</summary>
+    public static bool operator ==(Prefix p1, Prefix p2)
+    {
+        if (ReferenceEquals(p1, p2))
+        {
+            return true;
+        }
+
+        if ((object)p1 is null || (object)p2 is null)
+        {
+            return false;
+        }
+
+        return p1.Factor == p2.Factor;
+    }
+
+    /// <summary>Inequality inverse of <see cref="operator ==(Prefix, Prefix)"/>.</summary>
+    public static bool operator !=(Prefix p1, Prefix p2)
+    {
+        return !(p1 == p2);
+    }
+
     /// <inheritdoc />
     public bool Equals(Prefix other)
     {
