@@ -1,4 +1,6 @@
-﻿using Veggerby.Units.Dimensions;
+﻿using System;
+
+using Veggerby.Units.Dimensions;
 using Veggerby.Units.Reduction;
 
 namespace Veggerby.Units;
@@ -17,7 +19,7 @@ namespace Veggerby.Units;
 /// This guarantees that structurally equivalent expressions reduce to the same canonical form which underpins
 /// equality and hash code semantics.
 /// </summary>
-public abstract class Unit : IOperand
+public abstract class Unit : IOperand, IEquatable<Unit>
 {
     /// <summary>
     /// Dimensionless identity unit (multiplicative identity). Acts as neutral element for * and / and as the
@@ -302,16 +304,29 @@ public abstract class Unit : IOperand
     /// </summary>
     internal virtual double FromBase(double baseValue) => baseValue / GetScaleFactor();
 
+    private static bool IsAffine(Unit unit) => unit is AffineUnit;
+
+    /// <summary>Typed equality avoiding boxing. Delegates to <see cref="OperationUtility.Equals(IOperand, IOperand)"/>.</summary>
+    /// <param name="other">The unit to compare with.</param>
+    /// <returns><c>true</c> when both units are structurally equal.</returns>
+    public bool Equals(Unit other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return OperationUtility.Equals(this, other);
+    }
+
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-        if (obj is Unit)
+        if (obj is Unit u)
         {
-            return OperationUtility.Equals(this, (obj as Unit));
+            return Equals(u);
         }
 
         return false;
     }
-
-    private static bool IsAffine(Unit unit) => unit is AffineUnit;
 }

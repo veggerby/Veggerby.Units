@@ -10,7 +10,11 @@ namespace Veggerby.Units;
 /// Relational comparisons implicitly align units by converting the right operand to the left operand's unit.
 /// No implicit alignment is performed for equality or additive operators (they require identical units).
 /// </summary>
-public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where T : IComparable
+/// <typeparam name="T">The underlying numeric type. Must implement <see cref="IComparable"/>.</typeparam>
+/// <param name="value">The numeric scalar value.</param>
+/// <param name="unit">The physical unit associated with the value.</param>
+/// <param name="calculator">The arithmetic strategy used for operations on <typeparamref name="T"/>.</param>
+public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) : IEquatable<Measurement<T>>, IComparable<Measurement<T>> where T : IComparable
 {
     /// <summary>
     /// Adds two measurements retaining the left unit. Units must be structurally equal; no conversion is performed.
@@ -50,6 +54,20 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
         return new Measurement<T>(v1.Calculator.Subtract(v1.Value, v2.Value), v1.Unit, v1.Calculator);
     }
 
+    /// <summary>
+    /// Negates a measurement (unary minus). Value is negated; unit is preserved.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator -(Measurement<T> v)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Negate(v.Value), v.Unit, v.Calculator);
+    }
+
     /// <summary>Multiplies two measurements and composes their units via <see cref="Unit.op_Multiply(Unit, Unit)"/>.</summary>
     public static Measurement<T> operator *(Measurement<T> v1, Measurement<T> v2)
     {
@@ -60,6 +78,42 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
     public static Measurement<T> operator /(Measurement<T> v1, Measurement<T> v2)
     {
         return new Measurement<T>(v1.Calculator.Divide(v1.Value, v2.Value), v1.Unit / v2.Unit, v1.Calculator);
+    }
+
+    /// <summary>Scales the measurement value by a scalar of the same numeric type. Unit is preserved.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator *(Measurement<T> v, T scalar)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Multiply(v.Value, scalar), v.Unit, v.Calculator);
+    }
+
+    /// <summary>Scales the measurement value by a scalar (commutative). Unit is preserved.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator *(T scalar, Measurement<T> v)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Multiply(scalar, v.Value), v.Unit, v.Calculator);
+    }
+
+    /// <summary>Divides the measurement value by a scalar of the same numeric type. Unit is preserved.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v"/> is null.</exception>
+    public static Measurement<T> operator /(Measurement<T> v, T scalar)
+    {
+        if (v is null)
+        {
+            throw new ArgumentNullException(nameof(v));
+        }
+
+        return new Measurement<T>(v.Calculator.Divide(v.Value, scalar), v.Unit, v.Calculator);
     }
 
     /// <summary>Applies unit multiplication to this measurement (value unchanged) producing a new measurement.</summary>
@@ -75,26 +129,70 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
     }
 
     /// <summary>Relational less-than after aligning the right operand's unit to the left operand's unit.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v1"/> or <paramref name="v2"/> is null.</exception>
     public static bool operator <(Measurement<T> v1, Measurement<T> v2)
     {
+        if (v1 is null)
+        {
+            throw new ArgumentNullException(nameof(v1));
+        }
+
+        if (v2 is null)
+        {
+            throw new ArgumentNullException(nameof(v2));
+        }
+
         return v1.Value.CompareTo(v2.AlignUnits(v1).Value) < 0;
     }
 
     /// <summary>Relational less-than-or-equal after aligning the right operand's unit to the left operand's unit.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v1"/> or <paramref name="v2"/> is null.</exception>
     public static bool operator <=(Measurement<T> v1, Measurement<T> v2)
     {
+        if (v1 is null)
+        {
+            throw new ArgumentNullException(nameof(v1));
+        }
+
+        if (v2 is null)
+        {
+            throw new ArgumentNullException(nameof(v2));
+        }
+
         return v1.Value.CompareTo(v2.AlignUnits(v1).Value) <= 0;
     }
 
     /// <summary>Relational greater-than after aligning the right operand's unit to the left operand's unit.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v1"/> or <paramref name="v2"/> is null.</exception>
     public static bool operator >(Measurement<T> v1, Measurement<T> v2)
     {
+        if (v1 is null)
+        {
+            throw new ArgumentNullException(nameof(v1));
+        }
+
+        if (v2 is null)
+        {
+            throw new ArgumentNullException(nameof(v2));
+        }
+
         return v1.Value.CompareTo(v2.AlignUnits(v1).Value) > 0;
     }
 
     /// <summary>Relational greater-than-or-equal after aligning the right operand's unit to the left operand's unit.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="v1"/> or <paramref name="v2"/> is null.</exception>
     public static bool operator >=(Measurement<T> v1, Measurement<T> v2)
     {
+        if (v1 is null)
+        {
+            throw new ArgumentNullException(nameof(v1));
+        }
+
+        if (v2 is null)
+        {
+            throw new ArgumentNullException(nameof(v2));
+        }
+
         return v1.Value.CompareTo(v2.AlignUnits(v1).Value) >= 0;
     }
 
@@ -150,16 +248,49 @@ public class Measurement<T>(T value, Unit unit, Calculator<T> calculator) where 
     /// <summary>Returns a culture‑invariant string in the form "value unit".</summary>
     public override string ToString() => $"{Value} {Unit}";
 
+    /// <summary>Typed equality: both numeric value and unit must match exactly (no unit conversion performed).</summary>
+    /// <param name="other">The measurement to compare with.</param>
+    /// <returns><c>true</c> when both value and unit are equal.</returns>
+    public bool Equals(Measurement<T> other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return Value.Equals(other.Value) && Unit.Equals(other.Unit);
+    }
+
     /// <summary>Value + unit equality check (implements object equality contract).</summary>
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-        if (obj is Measurement<T>)
+        if (obj is Measurement<T> m)
         {
-            return Value.Equals((obj as Measurement<T>).Value) && Unit.Equals((obj as Measurement<T>).Unit);
+            return Equals(m);
         }
 
         return base.Equals(obj);
+    }
+
+    /// <summary>
+    /// Compares this measurement with another of the same type after aligning units. Null is considered less than
+    /// any non-null measurement. Throws <see cref="Conversion.MeasurementConversionException"/> when dimensions
+    /// are incompatible.
+    /// </summary>
+    /// <param name="other">The measurement to compare with, or <c>null</c>.</param>
+    /// <returns>
+    /// A negative integer when this is less than <paramref name="other"/>, zero when equal, and a positive integer
+    /// when greater.
+    /// </returns>
+    public int CompareTo(Measurement<T> other)
+    {
+        if (other is null)
+        {
+            return 1; // non-null > null by convention
+        }
+
+        return Value.CompareTo(other.AlignUnits(this).Value);
     }
 
     /// <summary>Combines value and unit hash codes ensuring equal measurements share the same hash.</summary>

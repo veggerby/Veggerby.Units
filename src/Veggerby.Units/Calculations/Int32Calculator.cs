@@ -15,6 +15,8 @@ public class Int32Calculator : Calculator<int>
     public override int Multiply(int v1, int v2) => v1 * v2;
     /// <inheritdoc />
     public override int Subtract(int v1, int v2) => v1 - v2;
+    /// <inheritdoc />
+    public override int Negate(int v) => -v;
 
     /// <summary>Singleton instance (reuse to avoid allocations).</summary>
     public static readonly Calculator<int> Instance = new Int32Calculator();

@@ -14,6 +14,8 @@ public class DecimalCalculator : Calculator<decimal>
     public override decimal Multiply(decimal v1, decimal v2) => v1 * v2;
     /// <inheritdoc />
     public override decimal Subtract(decimal v1, decimal v2) => v1 - v2;
+    /// <inheritdoc />
+    public override decimal Negate(decimal v) => -v;
 
     /// <summary>Singleton instance (reuse to avoid allocations).</summary>
     public static readonly Calculator<decimal> Instance = new DecimalCalculator();

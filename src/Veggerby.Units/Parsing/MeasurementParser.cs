@@ -116,11 +116,11 @@ public static class MeasurementParser
 
         if (type == typeof(int))
         {
-            // Try to parse as int, but handle decimal values by truncating
+            // Try to parse as int, but handle decimal values by rounding to nearest integer.
             if (value.Contains('.') || value.Contains('e') || value.Contains('E'))
             {
                 var doubleValue = double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
-                return (T)(object)(int)doubleValue;
+                return (T)(object)Convert.ToInt32(Math.Round(doubleValue));
             }
 
             return (T)(object)int.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);
@@ -141,7 +141,7 @@ public static class MeasurementParser
             if (value.Contains('.') || value.Contains('e') || value.Contains('E'))
             {
                 var doubleValue = double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
-                return (T)(object)(long)doubleValue;
+                return (T)(object)Convert.ToInt64(Math.Round(doubleValue));
             }
 
             return (T)(object)long.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);

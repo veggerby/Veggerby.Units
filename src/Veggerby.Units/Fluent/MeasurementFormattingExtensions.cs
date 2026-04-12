@@ -1,5 +1,6 @@
 using System;
 
+using Veggerby.Units.Conversion;
 using Veggerby.Units.Formatting;
 using Veggerby.Units.Quantities;
 
@@ -21,39 +22,15 @@ public static class MeasurementFormattingExtensions
     }
 
     /// <summary>
-    /// Converts the measurement to the specified <paramref name="target"/> unit (delegates to existing conversion logic) for fluent style.
+    /// Converts the measurement to the specified <paramref name="target"/> unit using the standard
+    /// <see cref="Extensions.ConvertTo{T}(Measurement{T}, Unit)"/> conversion path.
     /// </summary>
+    /// <typeparam name="T">Underlying numeric type.</typeparam>
+    /// <param name="measurement">The source measurement (must not be null).</param>
+    /// <param name="target">The target unit (must have the same dimension).</param>
+    /// <returns>A measurement expressed in <paramref name="target"/> (or the same instance when units already match).</returns>
     public static Measurement<T> In<T>(this Measurement<T> measurement, Unit target) where T : IComparable
     {
-        if (measurement.Unit == target)
-        {
-            return measurement;
-        }
-
-        // Perform conversion through double base space for now using internal scale factors.
-        // For generic T we restrict to double/decimal/int supported calculators by attempting double path first.
-        if (measurement is DoubleMeasurement dm)
-        {
-            var baseVal = dm.Unit.ToBase(dm.Value);
-            var converted = target.FromBase(baseVal);
-            return (Measurement<T>)(object)new DoubleMeasurement(converted, target);
-        }
-
-        if (measurement is DecimalMeasurement decm)
-        {
-            // Convert via double to reuse scaling (acceptable minor precision loss for derived units if scale factors are power of 10).
-            var baseVal = (decimal)decm.Unit.ToBase((double)decm.Value);
-            var converted = (decimal)target.FromBase((double)baseVal);
-            return (Measurement<T>)(object)new DecimalMeasurement(converted, target);
-        }
-
-        if (measurement is Int32Measurement im)
-        {
-            var baseVal = im.Unit.ToBase(im.Value);
-            var converted = target.FromBase(baseVal);
-            return (Measurement<T>)(object)new Int32Measurement((int)converted, target);
-        }
-
-        throw new System.NotSupportedException("Generic conversion for supplied numeric type not implemented.");
+        return measurement.ConvertTo(target);
     }
 }

@@ -20,4 +20,6 @@ public abstract class Calculator<T>
     public abstract T Multiply(T v1, T v2);
     /// <summary>Divides first by second (v1 / v2). Implementations may rely on underlying type division semantics (e.g. integer truncation).</summary>
     public abstract T Divide(T v1, T v2);
+    /// <summary>Negates a value (-v).</summary>
+    public abstract T Negate(T v);
 }

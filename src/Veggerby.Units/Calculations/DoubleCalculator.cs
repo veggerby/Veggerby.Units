@@ -15,6 +15,8 @@ public class DoubleCalculator : Calculator<double>
     public override double Multiply(double v1, double v2) => v1 * v2;
     /// <inheritdoc />
     public override double Subtract(double v1, double v2) => v1 - v2;
+    /// <inheritdoc />
+    public override double Negate(double v) => -v;
 
     /// <summary>Singleton instance (reuse to avoid allocations).</summary>
     public static readonly Calculator<double> Instance = new DoubleCalculator();
